@@ -5,6 +5,8 @@ volumes:
 
 services:
   app:
+    container_name: app
+    # hostname: app
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
@@ -18,7 +20,23 @@ services:
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
 
+  # https-portal:
+  #   image: steveltn/https-portal:1
+  #   ports:
+  #     - '80:80'
+  #     - '443:443'
+  #   links:
+  #     - web
+  #   restart: always
+  #   environment:
+  #     DOMAINS: 'jhm.local -> http://web:80'
+  #     STAGE: local
+  #   depends_on:
+  #     - web
+
   web:
+    container_name: web
+    hostname: web
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
@@ -30,6 +48,7 @@ services:
       - ./src/:/var/www/html
 
   db:
+    container_name: db
     build:
       context: .
       dockerfile: ./docker/mysql/Dockerfile
