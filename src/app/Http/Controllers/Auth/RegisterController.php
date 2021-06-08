@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -69,5 +70,19 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    public function confirm()
+    {
+        return view('auth/confirm');
+    }
+
+    public function showRegistrationForm(Request $request)
+    {
+        $is_teacher = $request->teacher;
+        if($is_teacher){
+            return view('auth/register');
+        }
+        return redirect()->route('register_confirm');
     }
 }
