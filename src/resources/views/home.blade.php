@@ -14,7 +14,19 @@
                         </div>
                     @endif
 
-                    You are logged in!
+                    @if (Auth::user()->is_teacher)
+                        <h2>ようこそ、{{ Auth::user()->name }}先生！</h2>
+                    @else
+                        <h2>ようこそ、{{ Auth::user()->name }}さん！</h2>
+                    @endif
+
+                    <div class="btn-group btn-toolbar">
+                        @if (Auth::user()->is_teacher)
+                            <div class="top-right links mr-2 mb-2">
+                                <a class="btn btn-success" href="{{ url('/users/create') }}" role="button">生徒登録ページ</a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
