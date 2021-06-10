@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,5 +16,6 @@ Route::get('/', 'HomeController@index')->middleware('auth');
 
 Route::get('/register_confirm', 'Auth\RegisterController@confirm')->name('register_confirm');
 Auth::routes();
-
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::resource('users', 'UsersController', ['only' => ['create','edit','store','update','destroy']])->middleware('auth');

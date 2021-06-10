@@ -57,4 +57,14 @@ DB_PASSWORD=password
 
 17 $ php artisan config:clear
 
+18 $ php artisan migrate:refresh --seed
+
 18 $ exit
+
+
+
+src/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php内の
+
+$this->guard()->login($user);
+
+をコメントアウトすること
