@@ -19,3 +19,4 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('users', 'UsersController', ['only' => ['create','edit','store','update','destroy']])->middleware('auth');
+Route::resource('companies', 'CompaniesController')->middleware('auth');

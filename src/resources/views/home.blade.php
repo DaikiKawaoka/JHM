@@ -26,6 +26,12 @@
                                 <a class="btn btn-success" href="{{ url('/users/create') }}" role="button">生徒登録ページ</a>
                             </div>
                         @endif
+                        <div class="top-right links mr-2 mb-2">
+                            <a class="btn btn-success" href="{{ url('/companies/create') }}" role="button">求人登録ページ</a>
+                        </div>
+                        <div class="top-right links mr-2 mb-2">
+                            <a class="btn btn-success" href="{{ url('/companies') }}" role="button">求人一覧ページ</a>
+                        </div>
                     </div>
                 </div>
             </div>
