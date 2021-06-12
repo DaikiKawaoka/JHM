@@ -43,6 +43,8 @@ DB_USERNAME=jhm_user
 
 DB_PASSWORD=password
 
+DB_TESTING_PORT=13307
+
 --------------------------------- 
 
 12 $ docker compose build
