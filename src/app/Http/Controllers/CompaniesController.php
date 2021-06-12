@@ -54,12 +54,12 @@ class CompaniesController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'prefecture' => ['nullable', 'string', 'max:3'],
             'url' => ['url', 'nullable', 'max:255'],
-            'deadline' => ['date', 'nullable','after:today'],
+            'deadline' => ['date', 'nullable','after:yesterday'],
             'remarks' => ['string','nullable'],
         ],[
             'name.required' => '会社名は必須項目です。',
             'name.max' => '会社名は必須項目です。',
-            'deadline.after' => '締切日は明日以降です。',
+            'deadline.after' => '締切日は本日以降にしてください。',
         ]);
 
         Company::create([

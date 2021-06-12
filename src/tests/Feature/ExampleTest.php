@@ -14,8 +14,10 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        $response = $this->get('/home');
+        $response->assertStatus(302)
+                 ->assertRedirect('/login'); // リダイレクト先を確認
+        // 認証されていないことを確認
+        $this->assertGuest();
     }
 }

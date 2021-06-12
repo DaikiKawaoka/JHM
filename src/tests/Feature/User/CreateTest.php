@@ -3,6 +3,7 @@
 namespace Tests\Feature\User;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\User;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      *
@@ -52,10 +54,16 @@ class CreateTest extends TestCase
         // dd($response);
         // メッセージがあることをチェック
         $response->assertSessionHas([
-            'error' => 'あなたは先生ではないので生徒を登録することはできません。',
+            'error' => 'あなたは教師ではないので生徒を登録することはできません。',
         ]);
         $response->assertStatus(302);
         $response->assertRedirect('/home');
 
+    }
+    public function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
     }
 }
