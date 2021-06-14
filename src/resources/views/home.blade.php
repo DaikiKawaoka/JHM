@@ -25,6 +25,10 @@
                             <div class="top-right links mr-2 mb-2">
                                 <a class="btn btn-success" href="{{ url('/users/create') }}" role="button">生徒登録ページ</a>
                             </div>
+                        @else
+                            <div class="top-right links mr-2 mb-2">
+                                <a class="btn btn-success" href="{{ url('/entries') }}" role="button">エントリー済み会社一覧</a>
+                            </div>
                         @endif
                         <div class="top-right links mr-2 mb-2">
                             <a class="btn btn-success" href="{{ url('/companies/create') }}" role="button">求人登録ページ</a>

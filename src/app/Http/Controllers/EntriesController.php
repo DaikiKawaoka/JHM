@@ -6,11 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Entry;
 use App\Company;
+use App\User;
 
 class EntriesController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+        if(!($user->is_teacher)){
+            $entered_companies = User::find($user->id)->companies;
+            return view('entries/index')->with('entered_companies', $entered_companies);
+        }
+        // 教師はエントリー一覧ページに遷移できない
+        return redirect()->route('home');
     }
     /**
      * Show the form for creating a new resource.
