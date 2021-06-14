@@ -2,6 +2,16 @@
 
 @section('content')
 <div class="container-fluid">
+    @if (session('status'))
+        <div class="alert alert-success" role="alert">
+            {{ session('status') }}
+        </div>
+    @endif
+    @if (session('status-error'))
+        <div class="alert alert-danger ">
+            {{ session('status-error') }}
+        </div>
+    @endif
     <div class="row justify-content-center mb-5">
         <div class="col-md-8">
             <div class="card">
@@ -20,6 +30,7 @@
             <th scope="col">締切日</th>
             <th scope="col">登録者名</th>
             <th scope="col">登録日</th>
+            <th scope="col">エントリー</th>
             <th scope="col">編集</th>
             <th scope="col">削除</th>
             </tr>
@@ -42,6 +53,14 @@
               @else
                 <td>null</td>
               @endif
+              <td>
+                <form action="{{route('entries.store')}}" method='post'>
+                  {{ csrf_field() }}
+                  {{ method_field('POST') }}
+                  <input type="submit" name="entry" value="エントリー" class="btn btn-success">
+                  <input type="hidden" name="company_id" value="{{ $company->id }}">
+                </form>
+              </td>
               <td>
                 <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
               </td>

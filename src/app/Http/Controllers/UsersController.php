@@ -51,7 +51,7 @@ class UsersController extends Controller
             ]);
         }else{
             return redirect()->route('home')
-            ->with('error','あなたは教師ではないので生徒を登録することはできません。');
+            ->with('stats','あなたは教師ではないので生徒を登録することはできません。');
         }
         return redirect()->route('home');
     }
