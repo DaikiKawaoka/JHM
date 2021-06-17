@@ -54,7 +54,7 @@ class CreateTest extends TestCase
         // dd($response);
         // メッセージがあることをチェック
         $response->assertSessionHas([
-            'error' => 'あなたは教師ではないので生徒を登録することはできません。',
+            'status-error' => 'あなたは教師ではないので生徒を登録することはできません。',
         ]);
         $response->assertStatus(302);
         $response->assertRedirect('/home');
