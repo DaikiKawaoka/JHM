@@ -55,7 +55,7 @@ class EntriesController extends Controller
                     'user_id' => $user->id,
                     'company_id' => $company_id,
                 ]);
-                return redirect()->route('companies.index')->with('status',$company->name.'にエントリーしました。');
+                return redirect()->route('companies.show',['company' => $company_id])->with('status',$company->name.'にエントリーしました。');
             }
         }
         return redirect()->route('companies.index')->with('status-error',$message);

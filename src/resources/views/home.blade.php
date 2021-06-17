@@ -13,6 +13,11 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                    @if (session('status-error'))
+                        <div class="alert alert-danger ">
+                            {{ session('status-error') }}
+                        </div>
+                    @endif
 
                     @if (Auth::user()->is_teacher)
                         <h2>ようこそ、{{ Auth::user()->name }}先生！</h2>

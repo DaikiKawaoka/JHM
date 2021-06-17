@@ -27,29 +27,17 @@
             <th scope="col">会社名</th>
             <th scope="col">勤務場所</th>
             <th scope="col">URL</th>
-            <th scope="col">締切日</th>
-            <th scope="col">登録者名</th>
-            <th scope="col">登録日</th>
+            <th scope="col">action</th>
+            <th scope="col">state</th>
             </tr>
         </thead>
         <tbody>
           @foreach ($entered_companies as $company)
             <tr>
               <td scope="row">{{ $company->id }}</th>
-              <td>{{ $company->name }}</th>
+              <td><a class="" href="/companies/{{ $company->id }}">{{ $company->name }}</a></th>
               <td>{{ $company->prefecture }}</td>
               <td>{{ $company->url }}</td>
-              @if ($company->deadline)
-                <td>{{ $company->deadline->format('Y年m月d日') }}</td>
-              @else
-                <td>null</td>
-              @endif
-              <td>{{ $company->create_user_name }}</td>
-              @if ($company->created_at)
-                <td>{{ $company->created_at->format('Y年m月d日') }}</td>
-              @else
-                <td>null</td>
-              @endif
             </tr>
           @endforeach
         </tbody>

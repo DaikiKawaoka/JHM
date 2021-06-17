@@ -39,7 +39,7 @@
           @foreach ($companies as $company)
             <tr>
               <td scope="row">{{ $company->id }}</th>
-              <td>{{ $company->name }}</th>
+              <td><a class="" href="/companies/{{ $company->id }}">{{ $company->name }}</a></th>
               <td>{{ $company->prefecture }}</td>
               <td>{{ $company->url }}</td>
               @if ($company->deadline)
@@ -68,7 +68,7 @@
                 <form action="{{route('companies.destroy', $company->id)}}" method='post' name="delete_form">
                   {{ csrf_field() }}
                   {{ method_field('DELETE') }}
-                  <input type="submit" name="delete" class="btn btn-danger" value="削除" onClick="delete_alert(event);return false;">
+                  <input type="submit" name="delete" class="btn btn-danger" value="削除">
                 </form>
               </td>
             </tr>

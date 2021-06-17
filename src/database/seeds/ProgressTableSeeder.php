@@ -12,14 +12,16 @@ class ProgressTableSeeder extends Seeder
      */
     public function run()
     {
-        $evens = ['会社説明会','一次面接','最終面接'];
-        $states = ['参加','合格','不合格'];
+        $actions = ['会社説明会','一次面接','最終面接'];
+        $action_dates = ['2021-01-01','2021-02-02','2021-03-03'];
+        $states = ['◯','◯','×'];
         for ($i = 1; $i<=3; $i++) {
             DB::table('progress')->insert([
                 'user_id' => $i+1, //id1は先生だからプラスしている
                 'entry_id' => $i,
-                'event' => $evens[$i-1],
+                'action' => $actions[$i-1],
                 'state' => $states[$i-1],
+                'action_date' => $action_dates[$i-1],
             ]);
         }
     }
