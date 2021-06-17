@@ -112,17 +112,17 @@
                 <select class="form-select" name="action">
                   <option value="会社説明会">会社説明会</option>
                   <option value="試験受験">試験受験（SPI,筆記など）</option>
-                  <option value="第一次面接">第一次面接</option>
-                  <option value="第二次面接">第二次面接</option>
-                  <option value="第三次面接">第三次面接</option>
+                  <option value="一次面接">一次面接</option>
+                  <option value="二次面接">二次面接</option>
+                  <option value="三次面接">三次面接</option>
                   <option value="社長面接">社長面接</option>
                 </select>
               </td>
               <td>
                 <select class="form-select" name="state">
                   <option value="待ち">待ち</option>
-                  <option value="合格">◯</option>
-                  <option value="不合格">×</option>
+                  <option value="◯">◯</option>
+                  <option value="×">×</option>
                   <option value="内々定">内々定</option>
                   <option value="欠席">欠席</option>
                 </select>
@@ -131,7 +131,6 @@
                 <input type="date" class="form-control" name="action_date" required autocomplete="action_date">
               </td>
               <td><input type="submit" name="progress" value="登録" class="btn btn-success"></td>
-              <input type="hidden" name="entry_id" value="{{ $entry->id }}">
               <input type="hidden" name="company_id" value="{{ $company->id }}">
             </tr>
           </tbody>

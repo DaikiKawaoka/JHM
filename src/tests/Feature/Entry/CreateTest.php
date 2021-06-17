@@ -28,7 +28,7 @@ class CreateTest extends TestCase
         $response = $this->post(route('entries.store'), ['user_id' => $non_teacher->id,'company_id' => 2]);
         // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
-        $response->assertRedirect('/companies');
+        $response->assertRedirect('/companies/2');
 
         $this->assertDatabaseHas('entries', [
             'user_id' => $non_teacher->id,
