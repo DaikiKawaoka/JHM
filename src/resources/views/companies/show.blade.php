@@ -78,7 +78,7 @@
                     <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
                   </td>
                   <td>
-                    <form action="{{route('companies.destroy', $company->id)}}" method='post' name="delete_form">
+                    <form action="{{route('progress.destroy', $progress->id)}}" method='post'>
                       {{ csrf_field() }}
                       {{ method_field('DELETE') }}
                       <input type="submit" name="delete" class="btn btn-danger" value="削除">
@@ -88,6 +88,11 @@
               @endforeach
             </tbody>
           </table>
+      @else
+      <br/>
+      <br/>
+      <br/>
+      <h1 style="text-align: center;">現在進捗が登録されていません。</h1>
       @endif
 
       <br/>
