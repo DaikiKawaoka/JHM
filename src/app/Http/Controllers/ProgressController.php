@@ -70,7 +70,7 @@ class ProgressController extends Controller
         }
     }
 
-    public function update(Request $request , $id)
+    public function update(Request $request , $progress_id)
     {
         $request->validate([
             'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
@@ -103,7 +103,7 @@ class ProgressController extends Controller
 
         if($entry){
             // 会社にエントリーしている場合
-            $progress = Progress::where('id', $id)
+            $progress = Progress::where('id', $progress_id)
                         ->where('user_id', $user->id)
                         ->first();
             if($progress){
@@ -118,6 +118,22 @@ class ProgressController extends Controller
             }
         }else{
             return redirect()->route('companies.show', ['company' => $company_id])->with('status-error','エントリーしていないのでこの処理はできません。');
+        }
+    }
+
+    public function destroy($progress_id)
+    {
+        $user = Auth::user();
+        $progress = Progress::find($progress_id);
+        if($progress){
+            if($user->id != $progress->user_id){
+                // 自分の進捗IDではない場合
+                return redirect()->back()->with('status-error','他人の進捗は削除できません。');
+            }
+            Progress::destroy($progress->id);
+            return redirect()->back()->with('status','進捗（'.$progress->action.'）を削除しました。');
+        }else{
+            return redirect()->back()->with('status-error','進捗の削除処理に失敗しました。');
         }
     }
 }
