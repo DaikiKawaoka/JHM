@@ -45,7 +45,7 @@ class CreateTest extends TestCase
             ->get('companies/create');
         $response->assertStatus(200);
 
-        $yesterday = Carbon::yesterday('Asia/Tokyo');
+        $yesterday = Carbon::yesterday();
         $response = $this->post(route('companies.store'), ['name' => '','prefecture' => '愛媛', 'url' => 'https://test.com', 'remarks' => 'なし','deadline' => $yesterday]);
         // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);

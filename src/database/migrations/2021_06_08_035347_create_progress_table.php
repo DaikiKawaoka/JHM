@@ -22,7 +22,6 @@ class CreateProgressTable extends Migration
             $table->date('action_date'); //締切日
             $table->foreign('user_id')->references('id')->on('users'); //外部キー参照
             $table->foreign('entry_id')->references('id')->on('entries'); //外部キー参照
-            $table->unique(['user_id', 'entry_id','action']);
             $table->timestamps();
         });
     }

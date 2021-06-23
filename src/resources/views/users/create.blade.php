@@ -12,6 +12,20 @@
                         @csrf
 
                         <div class="form-group row">
+                            <label for="attend_num" class="col-md-4 col-form-label text-md-right">{{ __('出席番号') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="attend_num" type="number" class="form-control @error('attend_num') is-invalid @enderror" name="attend_num" value="{{ old('attend_num') }}" required autocomplete="attend_num" min="1" max="50" autofocus>
+
+                                @error('attend_num')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('生徒名') }}</label>
 
                             <div class="col-md-6">

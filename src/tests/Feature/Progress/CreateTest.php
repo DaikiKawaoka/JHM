@@ -21,8 +21,8 @@ class CreateTest extends TestCase
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
-        // １度目登録
-        $response = $this->post(route('progress.store'), ['action' => '一次面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        // 2個目登録（1個目はseederで作成済み）
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
         // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
@@ -30,15 +30,22 @@ class CreateTest extends TestCase
         $this->assertDatabaseHas('progress', [
             'user_id' => $user->id,
             'entry_id' => 1,
-            'action' => "一次面接",
+            'action' => "面接",
             'state' => "◯",
         ]);
 
-        // 2度目登録
-        $response = $this->post(route('progress.store'), ['action' => '一次面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        // 3,4,5個目登録 (5個が作成限度)
+        for($i = 2; $i < 5; $i++){
+            $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+            $response->assertStatus(302);
+            $response->assertRedirect('companies/'.$company->id);
+            $response->assertSessionHas("status", "進捗を登録しました。");
+        }
+        // 6個目登録
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
-        $response->assertSessionHas("status-error", "既にその活動内容（一次面接）は登録済みです。");
+        $response->assertSessionHas("status-error", "進捗は5件までしか登録することができません。");
     }
 
     public function testUserRegisterProgressNotEnterd()
@@ -50,7 +57,7 @@ class CreateTest extends TestCase
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
-        $response = $this->post(route('progress.store'), ['action' => '一次面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
         // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
@@ -66,7 +73,7 @@ class CreateTest extends TestCase
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
-        $response = $this->post(route('progress.store'), ['action' => '一次面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
         // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
