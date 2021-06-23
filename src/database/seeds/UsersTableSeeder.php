@@ -23,6 +23,7 @@ class UsersTableSeeder extends Seeder
         $emails = ['taro1@example.com','taro2@example.com','taro3@example.com'];
         for ($i = 0; $i<3; $i++) {
             DB::table('users')->insert([
+                'attend_num' => $i+1,
                 'name' => $students[$i],
                 'email' => $emails[$i],
                 'password' => bcrypt('password'),

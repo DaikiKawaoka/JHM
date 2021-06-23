@@ -25,7 +25,7 @@ class CreateTest extends TestCase
             ->get('users/create');
         $response->assertStatus(200);
 
-        $response = $this->post(route('users.store'), ['name' => 'User作成テスト太郎','email' => 'taro4@example.com', 'password' => 'password', 'password_confirmation' => 'password']);
+        $response = $this->post(route('users.store'), ['attend_num' =>5,'name' => 'User作成テスト太郎','email' => 'taro4@example.com', 'password' => 'password', 'password_confirmation' => 'password']);
         // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('/home');
@@ -49,7 +49,7 @@ class CreateTest extends TestCase
 
         $response = $this
         ->actingAs($non_teacher)
-        ->post(route('users.store'), ['name' => 'User作成テスト太郎','email' => 'taro4@example.com', 'password' => 'password', 'password_confirmation' => 'password']);
+        ->post(route('users.store'), ['attend_num' =>6,'name' => 'User作成テスト太郎','email' => 'taro4@example.com', 'password' => 'password', 'password_confirmation' => 'password']);
 
         // dd($response);
         // メッセージがあることをチェック

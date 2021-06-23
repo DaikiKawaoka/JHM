@@ -27,7 +27,6 @@ class UpdateTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status", "進捗を変更しました。");
-        // $response->assertSessionHas("status-error", "進捗が登録されていないのでこの処理はできません。");
         $this->assertDatabaseHas('progress', [
             'user_id' => $user->id,
             'entry_id' => 1,

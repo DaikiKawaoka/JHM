@@ -12,7 +12,7 @@ class ProgressTableSeeder extends Seeder
      */
     public function run()
     {
-        $actions = ['会社説明会','一次面接','最終面接'];
+        $actions = ['会社説明会','面接','社長面接'];
         $action_dates = ['2021-01-01','2021-02-02','2021-03-03'];
         $states = ['◯','◯','×'];
         for ($i = 1; $i<=3; $i++) {

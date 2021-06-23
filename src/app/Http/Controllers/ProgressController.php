@@ -6,13 +6,65 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Entry;
 use App\Progress;
+use Illuminate\Support\Facades\DB;
 
 class ProgressController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        if(!($user->is_teacher)){
+            return redirect()->route('home');
+        }
+        // 進捗配列
+        $progress_list = DB::select
+                        ('SELECT u.attend_num, p.id, p.user_id, p.entry_id, p.action,p.state, p.action_date
+                        FROM users u,progress p
+                        WHERE u.id = p.user_id AND u.teacher_id = :teacherid
+                        ORDER BY u.attend_num ASC, p.entry_id ASC , p.action_date ASC',["teacherid"=> $user->id]);
+        // エントリー配列
+        $entry_list = DB::select
+                    ('SELECT u.attend_num, e.id,e.user_id,e.company_id,c.name
+                    FROM entries e, users u, companies c
+                    WHERE e.user_id = u.id AND e.company_id = c.id AND u.teacher_id = :teacherid
+                    ORDER BY u.attend_num ASC, e.id ASC',["teacherid"=> $user->id]);
+        // 生徒配列
+        $students = DB::table('users')
+                        ->select(['id','name','attend_num'])
+                        ->where('teacher_id',$user->id)
+                        ->orderBy('attend_num')
+                        ->get();
+        // 生徒で一番エントリーした人のエントリー数
+        $max_entry_count = DB::select ('SELECT MAX(cnt) AS count
+                                        FROM (SELECT COUNT(*) cnt FROM entries e,users u
+                                        WHERE e.user_id = u.id AND u.teacher_id = :teacherid
+                                        GROUP BY e.user_id) num',["teacherid"=> $user->id]);
+
+        // 配列で帰ってくるので変換
+        $max_entry_count = $max_entry_count[0]->count;
+
+        // エントリーがクラス全体で0でも1列は作成するため,0の場合1を代入
+        if($max_entry_count < 1){
+            $max_entry_count = 1;
+        }
+
+        // tableタグのwidth値
+        // 500 = 一つのエントリーの幅, 100 = 名前幅, 65 = 出席番号幅
+        $table_with_px = $max_entry_count * 500 + 100 + 65;
+
+        return view('progress/index')->with([
+            'progress_list' => $progress_list,
+            'students' => $students,
+            'entry_list' => $entry_list,
+            'max_entry_count' => $max_entry_count,
+            'table_with_px' => $table_with_px,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'action' => ['required','string','regex:/^[会社説明会|試験受験|一次面接|二次面接|三次面接|社長面接]+$/u'],
+            'action' => ['required','string','regex:/^[会社説明会|試験受験|面接|社長面接]+$/u'],
             'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
             'action_date' => ['required','date'],
             'company_id' => ['required'],
@@ -48,10 +100,8 @@ class ProgressController extends Controller
             // 会社にエントリーしている場合
             $progress = Progress::
                     where('user_id', $user->id)
-                    ->where('entry_id', $entry->id)
-                    ->where('action', $action)
-                    ->first();
-            if(!($progress)){
+                    ->where('entry_id', $entry->id)->get();
+            if(!($progress) || $progress->count() < 5){
                 // 同じ進捗が登録されていない場合
                 Progress::create([
                     'user_id' => $user->id,
@@ -62,7 +112,7 @@ class ProgressController extends Controller
                 ]);
                 return redirect()->route('companies.show', ['company' => $company_id])->with('status','進捗を登録しました。');
             }else{
-                $message = "既にその活動内容（". $progress->action ."）は登録済みです。";
+                $message = "進捗は5件までしか登録することができません。";
                 return redirect()->route('companies.show', ['company' => $company_id])->with('status-error',$message);
             }
         }else{

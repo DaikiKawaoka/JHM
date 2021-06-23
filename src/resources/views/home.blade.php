@@ -28,6 +28,9 @@
                     <div class="btn-group btn-toolbar">
                         @if (Auth::user()->is_teacher)
                             <div class="top-right links mr-2 mb-2">
+                                <a class="btn btn-danger" href="{{ route('progress.index') }}" role="button">生徒進捗一覧ページ</a>
+                            </div>
+                            <div class="top-right links mr-2 mb-2">
                                 <a class="btn btn-success" href="{{ url('/users/create') }}" role="button">生徒登録ページ</a>
                             </div>
                         @else
