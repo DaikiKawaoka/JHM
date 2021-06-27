@@ -41,6 +41,6 @@ class User extends Authenticatable
 
     public function companies()
     {
-        return $this->belongsToMany(Company::class,'entries','user_id','company_id');
+        return $this->belongsToMany(Company::class,'entries','user_id','company_id')->whereNull('entries.deleted_at');
     }
 }
