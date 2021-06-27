@@ -118,8 +118,7 @@ class EntriesController extends Controller
     {
         //
         $user = Auth::user();
-        $entry = Entry::
-            where('id', $id);
+        $entry = Entry::find($id);
         if(!($user->is_teacher)){
             if($entry){
                 //エントリーしていれば
