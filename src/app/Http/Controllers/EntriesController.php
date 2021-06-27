@@ -42,6 +42,11 @@ class EntriesController extends Controller
                     where('user_id', $user->id)
                     ->where('company_id', $company_id)
                     ->first();
+        //ソフトデリートしたエントリー
+        $was_entered = Entry::onlyTrashed()
+                    ->where('user_id', $user->id)
+                    ->where('company_id', $company_id)
+                    ->first();
         $message = '';
 
         if($user->is_teacher){
@@ -51,10 +56,15 @@ class EntriesController extends Controller
             if($is_entered){
                 $message = '過去にあなたは'.$company->name.'にエントリー済みです。';
             }else{
-                Entry::create([
-                    'user_id' => $user->id,
-                    'company_id' => $company_id,
-                ]);
+                if($was_entered){
+                    //ソフトデリートから戻す
+                    $was_entered -> restore();
+                }else{
+                    Entry::create([
+                        'user_id' => $user->id,
+                        'company_id' => $company_id,
+                    ]);
+                }
                 return redirect()->route('companies.show',['company' => $company_id])->with('status',$company->name.'にエントリーしました。');
             }
         }
@@ -107,5 +117,17 @@ class EntriesController extends Controller
     public function destroy($id)
     {
         //
+        $user = Auth::user();
+        $entry = Entry::find($id);
+        if(!($user->is_teacher)){
+            if($entry){
+                //エントリーしていれば
+                $entry -> delete();
+            }
+            return redirect()->route('entries.index');
+        }else{
+            return redirect()->route('home');
+        }
+
     }
 }

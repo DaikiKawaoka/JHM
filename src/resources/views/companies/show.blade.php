@@ -48,6 +48,14 @@
                     <input type="hidden" name="company_id" value="{{ $company->id }}">
                   </form>
                   </td>
+                @else
+                  <td>
+                    <form action="{{route('entries.destroy', $entry->id)}}" method="post">
+                      {{ csrf_field() }}
+                      {{ method_field('delete') }}
+                      <button type="submit" class="btn btn-danger">取り消し</button>
+                    </form>
+                  </td>
                 @endif
               </tr>
           </tbody>
