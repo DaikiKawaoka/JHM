@@ -10,7 +10,7 @@
         </div>
     </div>
     @if(!($students->isEmpty()))
-      <table class="table table-bordered" style="width: {{$table_with_px}}px;">
+      <table class="table table-bordered" style="width: {{$table_width_px}}px;">
         <thead>
             <tr>
               <th rowspan="4" style="width: 65px; text-align: center; vertical-align: middle;  padding:0;">出席番号</th>

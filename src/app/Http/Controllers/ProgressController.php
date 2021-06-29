@@ -14,6 +14,7 @@ class ProgressController extends Controller
     {
         $user = Auth::user();
         if(!($user->is_teacher)){
+            // 先生ではない場合ホームにページ遷移
             return redirect()->route('home');
         }
         // 進捗配列
@@ -48,16 +49,19 @@ class ProgressController extends Controller
             $max_entry_count = 1;
         }
 
-        // tableタグのwidth値
-        // 500 = 一つのエントリーの幅, 100 = 名前幅, 65 = 出席番号幅
-        $table_with_px = $max_entry_count * 500 + 100 + 65;
+        $ENTRY_COLUMN_WIDTH_PX = config('const.ENTRY_COLUMN_WIDTH_PX');
+        $NAME_COLUMN_WIDTH_PX = config('const.NAME_COLUMN_WIDTH_PX');
+        $ATTENDANCE_NUM_COLUMN_WIDTH_PX = config('const.ATTENDANCE_NUM_COLUMN_WIDTH_PX');
+
+        // テーブルの幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
+        $table_width_px = $max_entry_count * $ENTRY_COLUMN_WIDTH_PX + $NAME_COLUMN_WIDTH_PX + $ATTENDANCE_NUM_COLUMN_WIDTH_PX;
 
         return view('progress/index')->with([
             'progress_list' => $progress_list,
             'students' => $students,
             'entry_list' => $entry_list,
             'max_entry_count' => $max_entry_count,
-            'table_with_px' => $table_with_px,
+            'table_width_px' => $table_width_px,
         ]);
     }
 
@@ -89,11 +93,14 @@ class ProgressController extends Controller
                     where('user_id', $user->id)
                     ->where('company_id', $company_id)
                     ->first();
-        $message = '';
+        $session_name = '';
+        $session_message = '';
+        $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT');
 
         if($user->is_teacher){
-            $message = 'あなたは教師なので進捗登録できません。';
-            return redirect()->route('companies.show', ['company' => $company_id])->with('status-error',$message);
+            $session_name = 'status-error';
+            $session_message = 'あなたは教師なので進捗登録できません。';
+            return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
         }
 
         if($entry){
@@ -101,7 +108,7 @@ class ProgressController extends Controller
             $progress = Progress::
                     where('user_id', $user->id)
                     ->where('entry_id', $entry->id)->get();
-            if(!($progress) || $progress->count() < 5){
+            if(!($progress) || $progress->count() < $MAX_PROGRESS_COUNT){
                 // 同じ進捗が登録されていない場合
                 Progress::create([
                     'user_id' => $user->id,
@@ -110,14 +117,17 @@ class ProgressController extends Controller
                     'state' => $state,
                     'action_date' => $action_date,
                 ]);
-                return redirect()->route('companies.show', ['company' => $company_id])->with('status','進捗を登録しました。');
+                $session_name = 'status';
+                $session_message = '進捗を登録しました。';
             }else{
-                $message = "進捗は5件までしか登録することができません。";
-                return redirect()->route('companies.show', ['company' => $company_id])->with('status-error',$message);
+                $session_name = 'status-error';
+                $session_message = "進捗は" . $MAX_PROGRESS_COUNT . "件までしか登録することができません。";
             }
         }else{
-            return redirect()->route('companies.show', ['company' => $company_id])->with('status-error','エントリーしていないので進捗を登録できません。');
+            $session_name = 'status-error';
+            $session_message = 'エントリーしていないので進捗を登録できません。';
         }
+        return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
     }
 
     public function update(Request $request , $progress_id)
@@ -144,11 +154,13 @@ class ProgressController extends Controller
                     where('user_id', $user->id)
                     ->where('company_id', $company_id)
                     ->first();
-        $message = '';
+        $session_name = '';
+        $session_message = '';
 
         if($user->is_teacher){
-            $message = 'あなたは教師なのでこの処理はできません。';
-            return redirect()->route('companies.show', ['company' => $company_id])->with('status-error',$message);
+            $session_name = 'status-error';
+            $session_message = 'あなたは教師なのでこの処理はできません。';
+            return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
         }
 
         if($entry){
@@ -161,29 +173,41 @@ class ProgressController extends Controller
                 $progress->state = $state;
                 $progress->action_date = $action_date;
                 $progress->save();
-                return redirect()->route('companies.show', ['company' => $company_id])->with('status','進捗を変更しました。');
+
+                $session_name = 'status';
+                $session_message = '進捗を変更しました。';
             }else{
-                $message = "進捗が登録されていないのでこの処理はできません。";
-                return redirect()->route('companies.show', ['company' => $company_id])->with('status-error',$message);
+                $session_name = 'status-error';
+                $session_message = "進捗が登録されていないのでこの処理はできません。";
             }
         }else{
-            return redirect()->route('companies.show', ['company' => $company_id])->with('status-error','エントリーしていないのでこの処理はできません。');
+            $session_name = 'status-error';
+            $session_message = "エントリーしていないのでこの処理はできません。";
         }
+        return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
     }
 
     public function destroy($progress_id)
     {
         $user = Auth::user();
         $progress = Progress::find($progress_id);
+        $session_name = '';
+        $session_message = '';
         if($progress){
             if($user->id != $progress->user_id){
                 // 自分の進捗IDではない場合
-                return redirect()->back()->with('status-error','他人の進捗は削除できません。');
+                $session_name = "status-error";
+                $session_message = "他人の進捗は削除できません。";
+            }else{
+                // 進捗削除処理
+                Progress::destroy($progress->id);
+                $session_name = "status";
+                $session_message = '進捗（'.$progress->action.'）を削除しました。';
             }
-            Progress::destroy($progress->id);
-            return redirect()->back()->with('status','進捗（'.$progress->action.'）を削除しました。');
         }else{
-            return redirect()->back()->with('status-error','進捗の削除処理に失敗しました。');
+            $session_name = "status-error";
+            $session_message = "進捗の削除処理に失敗しました。";
         }
+        return redirect()->back()->with($session_name,$session_message);
     }
 }
