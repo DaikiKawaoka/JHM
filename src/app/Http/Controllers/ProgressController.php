@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Entry;
 use App\Progress;
+use App\User;
 use Illuminate\Support\Facades\DB;
 
 class ProgressController extends Controller
@@ -17,51 +18,37 @@ class ProgressController extends Controller
             // 先生ではない場合ホームにページ遷移
             return redirect()->route('home');
         }
-        // 進捗配列
-        $progress_list = DB::select
-                        ('SELECT u.attend_num, p.id, p.user_id, p.entry_id, p.action,p.state, p.action_date
-                        FROM users u,progress p
-                        WHERE u.id = p.user_id AND u.teacher_id = :teacherid
-                        ORDER BY u.attend_num ASC, p.entry_id ASC , p.action_date ASC',["teacherid"=> $user->id]);
-        // エントリー配列
-        $entry_list = DB::select
-                    ('SELECT u.attend_num, e.id,e.user_id,e.company_id,c.name
-                    FROM entries e, users u, companies c
-                    WHERE e.user_id = u.id AND e.company_id = c.id AND u.teacher_id = :teacherid
-                    ORDER BY u.attend_num ASC, e.id ASC',["teacherid"=> $user->id]);
         // 生徒配列
-        $students = DB::table('users')
-                        ->select(['id','name','attend_num'])
+        $students = User::select(['id','name','attend_num'])
                         ->where('teacher_id',$user->id)
                         ->orderBy('attend_num')
                         ->get();
         // 生徒で一番エントリーした人のエントリー数
-        $max_entry_count = DB::select ('SELECT MAX(cnt) AS count
+        $most_many_entry_count = DB::select ('SELECT MAX(cnt) AS count
                                         FROM (SELECT COUNT(*) cnt FROM entries e,users u
                                         WHERE e.user_id = u.id AND u.teacher_id = :teacherid
                                         GROUP BY e.user_id) num',["teacherid"=> $user->id]);
 
         // 配列で帰ってくるので変換
-        $max_entry_count = $max_entry_count[0]->count;
+        $most_many_entry_count = $most_many_entry_count[0]->count;
 
         // エントリーがクラス全体で0でも1列は作成するため,0の場合1を代入
-        if($max_entry_count < 1){
-            $max_entry_count = 1;
+        if($most_many_entry_count < 1){
+            $most_many_entry_count = 1;
         }
 
-        $ENTRY_COLUMN_WIDTH_PX = config('const.ENTRY_COLUMN_WIDTH_PX');
-        $NAME_COLUMN_WIDTH_PX = config('const.NAME_COLUMN_WIDTH_PX');
-        $ATTENDANCE_NUM_COLUMN_WIDTH_PX = config('const.ATTENDANCE_NUM_COLUMN_WIDTH_PX');
+        $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT'); //デフォルト値:5
+        $ENTRY_COLUMN_WIDTH_PX = $MAX_PROGRESS_COUNT * 100;  // 1進捗セル:100px
 
         // テーブルの幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
-        $table_width_px = $max_entry_count * $ENTRY_COLUMN_WIDTH_PX + $NAME_COLUMN_WIDTH_PX + $ATTENDANCE_NUM_COLUMN_WIDTH_PX;
+        $table_width_px = $most_many_entry_count * $ENTRY_COLUMN_WIDTH_PX + 100 + 65;
 
         return view('progress/index')->with([
-            'progress_list' => $progress_list,
             'students' => $students,
-            'entry_list' => $entry_list,
-            'max_entry_count' => $max_entry_count,
+            'most_many_entry_count' => $most_many_entry_count,
             'table_width_px' => $table_width_px,
+            'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
+            'max_progress_count' => $MAX_PROGRESS_COUNT,
         ]);
     }
 

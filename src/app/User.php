@@ -6,6 +6,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use App\Entry;
+
 
 class User extends Authenticatable
 {
@@ -42,5 +45,15 @@ class User extends Authenticatable
     public function companies()
     {
         return $this->belongsToMany(Company::class,'entries','user_id','company_id')->whereNull('entries.deleted_at');
+    }
+
+    public function getMyEntries()
+    {
+        return Entry::select('entries.id','entries.user_id','entries.company_id','companies.name')
+                ->join('users', 'entries.user_id', '=', 'users.id')
+                ->join('companies', 'entries.company_id', '=', 'companies.id')
+                ->where('users.id', $this->id)
+                ->orderBy('entries.id', 'asc')
+                ->get();
     }
 }
