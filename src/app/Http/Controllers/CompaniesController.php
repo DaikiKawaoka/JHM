@@ -33,7 +33,7 @@ class CompaniesController extends Controller
                         ->latest()
                         ->paginate(5);
         }
-        return view('companies/index')->with('companies', $companies);
+        return view('companies/index')->with(['companies'=>$companies,'user' => $user]);
     }
     /**
      * Show the form for creating a new resource.

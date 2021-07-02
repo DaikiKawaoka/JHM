@@ -30,7 +30,9 @@
             <th scope="col">締切日</th>
             <th scope="col">登録者名</th>
             <th scope="col">登録日</th>
-            <th scope="col">エントリー</th>
+            @if(!($user->is_teacher))
+              <th scope="col">エントリー</th>
+            @endif
             <th scope="col">編集</th>
             <th scope="col">削除</th>
             </tr>
@@ -53,24 +55,31 @@
               @else
                 <td>null</td>
               @endif
-              <td>
-                <form action="{{route('entries.store')}}" method='post'>
-                  {{ csrf_field() }}
-                  {{ method_field('POST') }}
-                  <input type="submit" name="entry" value="エントリー" class="btn btn-success">
-                  <input type="hidden" name="company_id" value="{{ $company->id }}">
-                </form>
-              </td>
-              <td>
-                <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
-              </td>
-              <td>
-                <form action="{{route('companies.destroy', $company->id)}}" method='post' name="delete_form">
-                  {{ csrf_field() }}
-                  {{ method_field('DELETE') }}
-                  <input type="submit" name="delete" class="btn btn-danger" value="削除">
-                </form>
-              </td>
+              @if(!($user->is_teacher))
+                <td>
+                  <form action="{{route('entries.store')}}" method='post'>
+                    {{ csrf_field() }}
+                    {{ method_field('POST') }}
+                    <input type="submit" name="entry" value="エントリー" class="btn btn-success">
+                    <input type="hidden" name="company_id" value="{{ $company->id }}">
+                  </form>
+                </td>
+              @endif
+              @if($user->is_teacher || $company->create_user_id == $user->id)
+                <td>
+                  <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
+                </td>
+                <td>
+                  <form action="{{route('companies.destroy', $company->id)}}" method='post' name="delete_form">
+                    {{ csrf_field() }}
+                    {{ method_field('DELETE') }}
+                    <input type="submit" name="delete" class="btn btn-danger" value="削除">
+                  </form>
+                </td>
+              @else
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              @endif
             </tr>
           @endforeach
         </tbody>
