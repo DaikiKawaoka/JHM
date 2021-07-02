@@ -143,6 +143,26 @@ class CompaniesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $login_user = Auth::user();
+        $company = Company::find($id);
+        $session_name = '';
+        $session_message = '';
+
+        if($company){
+            // 削除対象の会社が存在する場合
+            if($company->create_user_id == $login_user->id || $login_user->is_teacher){
+                //作成者が自分またはログインユーザーが先生の場合
+                Company::destroy($id);
+                $session_name = 'status';
+                $session_message = '会社情報（'.$company->name.'）を削除しました。';
+            }else{
+                $session_name = 'status-error';
+                $session_message = 'あなたは削除可能ユーザーではないため、処理が失敗しました。';
+            }
+        }else{
+            $session_name = 'status-error';
+            $session_message = '会社情報が存在しないため、処理が失敗しました。';
+        }
+        return redirect()->back()->with($session_name,$session_message);
     }
 }
