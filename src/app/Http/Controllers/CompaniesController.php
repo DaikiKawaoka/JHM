@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\DB;
 use App\Company;
 use App\Entry;
+use App\User;
 use App\Progress;
 
 class CompaniesController extends Controller
@@ -145,13 +145,15 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
+        $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
+                                ->where('companies.id',$id);
         $session_name = '';
         $session_message = '';
 
         if($company){
             // 削除対象の会社が存在する場合
-            if($company->create_user_id == $login_user->id || $login_user->is_teacher){
-                //作成者が自分またはログインユーザーが先生の場合
+            if($company->create_user_id == $login_user->id || ($login_user->is_teacher && $login_user->id == $create_company_user->teacher_id) ){
+                // 会社の作成者がログインユーザーの場合 または (ログインユーザーが先生 かつ 会社作成生徒の先生IDがログインユーザーIDの場合)
                 Company::destroy($id);
                 $session_name = 'status';
                 $session_message = '会社情報（'.$company->name.'）を削除しました。';
