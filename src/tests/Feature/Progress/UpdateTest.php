@@ -15,20 +15,19 @@ class UpdateTest extends TestCase
     use RefreshDatabase;
     public function testUserUpdateProgress()
     {
-        $user = User::find(2);
+        $student = User::where('is_teacher',0)->first();
         $company = Company::find(1);
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
         $response = $this->put(route('progress.update',['progress' => 1]), ['state' => '欠席', 'action_date' => '2021-06-10','company_id' => $company->id]);
-        // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status", "進捗を変更しました。");
         $this->assertDatabaseHas('progress', [
-            'user_id' => $user->id,
+            'user_id' => $student->id,
             'entry_id' => 1,
             'action' => "会社説明会",
             'state' => "欠席",
@@ -37,15 +36,14 @@ class UpdateTest extends TestCase
 
     public function testUserUpdateProgressUnregisterProgress()
     {
-        $user = User::find(2);
+        $student = User::where('is_teacher',0)->first();
         $company = Company::find(1);
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
         $response = $this->put(route('progress.update',['progress' => 3]), ['state' => '欠席', 'action_date' => '2021-06-10','company_id' => $company->id]);
-        // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status-error", "進捗が登録されていないのでこの処理はできません。");
@@ -53,15 +51,14 @@ class UpdateTest extends TestCase
 
     public function testUserUpdateProgressNotEnterd()
     {
-        $user = User::find(2);
+        $student = User::where('is_teacher',0)->first();
         $company = Company::find(3);
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
         $response = $this->put(route('progress.update',['progress' => 1]), ['state' => '欠席', 'action_date' => '2021-06-10','company_id' => $company->id]);
-        // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status-error", "エントリーしていないのでこの処理はできません。");
@@ -77,7 +74,6 @@ class UpdateTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->put(route('progress.update',['progress' => 1]), ['state' => '欠席', 'action_date' => '2021-06-10','company_id' => $company->id]);
-        // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status-error", "あなたは教師なのでこの処理はできません。");
@@ -93,7 +89,6 @@ class UpdateTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->put(route('progress.update',['progress' => 1]), ['state' => '', 'action_date' => '','company_id' => '']);
-        // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHasErrors(['state' => '状態は必須です。','action_date'=>'実施日は必須です。','company_id'=>'会社詳細ページから変更してください。']);
@@ -109,7 +104,6 @@ class UpdateTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->put(route('progress.update',['progress' => 1]), ['state' => '▽', 'action_date' => '2020/444/2323','company_id' => "aaa"]);
-        // リダイレクトでページ遷移してくるのでstatusは302
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHasErrors(['state' => '選択欄からお選びください。','action_date'=>'日にちを入力してください。','company_id'=>'会社IDが不正です。']);

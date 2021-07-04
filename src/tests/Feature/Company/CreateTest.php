@@ -17,11 +17,11 @@ class CreateTest extends TestCase
      *
      * @return void
      */
-    public function testUserCreatesCompany()
+    public function testStudentCreatesCompany()
     {
-        $user = User::find(3);
+        $student = User::where('is_teacher',0)->first();
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/create');
         $response->assertStatus(200);
 
@@ -33,7 +33,27 @@ class CreateTest extends TestCase
 
         $this->assertDatabaseHas('companies', [
             'name' => '株式会社テスト',
-            'create_user_id' => $user->id,
+            'create_user_id' => $student->id,
+        ]);
+    }
+
+    public function testTeacherCreatesCompany()
+    {
+        $teacher = User::where('is_teacher',1)->first();
+        $response = $this
+            ->actingAs($teacher)
+            ->get('companies/create');
+        $response->assertStatus(200);
+
+        $today = Carbon::tomorrow('Asia/Tokyo');
+        $response = $this->post(route('companies.store'), ['name' => '株式会社テスト','prefecture' => '愛媛', 'url' => 'https://test.com', 'remarks' => 'なし','deadlind' => $today]);
+        // リダイレクトでページ遷移してくるのでstatusは302
+        $response->assertStatus(302);
+        $response->assertRedirect('/companies');
+
+        $this->assertDatabaseHas('companies', [
+            'name' => '株式会社テスト',
+            'create_user_id' => $teacher->id,
         ]);
     }
 
