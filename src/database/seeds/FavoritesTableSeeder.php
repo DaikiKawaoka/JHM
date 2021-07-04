@@ -14,7 +14,7 @@ class FavoritesTableSeeder extends Seeder
     {
         for ($i = 1; $i<=3; $i++) {
             DB::table('favorites')->insert([
-                'user_id' => $i+1, //id1は先生だからプラスしている
+                'user_id' => $i+2, //id1,2は先生だからプラス2している
                 'company_id' => $i,
             ]);
         }

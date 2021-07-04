@@ -183,17 +183,17 @@ class ProgressController extends Controller
         if($progress){
             if($user->id != $progress->user_id){
                 // 自分の進捗IDではない場合
-                $session_name = "status-error";
-                $session_message = "他人の進捗は削除できません。";
+                $session_name = 'status-error';
+                $session_message = '他人の進捗は削除できません。';
             }else{
                 // 進捗削除処理
                 Progress::destroy($progress->id);
-                $session_name = "status";
+                $session_name = 'status';
                 $session_message = '進捗（'.$progress->action.'）を削除しました。';
             }
         }else{
-            $session_name = "status-error";
-            $session_message = "進捗の削除処理に失敗しました。";
+            $session_name = 'status-error';
+            $session_message = '進捗の削除処理に失敗しました。';
         }
         return redirect()->back()->with($session_name,$session_message);
     }

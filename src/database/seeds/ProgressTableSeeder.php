@@ -17,7 +17,7 @@ class ProgressTableSeeder extends Seeder
         $states = ['◯','◯','×'];
         for ($i = 1; $i<=3; $i++) {
             DB::table('progress')->insert([
-                'user_id' => $i+1, //id1は先生だからプラスしている
+                'user_id' => $i+2, //id1,2は先生だからプラス2している
                 'entry_id' => $i,
                 'action' => $actions[$i-1],
                 'state' => $states[$i-1],

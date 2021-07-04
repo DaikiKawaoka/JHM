@@ -15,10 +15,10 @@ class DestroyTest extends TestCase
     use RefreshDatabase;
     public function testDeleteProgress()
     {
-        $user = User::find(2);
+        $student = User::where('is_teacher',0)->first();
         $company = Company::find(1);
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/' . $company->id);
         $progress = Progress::find(1);
         $response->assertStatus(200);
@@ -33,10 +33,10 @@ class DestroyTest extends TestCase
 
     public function testDeleteProgressUnregisterProgress()
     {
-        $user = User::find(2);
+        $student = User::where('is_teacher',0)->first();
         $company = Company::find(1);
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
@@ -48,10 +48,10 @@ class DestroyTest extends TestCase
 
     public function testDeleteOtherUserProgress()
     {
-        $user = User::find(2);
+        $student = User::where('is_teacher',0)->first();
         $company = Company::find(1);
         $response = $this
-            ->actingAs($user)
+            ->actingAs($student)
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 

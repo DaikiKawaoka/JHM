@@ -14,7 +14,7 @@ class EntriesTableSeeder extends Seeder
     {
         for ($i = 1; $i<=3; $i++) {
             DB::table('entries')->insert([
-                'user_id' => $i+1,
+                'user_id' => $i+2, //id1,2は先生だからプラス2している
                 'company_id' => $i,
             ]);
         }
