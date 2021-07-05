@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProgressController extends Controller
 {
+    // 先生のルートページ
     public function index()
     {
         $user = Auth::user();

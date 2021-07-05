@@ -54,8 +54,8 @@ class LoginTest extends TestCase
             ->actingAs(User::find(1)) // 追加
             ->get('/home'); // 変更(ホーム画面のパスに変更)
 
-        $response->assertStatus(200)
-        ->assertViewIs('home'); // 追加(ここでの'home'は、ホーム画面で使われているビュー名)
+        $response->assertStatus(302)
+        ->assertRedirect(route('progress.index')); // 追加(ここでの'home'は、ホーム画面で使われているビュー名)
         // ->assertSee('You are logged in!'); // 追加(ホーム画面で表示されているメッセージ)
     }
     /**

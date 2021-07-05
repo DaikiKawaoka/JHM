@@ -51,6 +51,49 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    求人 <span class="caret"></span>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    @if(!(Auth::user()->is_teacher))
+                                        <a class="dropdown-item" href="{{ route('entries.index') }}">
+                                            エントリー済み会社一覧
+                                        </a>
+                                    @endif
+                                    <a class="dropdown-item" href="{{ route('companies.index') }}">
+                                        求人一覧
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('companies.create') }}">
+                                        求人登録
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                            @if(Auth::user()->is_teacher)
+                                <li class="nav-item dropdown">
+                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                        生徒 <span class="caret"></span>
+                                    </a>
+
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{{ route('users.index') }}">
+                                            生徒一覧
+                                        </a>
+                                        <a class="dropdown-item" href="{{ route('users.create') }}">
+                                            生徒登録
+                                        </a>
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                            @csrf
+                                        </form>
+                                    </div>
+                                </li>
+                            @endif
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
@@ -71,7 +114,6 @@
                 </div>
             </div>
         </nav>
-
         <main class="py-4">
             @yield('content')
         </main>
