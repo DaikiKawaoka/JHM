@@ -10,6 +10,14 @@
         </div>
     </div>
     @if(!($students->isEmpty()))
+      <div class="btn-group">
+        <form action="{{route('progress.excel_export')}}" method='post'>
+            {{ csrf_field() }}
+            {{ method_field('POST') }}
+            <input type="submit" class="btn btn-success btn-lg mb-3 mr-2" value="Excelダウンロード">
+        </form>
+      </div>
+
       <div style="overflow-y: scroll;">
         <table class="table table-bordered" style="width: {{$table_width_px}}px;">
           <thead>

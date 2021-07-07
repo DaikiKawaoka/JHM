@@ -61,7 +61,9 @@ DB_TESTING_PORT=13307
 
 18 $ php artisan migrate:refresh --seed
 
-18 $ exit
+19 $ composer require phpoffice/phpspreadsheet
+
+20 $ exit
 
 
 

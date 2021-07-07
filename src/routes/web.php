@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 Route::get('/', 'ProgressController@index')->middleware('auth');
+Route::post('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export')->middleware('auth');
 
 Route::get('/register_confirm', 'Auth\RegisterController@confirm')->name('register_confirm');
 Auth::routes();

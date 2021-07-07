@@ -29,7 +29,7 @@ class UpdateTest extends TestCase
         $this->assertDatabaseHas('progress', [
             'user_id' => $student->id,
             'entry_id' => 1,
-            'action' => "会社説明会",
+            'action' => "説明会",
             'state' => "欠席",
         ]);
     }

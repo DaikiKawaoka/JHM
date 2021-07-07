@@ -123,7 +123,7 @@
             <tr>
               <td scope="row">
                 <select class="form-select" name="action">
-                  <option value="会社説明会">会社説明会</option>
+                  <option value="説明会">説明会</option>
                   <option value="試験受験">試験受験（SPI,筆記など）</option>
                   <option value="面接">面接</option>
                   <option value="社長面接">社長面接</option>
