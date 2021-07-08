@@ -21,7 +21,7 @@ class CreateProgressTable extends Migration
             $table->string('state'); // 例: 合格,不合格,保留中
             $table->date('action_date'); //締切日
             $table->foreign('user_id')->references('id')->on('users'); //外部キー参照
-            $table->foreign('entry_id')->references('id')->on('entries'); //外部キー参照
+            $table->foreign('entry_id')->references('id')->on('entries')->onDelete('cascade'); //外部キー参照
             $table->timestamps();
         });
     }
