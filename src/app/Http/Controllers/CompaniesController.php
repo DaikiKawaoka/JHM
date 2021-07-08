@@ -119,19 +119,67 @@ class CompaniesController extends Controller
      */
     public function edit($id)
     {
-        //
+        $login_user = Auth::user();
+        $company = Company::find($id);
+        $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
+                                ->where('companies.id',$id)->first();
+        if($company){
+            if($company->create_user_id == $login_user->id || ($login_user->is_teacher && $login_user->id == $create_company_user->teacher_id) ){
+                return view('companies.edit')->with([
+                    'company' => $company,
+                ]);
+            }
+        }
+        return redirect()->route('home');
     }
-
-
+    
+    
     /**
      * Update the specified resource in storage.
      *
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
-        //
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'prefecture' => ['nullable', 'string', 'max:3'],
+            'url' => ['url', 'nullable', 'max:255'],
+            'deadline' => ['date', 'nullable','after:yesterday'],
+            'remarks' => ['string','nullable'],
+        ],[
+            'name.required' => '会社名は必須項目です。',
+            'name.max' => '会社名は必須項目です。',
+            'deadline.after' => '締切日は本日以降にしてください。',
+        ]);
+
+        $login_user = Auth::user();
+        $company = Company::find($id);
+        $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
+                                ->where('companies.id',$id)->first();
+        $session_name = '';
+        $session_message = '';
+        if($company){
+            if($company->create_user_id == $login_user->id || ($login_user->is_teacher && $login_user->id == $create_company_user->teacher_id) ){
+                $company->name = $request->name;
+                $company->url = $request->url;
+                $company->prefecture = $request->prefecture;
+                $company->deadline = $request->deadline;
+                $company->remarks = $request->remarks;
+                $company->save();
+                $session_name = 'status';
+                $session_message = '会社情報（'.$company->name.'）を変更しました。';
+            }else{
+                $session_name = 'status-error';
+                $session_message = 'あなたは変更可能なユーザではないので変更できませんでした。';
+            }
+        }else{
+            $session_name = 'status-error';
+            $session_message = '会社情報が存在しないため、処理が失敗しました。';
+        }
+        return redirect()->route('companies.show', ['company' => $company->id])->with($session_name,$session_message);
     }
 
 
@@ -146,7 +194,7 @@ class CompaniesController extends Controller
         $login_user = Auth::user();
         $company = Company::find($id);
         $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
-                                ->where('companies.id',$id);
+                                ->where('companies.id',$id)->first();
         $session_name = '';
         $session_message = '';
 
