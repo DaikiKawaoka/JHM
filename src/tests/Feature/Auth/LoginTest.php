@@ -7,9 +7,11 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 
 class LoginTest extends TestCase
 {
+    use RefreshDatabase;
     /**
     * A basic feature test example.
     *
@@ -68,5 +70,11 @@ class LoginTest extends TestCase
                  ->assertRedirect('/login'); // リダイレクト先を確認
         // 認証されていないことを確認
         $this->assertGuest();
+    }
+    public function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
     }
 }

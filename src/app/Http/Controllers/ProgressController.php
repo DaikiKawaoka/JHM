@@ -9,6 +9,7 @@ use App\Entry;
 use App\Progress;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Carbon\CarbonImmutable;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
@@ -57,12 +58,17 @@ class ProgressController extends Controller
         // テーブルの幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
         $table_width_px = $most_many_entry_count * $ENTRY_COLUMN_WIDTH_PX + 100 + 65;
 
+        // 年度取得
+        $carbon = new CarbonImmutable();
+        $year = $carbon->subMonthsNoOverflow(3)->format('Y');
+
         return view('progress/index')->with([
             'students' => $students,
             'most_many_entry_count' => $most_many_entry_count,
             'table_width_px' => $table_width_px,
             'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
             'max_progress_count' => $MAX_PROGRESS_COUNT,
+            'year' => $year,
         ]);
     }
 
@@ -248,6 +254,7 @@ class ProgressController extends Controller
 
         // シート作成
         $spreadsheet->getActiveSheet('sheet1')->UnFreezePane();
+        $spreadsheet->getDefaultStyle()->getFont()->setName('游ゴシック');
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle("学生就職進捗表");
 
@@ -272,6 +279,21 @@ class ProgressController extends Controller
         // 全使用セル格子
         $sheet->getStyle("A3:{$max_cell_row_alphabet}{$max_cell_col_num}")->getBorders()->getAllBorders()->setBorderStyle( Border::BORDER_THIN );
 
+        // 1行目
+        $carbon = new CarbonImmutable();
+        $year = $carbon->subMonthsNoOverflow(3)->format('Y');
+        $sheet->mergeCells('A1:F1'); // セル結合
+        $sheet->setCellValue('A1', $year.'年度 学科別就職活動表');
+        $sheet->getStyle('A1')->getFont()->setSize(20);// フォントサイズ変更
+        $sheet->getRowDimension(1)->setRowHeight(33.0);// 行の高さ変更
+        $sheet->getStyle('A1')->getAlignment()->setVertical( Alignment::VERTICAL_CENTER );// 垂直位置中央揃え
+
+        // 2行目
+        $sheet->mergeCells('B2:I2'); // セル結合
+        $sheet->setCellValue('B2', "【河原電子ビジネス専門学校】/【{$user->class}科】/【担任：{$user->name}】");
+        $sheet->getStyle('B2')->getFont()->setSize(16);
+        $sheet->getRowDimension(2)->setRowHeight(33.0);// 行の高さ変更
+        $sheet->getStyle('B2')->getAlignment()->setVertical( Alignment::VERTICAL_CENTER );// 垂直位置中央揃え
 
         // 3行目
         for($i = 0 ; $i < $most_many_entry_count; $i++){

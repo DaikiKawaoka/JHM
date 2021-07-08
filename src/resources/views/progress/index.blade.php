@@ -17,7 +17,8 @@
             <input type="submit" class="btn btn-success btn-lg mb-3 mr-2" value="Excelダウンロード">
         </form>
       </div>
-
+      <h5>{{$year}}年度 学科別就職活動リスト</h5>
+      <h6>{{ Auth::user()->class }}科 / 担任：{{ Auth::user()->name }}</h6>
       <div style="overflow-y: scroll;">
         <table class="table table-bordered" style="width: {{$table_width_px}}px;">
           <thead>
