@@ -8,7 +8,6 @@ use App\Progress;
 
 class Entry extends Model
 {
-    use SoftDeletes;
     protected $fillable = [
         'user_id','company_id'
     ];
