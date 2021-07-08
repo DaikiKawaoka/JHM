@@ -16,6 +16,13 @@ RUN apt-get update \
     zip \
     unzip \
     vim \
+    zlib1g-dev \
+    libzip-dev \
+    libfreetype6-dev \
     && docker-php-ext-install pdo_mysql bcmath
+
+RUN docker-php-ext-install zip
+RUN docker-php-ext-configure gd --with-freetype
+RUN docker-php-ext-install -j$(nproc) gd
 
 WORKDIR /var/www/html
