@@ -57,12 +57,20 @@
               @endif
               @if(!($user->is_teacher))
                 <td>
-                  <form action="{{route('entries.store')}}" method='post'>
-                    {{ csrf_field() }}
-                    {{ method_field('POST') }}
-                    <input type="submit" name="entry" value="エントリー" class="btn btn-success">
-                    <input type="hidden" name="company_id" value="{{ $company->id }}">
-                  </form>
+                  @if($entries[$company->id])
+                    <form action="{{route('entries.destroy', $entries[$company->id]->id)}}" method="post">
+                      {{ csrf_field() }}
+                      {{ method_field('delete') }}
+                      <button type="submit" class="btn btn-danger">取り消し</button>
+                    </form>
+                  @else
+                    <form action="{{route('entries.store')}}" method='post'>
+                      {{ csrf_field() }}
+                      {{ method_field('POST') }}
+                      <input type="submit" name="entry" value="エントリー" class="btn btn-success">
+                      <input type="hidden" name="company_id" value="{{ $company->id }}">
+                    </form>
+                  @endif
                 </td>
               @endif
               @if($user->is_teacher || $company->create_user_id == $user->id)
