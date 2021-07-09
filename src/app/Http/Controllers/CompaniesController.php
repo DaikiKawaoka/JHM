@@ -16,6 +16,7 @@ class CompaniesController extends Controller
     {
         $user = Auth::user();
         $companies = null;
+        $isEntyies = [];
         if($user->is_teacher){
             $companies = Company::
                         select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
@@ -33,7 +34,13 @@ class CompaniesController extends Controller
                         ->latest()
                         ->paginate(5);
         }
-        return view('companies/index')->with(['companies'=>$companies,'user' => $user]);
+        foreach($companies as $company){
+            $entries[$company->id] = Entry::
+            where('user_id', $user->id)
+            ->where('company_id', $company->id)
+            ->first();
+        }
+        return view('companies/index')->with(['companies'=>$companies,'user' => $user, 'entries' => $entries]);
     }
     /**
      * Show the form for creating a new resource.

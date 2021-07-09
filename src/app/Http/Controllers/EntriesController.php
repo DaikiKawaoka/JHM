@@ -114,7 +114,7 @@ class EntriesController extends Controller
                 //エントリーしていれば
                 $entry -> delete();
             }
-            return redirect()->route('entries.index');
+            return redirect()->route('companies.index');
         }else{
             return redirect()->route('home');
         }
