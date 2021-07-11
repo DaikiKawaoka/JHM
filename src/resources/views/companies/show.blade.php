@@ -30,8 +30,10 @@
               <tr>
               <th scope="col">ID</th>
               <th scope="col">会社名</th>
-              @if (!($entry))
-                <th scope="col">エントリー</th>
+              @if(!($user->is_teacher))
+                @if (!($entry))
+                  <th scope="col">エントリー</th>
+                @endif
               @endif
               </tr>
           </thead>
@@ -39,23 +41,25 @@
               <tr>
                 <td scope="row">{{ $company->id }}</th>
                 <td>{{ $company->name }}</th>
-                @if (!($entry))
-                  <td>
-                  <form action="{{route('entries.store')}}" method='post'>
-                    {{ csrf_field() }}
-                    {{ method_field('POST') }}
-                    <input type="submit" name="entry" value="エントリー" class="btn btn-success">
-                    <input type="hidden" name="company_id" value="{{ $company->id }}">
-                  </form>
-                  </td>
-                @else
-                  <td>
-                    <form action="{{route('entries.destroy', $entry->id)}}" method="post">
+                @if(!($user->is_teacher))
+                  @if (!($entry))
+                    <td>
+                    <form action="{{route('entries.store')}}" method='post'>
                       {{ csrf_field() }}
-                      {{ method_field('delete') }}
-                      <button type="submit" class="btn btn-danger">取り消し</button>
+                      {{ method_field('POST') }}
+                      <input type="submit" name="entry" value="エントリー" class="btn btn-success">
+                      <input type="hidden" name="company_id" value="{{ $company->id }}">
                     </form>
-                  </td>
+                    </td>
+                  @else
+                    <td>
+                      <form action="{{route('entries.destroy', $entry->id)}}" method="post">
+                        {{ csrf_field() }}
+                        {{ method_field('delete') }}
+                        <button type="submit" class="btn btn-danger">取り消し</button>
+                      </form>
+                    </td>
+                  @endif
                 @endif
               </tr>
           </tbody>

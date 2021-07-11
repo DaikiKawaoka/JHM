@@ -109,11 +109,13 @@ class CompaniesController extends Controller
                 "company" => $company,
                 "entry" => $entry,
                 "progress_list" => $progress_list,
+                "user" => $user,
             ]);
         }
         return view('companies.show')->with([
             "company" => $company,
             "entry" => $entry,
+            "user" => $user,
         ]);
     }
 
