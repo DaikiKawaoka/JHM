@@ -31,9 +31,7 @@
               <th scope="col">ID</th>
               <th scope="col">会社名</th>
               @if(!($user->is_teacher))
-                @if (!($entry))
-                  <th scope="col">エントリー</th>
-                @endif
+                <th scope="col">エントリー</th>
               @endif
               </tr>
           </thead>
