@@ -106,17 +106,20 @@ class EntriesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $message = '';
         $user = Auth::user();
         $entry = Entry::find($id);
         if(!($user->is_teacher)){
             if($entry){
                 //エントリーしていれば
                 $entry -> delete();
+            }else{
+                $message = 'あなたはエントリーしていないのでこの処理はできません。';
             }
-            return redirect()->route('companies.index');
+            return redirect()->route('companies.index')->with('status-error',$message);;
         }else{
-            return redirect()->route('home');
+            $message = 'あなたは教師なのでこの処理はできません。';
+            return redirect()->route('home')->with('status-error',$message);
         }
 
     }
