@@ -93,27 +93,23 @@ class CompaniesController extends Controller
     public function show($id)
     {
         $user = Auth::user();
+        // $user = User::find($user->id);
         $company = Company::find($id);
-        $entry = Entry::
-                    where('user_id', $user->id)
-                    ->where('company_id', $company->id)
-                    ->first();
-        // エントリーしているか分岐
+        $entry = $user->getMyEntry($company->id);
+        $progress_list = null;
+        // エントリーしているか分岐\
         if($entry){
             $progress_list = Progress::
                     where('user_id', $user->id)
                     ->where('entry_id', $entry->id)
                     ->orderBy('action_date','asc')
                     ->get();
-            return view('companies.show')->with([
-                "company" => $company,
-                "entry" => $entry,
-                "progress_list" => $progress_list,
-            ]);
         }
         return view('companies.show')->with([
             "company" => $company,
             "entry" => $entry,
+            "progress_list" => $progress_list,
+            "user" => $user,
         ]);
     }
 

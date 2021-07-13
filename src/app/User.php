@@ -56,4 +56,14 @@ class User extends Authenticatable
                 ->orderBy('entries.id', 'asc')
                 ->get();
     }
+
+    public function getMyEntry($company_id)
+    {
+        return Entry::select('entries.id','entries.user_id','entries.company_id','companies.name')
+                ->join('users', 'entries.user_id', '=', 'users.id')
+                ->join('companies', 'entries.company_id', '=', 'companies.id')
+                ->where('users.id', $this->id)
+                ->where('companies.id', $company_id)
+                ->first();
+    }
 }
