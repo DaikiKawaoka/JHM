@@ -106,7 +106,7 @@ class EntriesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $message = '';
         $user = Auth::user();
         $entry = Entry::find($id);
         if(!($user->is_teacher)){
@@ -116,7 +116,8 @@ class EntriesController extends Controller
             }
             return redirect()->route('companies.index');
         }else{
-            return redirect()->route('home');
+            $message = 'あなたは教師なのでこの処理はできません。';
+            return redirect()->route('home')->with('status-error',$message);
         }
 
     }
