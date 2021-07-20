@@ -145,6 +145,42 @@ class UsersController extends Controller
         return redirect()->route('users.edit', $user->id);
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function updateTeacherProfile($id, Request $request)
+    {
+        $user = Auth::user();
+        $updateUser = User::find($id);
+        $session_name = '';
+        $session_message = '';
+        if(!$user->is_teacher){
+            $session_name = 'status-error';
+            $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
+            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+        }
+        if($user->id != $id){
+            $session_name = 'status-error';
+            $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
+            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+        }
+        $request -> validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        ],[
+            'name.required' => '生徒名は必須項目です。',
+            'email.required'  => 'メールアドレスは必須項目です。',
+            'email.email'  => 'メールアドレスを入力してください。',
+        ]);
+        $updateUser->name = $request->input('name');
+        $updateUser->email = $request->input('email');
+        $updateUser->save();
+        return redirect()->route('users.edit', $user->id);
+    }
+
 
     /**
      * Update the specified resource in storage.
@@ -158,9 +194,9 @@ class UsersController extends Controller
         $updateUser = User::find($id);
         $session_name = '';
         $session_message = '';
-        if($user->is_teacher){
+        if($user->id != $id){
             $session_name = 'status-error';
-            $session_message = '削除対象の生徒が自分の生徒ではない為、処理が失敗しました。';
+            $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
             return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
         }
         $request -> validate([
