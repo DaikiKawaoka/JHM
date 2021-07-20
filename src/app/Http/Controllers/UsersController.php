@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\CurrentPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
@@ -97,7 +98,12 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = Auth::user();
+        if($user->is_teacher){
+            return view('users.teacherEdit')->with(['user'=>$user]);
+        }else{
+            return view('users.studentEdit')->with(['user'=>$user, 'activeProfile' => 'active', 'activePassword' => '']);
+        }
     }
 
 
@@ -107,9 +113,68 @@ class UsersController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
         //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function updateStudentProfile($id, Request $request)
+    {
+        $user = Auth::user();
+        $updateUser = User::find($id);
+        $session_name = '';
+        $session_message = '';
+        if($user->is_teacher){
+            $session_name = 'status-error';
+            $session_message = '削除対象の生徒が自分の生徒ではない為、処理が失敗しました。';
+            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+        }
+        $request -> validate([
+            'name' => ['required', 'string', 'max:255'],
+        ],[
+            'name.required' => '生徒名は必須項目です。',
+        ]);
+        $updateUser->name = $request->input('name');
+        $updateUser->save();
+        return redirect()->route('users.edit', $user->id);
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function updatePassword($id, Request $request)
+    {
+        $user = Auth::user();
+        $updateUser = User::find($id);
+        $session_name = '';
+        $session_message = '';
+        if($user->is_teacher){
+            $session_name = 'status-error';
+            $session_message = '削除対象の生徒が自分の生徒ではない為、処理が失敗しました。';
+            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+        }
+        $request -> validate([
+            'password_current' => ['required', 'string', new CurrentPassword],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ],[
+            'password_current.required' => 'パスワードは必須項目です。',
+            'password.required'  => 'パスワードは必須項目です。',
+            'password.min' => 'パスワードは８文字以上です。',
+            'password.confirmed' => 'パスワードを正確に入力して下さい。',
+        ]);
+        $updateUser->password = Hash::make($request->input('password'));
+        $updateUser->save();
+        return redirect()->route('users.edit', $user->id);
     }
 
 
