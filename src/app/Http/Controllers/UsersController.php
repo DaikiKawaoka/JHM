@@ -169,6 +169,7 @@ class UsersController extends Controller
         }
         $request -> validate([
             'name' => ['required', 'string', 'max:255'],
+            'class' => ['string', 'max:31'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         ],[
             'name.required' => '生徒名は必須項目です。',
@@ -176,6 +177,7 @@ class UsersController extends Controller
             'email.email'  => 'メールアドレスを入力してください。',
         ]);
         $updateUser->name = $request->input('name');
+        $updateUser->class = $request->input('class');
         $updateUser->email = $request->input('email');
         $updateUser->save();
         return redirect()->route('users.edit', $user->id);
