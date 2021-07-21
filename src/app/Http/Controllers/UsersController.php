@@ -132,15 +132,30 @@ class UsersController extends Controller
         $session_message = '';
         if($user->is_teacher){
             $session_name = 'status-error';
-            $session_message = '削除対象の生徒が自分の生徒ではない為、処理が失敗しました。';
+            $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
+            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+        }
+        if($user->id != $id){
+            $session_name = 'status-error';
+            $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
             return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
         }
         $request -> validate([
+            'attend_num' => ['required','integer','min:1','max:50'],
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         ],[
             'name.required' => '生徒名は必須項目です。',
+            'attend_num.required' => '出席番号は必須です。',
+            'attend_num.max' => '出席番号は50より小さい数にしてください。',
+            'attend_num.min' => '出席番号は1以上です。',
+            'email.required'  => 'メールアドレスは必須項目です。',
+            'email.email'  => 'メールアドレスを入力してください。',
+            'email.unique' => 'そのメールアドレスは別のユーザが使用しています',
         ]);
         $updateUser->name = $request->input('name');
+        $updateUser->attend_num = $request->input('attend_num');
+        $updateUser->email = $request->input('email');
         $updateUser->save();
         return redirect()->route('users.edit', $user->id);
     }
