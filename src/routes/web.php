@@ -21,6 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('users', 'UsersController')->middleware('auth');
 Route::put('users/updateStudentProfile/{id}', 'UsersController@updateStudentProfile')->name('users.updateStudentProfile')->middleware('auth');
+Route::put('users/updateTeacherProfile/{id}', 'UsersController@updateTeacherProfile')->name('users.updateTeacherProfile')->middleware('auth');
 Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name('users.updatePassword')->middleware('auth');
 Route::resource('companies', 'CompaniesController')->middleware('auth');
 Route::resource('entries', 'EntriesController')->middleware('auth');
