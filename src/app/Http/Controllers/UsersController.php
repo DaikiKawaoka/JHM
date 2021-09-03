@@ -157,7 +157,9 @@ class UsersController extends Controller
         $updateUser->attend_num = $request->input('attend_num');
         $updateUser->email = $request->input('email');
         $updateUser->save();
-        return redirect()->route('users.edit', $user->id);
+        $session_name = 'status';
+        $session_message = '生徒（'.$updateUser->name.'）の情報を更新しました。';
+        return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
     }
 
     /**
