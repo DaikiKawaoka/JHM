@@ -99,6 +99,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
+        if($user->id != $id) return redirect()->route('home')->with(['status-error', '自身のプロフィール以外編集できません。']);
         if($user->is_teacher){
             return view('users.teacherEdit')->with(['user'=>$user]);
         }else{
@@ -133,7 +134,7 @@ class UsersController extends Controller
         if($user->is_teacher){
             $session_name = 'status-error';
             $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
-            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+            return redirect()->route('home')->with($session_name ,$session_message);
         }
         if($user->id != $id){
             $session_name = 'status-error';
