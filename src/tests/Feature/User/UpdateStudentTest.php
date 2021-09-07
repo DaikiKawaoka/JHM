@@ -6,13 +6,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class UpdateStudentTest extends TestCase
 {
     /**
      * @test
      */
-    public function updateStudent(){
+    public function updateStudentProfile(){
         $student = User::where('is_teacher',0)->first();
         $response = $this
             ->actingAs($student)
@@ -28,6 +29,24 @@ class UpdateStudentTest extends TestCase
             'name' => "田中一郎",
             'attend_num' => 11,
             'email' => "taro11@example.com",
+        ]);
+    }
+
+    public function updateStudentPassword(){
+        $student = User::where('is_teacher',0)->first();
+        $response = $this
+            ->actingAs($student)
+            ->get('users/'.$student->id.'/edit');
+        $response -> assertStatus(200);
+        $test_password = 'success_test';
+        $response = $this
+            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_current'=>$test_password]);
+        $response -> assertStatus(302);
+        $response -> assertSessionHas("status", "生徒（".$student->name."）のパスワードを更新しました。");
+        $response -> assertRedirect('users/'.$student->id.'/edit');
+        $this->assertDatabaseHas('users', [
+            'id' => $student->id,
+            'password' => Hash::make($test_password),
         ]);
     }
 

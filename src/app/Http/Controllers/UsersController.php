@@ -198,7 +198,9 @@ class UsersController extends Controller
         $updateUser->class = $request->input('class');
         $updateUser->email = $request->input('email');
         $updateUser->save();
-        return redirect()->route('users.edit', $user->id);
+        $session_name = 'status';
+        $session_message = '生徒（'.$updateUser->name.'）のパスワードを更新しました。';
+        return redirect()->route('users.edit', $user->id)->with($session_name,$session_message);
     }
 
 
