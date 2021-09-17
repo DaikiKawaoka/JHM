@@ -99,11 +99,8 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
-        if($user->is_teacher){
-            return view('users.teacherEdit')->with(['user'=>$user]);
-        }else{
-            return view('users.studentEdit')->with(['user'=>$user, 'activeProfile' => 'active', 'activePassword' => '']);
-        }
+        if($user->id != $id) return redirect()->route('companies.index')->with(['status-error'=> '自身のプロフィール以外編集できません。']);
+        return view('users.studentEdit')->with(['user'=>$user, 'activeProfile' => 'active', 'activePassword' => '']);
     }
 
 
@@ -133,12 +130,12 @@ class UsersController extends Controller
         if($user->is_teacher){
             $session_name = 'status-error';
             $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
-            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+            return redirect()->route('companies.index')->with($session_name ,$session_message)->withInput();
         }
         if($user->id != $id){
             $session_name = 'status-error';
             $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
-            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+            return redirect()->route('companies.index')->with($session_name ,$session_message);
         }
         $request -> validate([
             'attend_num' => ['required','integer','min:1','max:50'],
@@ -157,7 +154,9 @@ class UsersController extends Controller
         $updateUser->attend_num = $request->input('attend_num');
         $updateUser->email = $request->input('email');
         $updateUser->save();
-        return redirect()->route('users.edit', $user->id);
+        $session_name = 'status';
+        $session_message = '生徒（'.$updateUser->name.'）の情報を更新しました。';
+        return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
     }
 
     /**
@@ -195,7 +194,9 @@ class UsersController extends Controller
         $updateUser->class = $request->input('class');
         $updateUser->email = $request->input('email');
         $updateUser->save();
-        return redirect()->route('users.edit', $user->id);
+        $session_name = 'status';
+        $session_message = '生徒（'.$updateUser->name.'）のプロフィールを更新しました。';
+        return redirect()->route('users.edit', $user->id)->with($session_name,$session_message);
     }
 
 
@@ -213,8 +214,9 @@ class UsersController extends Controller
         $session_message = '';
         if($user->id != $id){
             $session_name = 'status-error';
-            $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
-            return redirect()->route('users.edit', $user->id)->with($session_name ,$session_message);
+            $session_message = '更新対象が自身のパスワードではないため、処理が失敗しました。';
+            $request->session()->put($session_name, $session_message);
+            return redirect()->route('companies.index')->with($session_name ,$session_message);
         }
         $request -> validate([
             'password_current' => ['required', 'string', new CurrentPassword],
@@ -227,7 +229,9 @@ class UsersController extends Controller
         ]);
         $updateUser->password = Hash::make($request->input('password'));
         $updateUser->save();
-        return redirect()->route('users.edit', $user->id);
+        $session_name = 'status';
+        $session_message = '生徒（'.$updateUser->name.'）のパスワードを更新しました。';
+        return redirect()->route('users.edit', $user->id)->with($session_name, $session_message);
     }
 
 
