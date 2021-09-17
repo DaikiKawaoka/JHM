@@ -44,10 +44,9 @@ class UpdateStudentTest extends TestCase
         $test_password = 'success_test';
         $response = $this
             ->actingAs($student)
-            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_current'=>$test_password]);
+            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_confirmation'=>$test_password]);
         $response -> assertStatus(302);
-        // $response -> assertSessionHas("status", "生徒（".$student->name."）のパスワードを更新しました。");
-        // $response -> assertSessionHas("status");
+        $response -> assertSessionHas("status", "生徒（".$student->name."）のパスワードを更新しました。");
         $response -> assertRedirect('users/'.$student->id.'/edit');
     }
 
@@ -86,7 +85,7 @@ class UpdateStudentTest extends TestCase
         $test_password = 'failure_test';
         $response = $this
             ->actingAs($teacher)
-            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_current'=>$test_password]);
+            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_confirmation'=>$test_password]);
         $response -> assertSessionHas("status-error", "更新対象が自身のパスワードではないため、処理が失敗しました。");
         $response -> assertRedirect('/companies');
     }
@@ -132,7 +131,7 @@ class UpdateStudentTest extends TestCase
         $test_password = 'failure_test';
         $response = $this
             ->actingAs($other_student)
-            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_current'=>$test_password]);
+            ->put(route('users.updatePassword', $student->id), ['password_current'=>'password', 'password'=>$test_password, 'password_confirmation'=>$test_password]);
         $response -> assertSessionHas("status-error", "更新対象が自身のパスワードではないため、処理が失敗しました。");
         $response -> assertRedirect('/companies');
     }
