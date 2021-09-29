@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
@@ -140,7 +141,7 @@ class UsersController extends Controller
         $request -> validate([
             'attend_num' => ['required','integer','min:1','max:50'],
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
         ],[
             'name.required' => '生徒名は必須項目です。',
             'attend_num.required' => '出席番号は必須です。',
@@ -184,7 +185,7 @@ class UsersController extends Controller
         $request -> validate([
             'name' => ['required', 'string', 'max:255'],
             'class' => ['string', 'max:31'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
         ],[
             'name.required' => '生徒名は必須項目です。',
             'email.required'  => 'メールアドレスは必須項目です。',
