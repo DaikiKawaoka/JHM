@@ -8,7 +8,7 @@
                     <div class="card-body">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link @error('password') @elseerror('password_current') @else active @enderror" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">
+                                <a class="nav-link @error('password'|'password_current') @else active @enderror" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">
                                     プロフィール
                                 </a>
                             </li>
@@ -22,7 +22,7 @@
                         <div class="tab-content mt-4" id="myTabContent">
 
                             <div class="tab-pane fade
-                            @error('password') @elseerror('password_current') @else show active @enderror" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            @error('password'|'password_current') @else show active @enderror" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                 <form action="{{route('users.updateTeacherProfile', $user->id)}}" method="post">
                                     @csrf
                                     {{ method_field('PUT') }}
