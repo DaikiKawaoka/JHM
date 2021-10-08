@@ -26,3 +26,5 @@ Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name(
 Route::resource('companies', 'CompaniesController')->middleware('auth');
 Route::resource('entries', 'EntriesController')->middleware('auth');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']])->middleware('auth');
+Route::get('students/login', 'StudentsController@showLoginForm')->name('students.showLoginForm');
+Route::post('students/login', 'StudentsController@login')->name('students.login');

@@ -2,16 +2,12 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
-use App\Entry;
 
+class Students extends Authenticatable{
 
-class User extends Authenticatable
-{
     use Notifiable;
     use SoftDeletes;
 
@@ -21,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'attend_num','name', 'email', 'password','is_teacher','teacher_id'
     ];
 
     /**

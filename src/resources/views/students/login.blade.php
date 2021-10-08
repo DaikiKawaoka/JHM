@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('教員ログイン') }}</div>
+                <div class="card-header">{{ __('生徒ログイン') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('students.login') }}">
                         @csrf
 
                         <div class="form-group row">
