@@ -11,13 +11,19 @@ class Students extends Authenticatable{
     use Notifiable;
     use SoftDeletes;
 
+    protected $primary_key = 'id';
+
+    protected $guard = 'student';
+
+    protected $table = 'students';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'attend_num','name', 'email', 'password','is_teacher','teacher_id'
+        'attend_num','name', 'email', 'password',
     ];
 
     /**

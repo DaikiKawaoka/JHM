@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StudentsSeeder extends Seeder
 {
@@ -19,7 +20,7 @@ class StudentsSeeder extends Seeder
                 'attend_num' => $i+1,
                 'name' => $students[$i],
                 'email' => $emails[$i],
-                'password' => bcrypt('password'),
+                'password' => Hash::make('password'),
             ]);
         }
 
