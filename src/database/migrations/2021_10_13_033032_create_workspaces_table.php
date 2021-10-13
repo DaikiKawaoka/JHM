@@ -17,7 +17,7 @@ class CreateWorkspacesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('teacher_id');
             $table->string('class_name');
-            $table->string('icon_path');
+            $table->string('icon_path')->nullable();;
             $table->year('year');
             $table->foreign('teacher_id')->references('id')->on('users'); //外部キー参照
             $table->timestamps();

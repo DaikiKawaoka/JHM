@@ -34,5 +34,16 @@ class StudentsSeeder extends Seeder
                 'password' => bcrypt('password'),
             ]);
         }
+
+        $students = ['ゲーム太郎','ゲーム二郎','ゲーム三郎'];
+        $emails = ['game1@example.com','game2@example.com','game3@example.com'];
+        for ($i = 0; $i<3; $i++) {
+            DB::table('students')->insert([
+                'attend_num' => $i+7,
+                'name' => $students[$i],
+                'email' => $emails[$i],
+                'password' => bcrypt('password'),
+            ]);
+        }
     }
 }

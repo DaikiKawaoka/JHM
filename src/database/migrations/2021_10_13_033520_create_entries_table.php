@@ -16,11 +16,11 @@ class CreateEntriesTable extends Migration
         Schema::create('entries', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('student_company_id');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('student_company_id')->nullable();
             $table->foreign('student_id')->references('id')->on('students');
-            $table->foreign('company_id')->references('id')->on('companies')->nullable();
-            $table->foreign('student_company_id')->references('id')->on('student_companies')->nullable();
+            $table->foreign('company_id')->references('id')->on('companies');
+            $table->foreign('student_company_id')->references('id')->on('student_companies');
             $table->timestamps();
         });
     }
