@@ -29,7 +29,7 @@ class ProgressController extends Controller
     public function index()
     {
         $user = Auth::user();
-        if(!($user->is_teacher)){
+        if(!($user->is_teacher())){
             // 先生ではない場合ホームにページ遷移
             return redirect()->route('home');
         }

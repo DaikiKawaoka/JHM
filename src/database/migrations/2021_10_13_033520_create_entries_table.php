@@ -15,11 +15,12 @@ class CreateEntriesTable extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('company_id');
-            $table->foreign('user_id')->references('id')->on('users'); //外部キー参照
-            $table->foreign('company_id')->references('id')->on('companies'); //外部キー参照
-            $table->softDeletes();
+            $table->unsignedBigInteger('student_company_id');
+            $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('company_id')->references('id')->on('companies')->nullable();
+            $table->foreign('student_company_id')->references('id')->on('student_companies')->nullable();
             $table->timestamps();
         });
     }

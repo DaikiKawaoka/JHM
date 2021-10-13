@@ -14,12 +14,8 @@ class AddColumnToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('teacher_id')->nullable();
-            $table->integer('attend_num')->default(0);
-            $table->boolean('is_teacher')->default(false); // 先生:1,生徒:0
             $table->dateTime('login_at')->nullable();
             $table->softDeletes();
-            $table->foreign('teacher_id')->references('id')->on('users'); //外部キー参照
         });
     }
 
