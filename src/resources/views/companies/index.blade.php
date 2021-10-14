@@ -30,7 +30,7 @@
             <th scope="col">締切日</th>
             <th scope="col">登録者名</th>
             <th scope="col">登録日</th>
-            @if(!($user->is_teacher))
+            @if(!($user->is_teacher()))
               <th scope="col">エントリー</th>
             @endif
             <th scope="col">編集</th>
@@ -55,7 +55,7 @@
               @else
                 <td>null</td>
               @endif
-              @if(!($user->is_teacher))
+              @if(!($user->is_teacher()))
                 <td>
                   @if($entries[$company->id])
                     <form action="{{route('entries.destroy', $entries[$company->id]->id)}}" method="post">
@@ -73,7 +73,7 @@
                   @endif
                 </td>
               @endif
-              @if($user->is_teacher || $company->create_user_id == $user->id)
+              @if($user->is_teacher() || $company->create_user_id == $user->id)
                 <td>
                   <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
                 </td>

@@ -26,7 +26,11 @@ Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name(
 Route::resource('companies', 'CompaniesController');
 Route::resource('entries', 'EntriesController');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
-Route::get('students/login', 'StudentsController@showLoginForm')->name('students.showLoginForm');
+Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
 
+Route::prefix('workspaces')->group(function(){
+    Route::get('{id}/change', 'WorkSpacesController@change')->name('workspaces.change');
+    Route::get('showMember', 'WorkSpacesController@showMember')->name('workspaces.showMember');
+});
 Route::get('/home', 'HomeController@index')->name('home');

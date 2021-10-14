@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use App\Entry;
-
+use App\WorkSpaces;
 
 class User extends Authenticatable
 {
@@ -54,8 +54,8 @@ class User extends Authenticatable
 
     public function getMyEntries()
     {
-        return Entry::select('entries.id','entries.user_id','entries.company_id','companies.name')
-                ->join('users', 'entries.user_id', '=', 'users.id')
+        return Entry::select('entries.id','entries.student_id','entries.company_id','companies.name')
+                ->join('users', 'entries.student_id', '=', 'users.id')
                 ->join('companies', 'entries.company_id', '=', 'companies.id')
                 ->where('users.id', $this->id)
                 ->orderBy('entries.id', 'asc')
@@ -64,11 +64,15 @@ class User extends Authenticatable
 
     public function getMyEntry($company_id)
     {
-        return Entry::select('entries.id','entries.user_id','entries.company_id','companies.name')
-                ->join('users', 'entries.user_id', '=', 'users.id')
+        return Entry::select('entries.id','entries.student_id','entries.company_id','companies.name')
+                ->join('users', 'entries.student_id', '=', 'users.id')
                 ->join('companies', 'entries.company_id', '=', 'companies.id')
                 ->where('users.id', $this->id)
                 ->where('companies.id', $company_id)
                 ->first();
+    }
+
+    public function getTaughtClasses(){
+        return WorkSpaces::where('teacher_id', $this->id)->get();
     }
 }

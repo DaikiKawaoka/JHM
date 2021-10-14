@@ -62,6 +62,7 @@
                                         {{ __('Forgot Your Password?') }}
                                     </a>
                                 @endif
+                                <a href="{{route('login')}}" class="">教師ログインへ</a>
                             </div>
                         </div>
                     </form>
