@@ -55,7 +55,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    @if(!(Auth::user()->is_teacher))
+                                    @if(!(Auth::user()->is_teacher()))
                                         <a class="dropdown-item" href="{{ route('entries.index') }}">
                                             エントリー済み会社一覧
                                         </a>
@@ -72,14 +72,14 @@
                                     </form>
                                 </div>
                             </li>
-                            @if(Auth::user()->is_teacher)
+                            @if(Auth::user()->is_teacher())
                                 <li class="nav-item dropdown">
                                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                         生徒 <span class="caret"></span>
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('users.index') }}">
+                                        <a class="dropdown-item" href="{{ route('workspaces.showMember') }}">
                                             生徒一覧
                                         </a>
                                         <a class="dropdown-item" href="{{ route('users.create') }}">
@@ -118,7 +118,28 @@
             </div>
         </nav>
         <main class="py-4">
-            @yield('content')
+            @guest
+                @yield('content')
+            @else
+                @if(Auth::user()->is_teacher())
+                    <div class="d-flex flex-row container">
+                        <div class="alert alert-danger col-md-3">
+                            @foreach(Auth::user()->getTaughtClasses() as $class)
+                                <div class="card m-3">
+                                    <div class="card-body @if(session('workspace_id')==$class->id) alert-secondary @endif">
+                                        <a href="{{route('workspaces.change', $class->id)}}">{{__($class->class_name)}}</a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col-md-9">
+                            @yield('content')
+                        </div>
+                    </div>
+                @else
+                    @yield('content')
+                @endif
+            @endguest
         </main>
     </div>
 </body>

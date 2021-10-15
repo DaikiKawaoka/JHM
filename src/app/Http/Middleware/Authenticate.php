@@ -20,7 +20,7 @@ class Authenticate extends Middleware
 
             $uri = $request->path();
 
-            return route('students.showLoginForm');
+            return route('students.login');
         }
     }
 }

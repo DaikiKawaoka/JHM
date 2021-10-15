@@ -20,35 +20,33 @@ class CompaniesController extends Controller
     public function index()
     {
         $user = Auth::user();
-        // dd($user);
+        // dd(Auth::user()->is_teacher());
         $companies = null;
         $isEntyies = [];
-        // if($user->is_teacher){
-        //     $companies = Company::
-        //                 select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
-        //                 -> join('users', 'companies.create_user_id', '=', 'users.id')
-        //                 -> where('companies.create_user_id',$user->id)
-        //                 -> orWhere('users.teacher_id',$user->id)
-        //                 ->latest()
-        //                 ->paginate(5);
-        // }else{
-        //     $companies = Company::
-        //                 select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
-        //                 ->join('users', 'companies.create_user_id', '=', 'users.id')
-        //                 ->where('create_user_id',$user->teacher_id)
-        //                 ->orWhere('create_user_id',$user->id)
-        //                 ->latest()
-        //                 ->paginate(5);
-        // }
-        // foreach($companies as $company){
-        //     $entries[$company->id] = Entry::
-        //     where('user_id', $user->id)
-        //     ->where('company_id', $company->id)
-        //     ->first();
-        // }
-        // return view('companies/index')->with(['companies'=>$companies,'user' => $user, 'entries' => $entries]);
-        // Auth::logout();
-        // dd($user);
+        if($user->is_teacher()){
+            $companies = Company::
+                        select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
+                        -> join('users', 'companies.create_user_id', '=', 'users.id')
+                        -> where('companies.create_user_id',$user->id)
+                        // -> orWhere('users.teacher_id',$user->id)
+                        ->latest()
+                        ->paginate(5);
+        }else{
+            $companies = Company::
+                        select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
+                        ->join('users', 'companies.create_user_id', '=', 'users.id')
+                        // ->where('create_user_id',$user->teacher_id)
+                        ->orWhere('create_user_id',$user->id)
+                        ->latest()
+                        ->paginate(5);
+        }
+        foreach($companies as $company){
+            $entries[$company->id] = Entry::
+            where('student_id', $user->id)
+            ->where('company_id', $company->id)
+            ->first();
+        }
+        return view('companies/index')->with(['companies'=>$companies,'user' => $user, 'entries' => $entries]);
         return view('companies/index')->with('user', $user);
     }
     /**
