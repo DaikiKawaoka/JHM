@@ -56,12 +56,11 @@ class Students extends Authenticatable{
 
     public function getMyEntries()
     {
-        return Entry::select('entries.id','entries.user_id','entries.company_id','companies.name')
-                ->join('users', 'entries.user_id', '=', 'users.id')
-                ->join('companies', 'entries.company_id', '=', 'companies.id')
-                ->where('users.id', $this->id)
-                ->orderBy('entries.id', 'asc')
-                ->get();
+        return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
+                ->leftJoin('students', 'entries.student_id', '=', 'students.id')
+                ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
+                ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
+                ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
     }
 
     public function getMyEntry($company_id)
