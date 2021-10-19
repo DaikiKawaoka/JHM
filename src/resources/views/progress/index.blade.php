@@ -17,32 +17,32 @@
             <input type="submit" class="btn btn-success btn-lg mb-3 mr-2" value="Excelダウンロード">
         </form>
       </div>
-      <h5>{{$year}}年度 学科別就職活動リスト</h5>
-      <h6>{{ Auth::user()->class }}科 / 担任：{{ Auth::user()->name }}</h6>
+      <h5>{{$workspace->year}}年度 就職活動リスト</h5>
+      <h6>{{ $workspace->class_name }}科 / 担任：{{ Auth::user()->name }}</h6>
       <div style="overflow-y: scroll;">
         <table class="table table-bordered" style="width: {{$table_width_px}}px;">
           <thead>
               <tr>
                 <th rowspan="4" style="width: 65px; text-align: center; vertical-align: middle;  padding:0;">出席番号</th>
                 <th rowspan="4" style="width: 100px; text-align: center; vertical-align: middle;  padding:0;">学生氏名</th>
-                @for ($i = 0; $i < $most_many_entry_count ; $i++)
+                @for ($i = 0; $i < $most_many_entry_num ; $i++)
                   <th colspan="{{$max_progress_count}}" style="width: 400px; text-align: center; padding:0;">応募先企業名</th>
                 @endfor
               </tr>
               <tr style="width: 100px;">
-                @for ($i = 0; $i < $most_many_entry_count ; $i++)
+                @for ($i = 0; $i < $most_many_entry_num ; $i++)
                   @for($j = 1; $j <= $max_progress_count; $j++)
                   <th style="text-align: center; padding:0;">選考{{$j}}</th>
                   @endfor
                 @endfor
               </tr>
               <tr style="width: {{$entry_column_width_px}}px;">
-                @for ($i = 0; $i < $most_many_entry_count ; $i++)
+                @for ($i = 0; $i < $most_many_entry_num ; $i++)
                   <th colspan="{{$max_progress_count}}" style="text-align: center; padding:0;">日付</th>
                 @endfor
               </tr>
               <tr style="width: {{$entry_column_width_px}}px;">
-                @for ($i = 0; $i < $most_many_entry_count ; $i++)
+                @for ($i = 0; $i < $most_many_entry_num ; $i++)
                   <th colspan="{{$max_progress_count}}" style="text-align: center; padding:0;">結果</th>
                 @endfor
               </tr>
@@ -55,12 +55,16 @@
                 <?php $i = 0;?>
                 @foreach($student->getMyEntries() as $entry)
                   <td colspan="{{$max_progress_count}}" style="text-align: center; padding:0;">
-                    {{$entry -> name}}
+                  @if($entry->company_name != null)
+                    {{$entry -> company_name}}
+                  @else
+                    {{$entry -> student_company_name}}
+                  @endif
                   </td>
                   <?php $i++;?>
                 @endforeach
-                @if($i < $most_many_entry_count)
-                  @for(; $i < $most_many_entry_count; $i++)
+                @if($i < $most_many_entry_num)
+                  @for(; $i < $most_many_entry_num; $i++)
                     <td colspan="{{$max_progress_count}}" style="text-align: center; padding:0;">
                       &nbsp;
                     </td>
@@ -91,8 +95,8 @@
                   @endif
                 @endforeach
                 <!-- 生徒のエントリー数を合わせ、テーブルを正方形にするため、一番エントリーが多い人の数までループで空の値を代入 -->
-                @if($entry_count < $most_many_entry_count)
-                  @for($count = $entry_count * $max_progress_count; $count < $most_many_entry_count * $max_progress_count; $count++)
+                @if($entry_count < $most_many_entry_num)
+                  @for($count = $entry_count * $max_progress_count; $count < $most_many_entry_num * $max_progress_count; $count++)
                     <td style="width: 100px; text-align: center; padding:0;">
                       &nbsp;
                     </td>
@@ -120,8 +124,8 @@
                     @endfor
                   @endif
                 @endforeach
-                @if($entry_count < $most_many_entry_count)
-                  @for($count = $entry_count * $max_progress_count; $count < $most_many_entry_count * $max_progress_count; $count++)
+                @if($entry_count < $most_many_entry_num)
+                  @for($count = $entry_count * $max_progress_count; $count < $most_many_entry_num * $max_progress_count; $count++)
                     <td style="width: 100px; text-align: center; padding:0;">
                       &nbsp;
                     </td>
@@ -149,8 +153,8 @@
                     @endfor
                   @endif
                 @endforeach
-                @if($entry_count < $most_many_entry_count)
-                  @for($count = $entry_count * $max_progress_count; $count < $most_many_entry_count * $max_progress_count; $count++)
+                @if($entry_count < $most_many_entry_num)
+                  @for($count = $entry_count * $max_progress_count; $count < $most_many_entry_num * $max_progress_count; $count++)
                     <td style="width: 100px; text-align: center; padding:0;">
                       &nbsp;
                     </td>

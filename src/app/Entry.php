@@ -15,8 +15,8 @@ class Entry extends Model
 
     public function getProgressList()
     {
-        return Progress::select('progress.id','user_id','entry_id','action','state','action_date')
-                ->join('users', 'progress.user_id', '=', 'users.id')
+        return Progress::select('progress.id','student_id','entry_id','action','state','action_date')
+                ->join('students', 'progress.student_id', '=', 'students.id')
                 ->where('entry_id', $this->id)
                 ->orderBy('action_date','asc')
                 ->get();
