@@ -10,10 +10,18 @@ use App\User;
 
 class EntriesController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth:web,student']);
+    }
+
     public function index()
     {
+
         $user = Auth::user();
-        if(!($user->is_teacher)){
+        // dd($user);
+        if(!$user->is_teacher()){
             $entered_companies = User::find($user->id)->companies;
             return view('entries/index')->with('entered_companies', $entered_companies);
         }

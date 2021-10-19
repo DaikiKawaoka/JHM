@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth:web,student']);
     }
 
     /**
@@ -25,7 +25,7 @@ class HomeController extends Controller
     public function index()
     {
         $login_user = Auth::user();
-        if($login_user->is_teacher){
+        if($login_user->is_teacher()){
             return redirect(route('progress.index'));
         }
         return redirect(route('companies.index'));

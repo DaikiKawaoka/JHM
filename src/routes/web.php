@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', 'ProgressController@index')->middleware('auth');
+
+Route::get('/', 'ProgressController@index');
+Route::post('/auth_logout', 'LogoutController@auth_logout')->name('auth_logout');
 Route::post('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
 
 Route::get('/register_confirm', 'Auth\RegisterController@confirm')->name('register_confirm');
