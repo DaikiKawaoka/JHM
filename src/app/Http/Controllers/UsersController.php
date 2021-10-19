@@ -11,6 +11,12 @@ use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth:web,student']);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -101,7 +107,7 @@ class UsersController extends Controller
     {
         $user = Auth::user();
         if($user->id != $id) return redirect()->route('companies.index')->with(['status-error'=> '自身のプロフィール以外編集できません。']);
-        if($user->is_teacher)
+        if($user->is_teacher())
             return view('users.teacherEdit')->with(['user'=>$user, 'activeProfile' => 'active', 'activePassword' => '']);
         else
             return view('users.studentEdit')->with(['user'=>$user, 'activeProfile' => 'active', 'activePassword' => '']);

@@ -86,9 +86,6 @@
                                             生徒登録
                                         </a>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                            @csrf
-                                        </form>
                                     </div>
                                 </li>
                             @endif
@@ -101,15 +98,12 @@
                                     <a class="dropdown-item" href="{{ route('users.edit', Auth::user()->id) }}">
                                         {{ __('プロフィール編集') }}
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                                    document.getElementById('logout-form').submit();">
-                                        {{ __('ログアウト') }}
-                                    </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    <form method="post" name="logout_form" action="{{ route('auth_logout') }}">
+                                        <a href="javascript:logout_form.submit()" class="dropdown-item">{{ __('ログアウト') }}</a>
                                         @csrf
                                     </form>
+
                                 </div>
                             </li>
                         @endguest

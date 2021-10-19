@@ -23,12 +23,20 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class ProgressController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth:web,student']);
+    }
+
     // 先生のルートページ
     public function index(Request $request)
     {
         $user = Auth::user();
-        if(!($user->is_teacher())){
+        // dd($user);
+        if(!$user->is_teacher()){
             // 先生ではない場合ホームにページ遷移
+            // dd($user);
             return redirect()->route('home');
         }
 
