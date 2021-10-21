@@ -8,6 +8,7 @@ use App\Company;
 use App\Entry;
 use App\User;
 use App\Progress;
+use App\StundentCompany;
 
 class CompaniesController extends Controller
 {
@@ -42,7 +43,9 @@ class CompaniesController extends Controller
      */
     public function create()
     {
-        return view('companies/create');
+
+        return view('companies.create');
+
     }
     /**
      * Store a newly created resource in storage.
@@ -51,27 +54,47 @@ class CompaniesController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'prefecture' => ['nullable', 'string', 'max:3'],
-            'url' => ['url', 'nullable', 'max:255'],
-            'deadline' => ['date', 'nullable','after:yesterday'],
-            'remarks' => ['string','nullable'],
-        ],[
-            'name.required' => '会社名は必須項目です。',
-            'name.max' => '会社名は必須項目です。',
-            'deadline.after' => '締切日は本日以降にしてください。',
-        ]);
+        $login_user = Auth::user();
+        if($login_user->is_teacher()){
 
-        Company::create([
-            'name' => $request->input('name'),
-            'prefecture' => $request->input('prefecture'),
-            'url' => $request->input('url'),
-            'remarks' => $request->input('remarks'),
-            'deadline' => $request->input('deadline'),
-            'create_user_id' => $user->id,
-        ]);
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'prefecture' => ['nullable', 'string', 'max:3'],
+                'url' => ['url', 'nullable', 'max:255'],
+                'deadline' => ['date', 'nullable','after:yesterday'],
+                'remarks' => ['string','nullable'],
+            ],[
+                'name.required' => '会社名は必須項目です。',
+                'name.max' => '会社名は必須項目です。',
+                'deadline.after' => '締切日は本日以降にしてください。',
+            ]);
+
+            Company::create([
+                'name' => $request->input('name'),
+                'prefecture' => $request->input('prefecture'),
+                'url' => $request->input('url'),
+                'remarks' => $request->input('remarks'),
+                'deadline' => $request->input('deadline'),
+                'create_user_id' => $login_user->id,
+            ]);
+
+        }else{
+
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'prefecture' => ['nullable', 'string', 'max:3'],
+            ],[
+                'name.required' => '会社名は必須項目です。',
+                'name.max' => '会社名は必須項目です。',
+            ]);
+
+            StundentCompany::create([
+                'name' => $request->input('name'),
+                'prefecture' => $request->input('prefecture'),
+                'create_student_id' => $login_user->id,
+            ]);
+
+        }
 
         return redirect()->route('companies.index');
     }
