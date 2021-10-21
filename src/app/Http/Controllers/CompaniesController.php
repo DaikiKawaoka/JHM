@@ -19,35 +19,21 @@ class CompaniesController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        // dd(Auth::user()->is_teacher());
-        $companies = null;
-        $isEntyies = [];
-        if($user->is_teacher()){
-            $companies = Company::
-                        select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
-                        -> join('users', 'companies.create_user_id', '=', 'users.id')
-                        -> where('companies.create_user_id',$user->id)
-                        // -> orWhere('users.teacher_id',$user->id)
-                        ->latest()
-                        ->paginate(5);
-        }else{
-            $companies = Company::
-                        select(['companies.id','companies.name as name','prefecture','url','remarks','deadline','create_user_id','users.name as create_user_name','companies.created_at'])
-                        ->join('users', 'companies.create_user_id', '=', 'users.id')
-                        // ->where('create_user_id',$user->teacher_id)
-                        ->orWhere('create_user_id',$user->id)
-                        ->latest()
-                        ->paginate(5);
-        }
+        $login_user = Auth::user();
+
+        // 会社一覧取得
+        $company = new Company();
+        $companies = $company->getAllCompanies();
+
+        // 各会社のエントリー情報取得
         foreach($companies as $company){
             $entries[$company->id] = Entry::
-            where('student_id', $user->id)
+            where('student_id', $login_user->id)
             ->where('company_id', $company->id)
             ->first();
         }
-        return view('companies/index')->with(['companies'=>$companies,'user' => $user, 'entries' => $entries]);
-        return view('companies/index')->with('user', $user);
+
+        return view('companies/index')->with(['companies'=>$companies,'user' => $login_user, 'entries' => $entries]);
     }
     /**
      * Show the form for creating a new resource.
