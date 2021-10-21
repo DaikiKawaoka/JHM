@@ -140,10 +140,13 @@ class CompaniesController extends Controller
         $login_user = Auth::user();
         $company = Company::find($id);
 
+        // dd($company->create_user_id);
+        // dd($login_user->id);
+
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if($company->creae_user_id != $login_user->id)
+        if($company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         return view('companies.edit')->with('company', $company,);
@@ -165,7 +168,7 @@ class CompaniesController extends Controller
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if($company->creae_user_id != $login_user->id)
+        if($company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         $request->validate([
@@ -198,7 +201,7 @@ class CompaniesController extends Controller
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if($company->creae_user_id != $login_user->id)
+        if($company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         $company->delete();
