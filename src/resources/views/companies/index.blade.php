@@ -73,7 +73,7 @@
                   @endif
                 </td>
               @endif
-              @if($user->is_teacher() || $company->create_user_id == $user->id)
+              @if($company->create_user_id == $user->id)
                 <td>
                   <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
                 </td>
