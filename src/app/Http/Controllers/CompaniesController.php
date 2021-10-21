@@ -109,7 +109,6 @@ class CompaniesController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        // $user = User::find($user->id);
         $company = Company::find($id);
         $entry = $user->getMyEntry($company->id);
         $progress_list = null;
@@ -140,19 +139,20 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
-        $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
-                                ->where('companies.id',$id)->first();
-        if($company){
-            if($company->create_user_id == $login_user->id || ($login_user->is_teacher && $login_user->id == $create_company_user->teacher_id) ){
-                return view('companies.edit')->with([
-                    'company' => $company,
-                ]);
-            }
-        }
-        return redirect()->route('home');
+
+        // dd($company->create_user_id);
+        // dd($login_user->id);
+
+        if(!$company)
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
+
+        if($company->create_user_id != $login_user->id)
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+
+        return view('companies.edit')->with('company', $company,);
+
     }
-    
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -161,6 +161,15 @@ class CompaniesController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $login_user = Auth::user();
+        $company = Company::find($id);
+
+        if(!$company)
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
+
+        if($company->create_user_id != $login_user->id)
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -174,31 +183,7 @@ class CompaniesController extends Controller
             'deadline.after' => '締切日は本日以降にしてください。',
         ]);
 
-        $login_user = Auth::user();
-        $company = Company::find($id);
-        $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
-                                ->where('companies.id',$id)->first();
-        $session_name = '';
-        $session_message = '';
-        if($company){
-            if($company->create_user_id == $login_user->id || ($login_user->is_teacher && $login_user->id == $create_company_user->teacher_id) ){
-                $company->name = $request->name;
-                $company->url = $request->url;
-                $company->prefecture = $request->prefecture;
-                $company->deadline = $request->deadline;
-                $company->remarks = $request->remarks;
-                $company->save();
-                $session_name = 'status';
-                $session_message = '会社情報（'.$company->name.'）を変更しました。';
-            }else{
-                $session_name = 'status-error';
-                $session_message = 'あなたは変更可能なユーザではないので変更できませんでした。';
-            }
-        }else{
-            $session_name = 'status-error';
-            $session_message = '会社情報が存在しないため、処理が失敗しました。';
-        }
-        return redirect()->route('companies.show', ['company' => $company->id])->with($session_name,$session_message);
+        return redirect()->route('companies.show', $company->id)->with('status','会社情報を更新しました');
     }
 
 
@@ -212,26 +197,15 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
-        $create_company_user = User::join('companies', 'users.id', '=', 'companies.create_user_id')
-                                ->where('companies.id',$id)->first();
-        $session_name = '';
-        $session_message = '';
 
-        if($company){
-            // 削除対象の会社が存在する場合
-            if($company->create_user_id == $login_user->id || ($login_user->is_teacher && $login_user->id == $create_company_user->teacher_id) ){
-                // 会社の作成者がログインユーザーの場合 または (ログインユーザーが先生 かつ 会社作成生徒の先生IDがログインユーザーIDの場合)
-                Company::destroy($id);
-                $session_name = 'status';
-                $session_message = '会社情報（'.$company->name.'）を削除しました。';
-            }else{
-                $session_name = 'status-error';
-                $session_message = 'あなたは削除可能ユーザーではないため、処理が失敗しました。';
-            }
-        }else{
-            $session_name = 'status-error';
-            $session_message = '会社情報が存在しないため、処理が失敗しました。';
-        }
-        return redirect()->back()->with($session_name,$session_message);
+        if(!$company)
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
+
+        if($company->create_user_id != $login_user->id)
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+
+        $company->delete();
+
+        return redirect()->route('companies.index')->with('status', '会社情報を削除しました');
     }
 }
