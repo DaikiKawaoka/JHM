@@ -32,6 +32,8 @@ Route::get('students/login', 'StudentsController@showLoginForm')->name('students
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
 
 Route::prefix('workspaces')->group(function(){
+    Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
+    Route::post('store', 'WorkSpacesController@store')->name('workspaces.store');
     Route::get('{id}/change', 'WorkSpacesController@change')->name('workspaces.change');
     Route::get('showMember', 'WorkSpacesController@showMember')->name('workspaces.showMember');
 });

@@ -9,6 +9,10 @@ use App\Students;
 class WorkSpaces extends Model
 {
 
+    protected $fillable = [
+        'teacher_id', 'class_name', 'year',
+    ];
+
     protected $table = 'workspaces';
 
     public function getMember(){
