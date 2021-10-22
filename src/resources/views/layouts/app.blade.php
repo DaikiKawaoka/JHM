@@ -125,6 +125,11 @@
                                     </div>
                                 </div>
                             @endforeach
+                            <a href="{{ route('workspaces.create') }}">
+                                <div class="card m-3 alert alert-dark text-center text-white border">
+                                    +
+                                </div>
+                            </a>
                         </div>
                         <div class="col-md-9">
                             @yield('content')
