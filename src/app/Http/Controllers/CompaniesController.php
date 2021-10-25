@@ -115,7 +115,7 @@ class CompaniesController extends Controller
         // エントリーしているか分岐\
         if($entry){
             $progress_list = Progress::
-                    where('user_id', $login_user->id)
+                    where('student_id', $login_user->id)
                     ->where('entry_id', $entry->id)
                     ->orderBy('action_date','asc')
                     ->get();

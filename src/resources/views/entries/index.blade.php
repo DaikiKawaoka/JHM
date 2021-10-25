@@ -23,20 +23,16 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-            <th scope="col">ID</th>
             <th scope="col">会社名</th>
-            <th scope="col">勤務場所</th>
             <th scope="col">URL</th>
-            <th scope="col">action</th>
-            <th scope="col">state</th>
+            <th scope="col">現在の進捗</th>
+            <th scope="col">進捗登録</th>
             </tr>
         </thead>
         <tbody>
           @foreach ($entered_companies as $company)
             <tr>
-              <td scope="row">{{ $company->id }}</th>
-              <td><a class="" href="/companies/{{ $company->id }}">{{ $company->name }}</a></th>
-              <td>{{ $company->prefecture }}</td>
+              <td><a class="" href="/companies/{{ $company->company_id }}">{{ $company->company_name }}</a></th>
               <td>{{ $company->url }}</td>
             </tr>
           @endforeach

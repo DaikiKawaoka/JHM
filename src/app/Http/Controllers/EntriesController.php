@@ -20,9 +20,8 @@ class EntriesController extends Controller
     {
 
         $user = Auth::user();
-        // dd($user);
         if(!$user->is_teacher()){
-            $entered_companies = User::find($user->id)->companies;
+            $entered_companies = $user->getMyEntries();
             return view('entries/index')->with('entered_companies', $entered_companies);
         }
         // 教師はエントリー一覧ページに遷移できない
@@ -47,21 +46,22 @@ class EntriesController extends Controller
         $user = Auth::user();
         $company_id = $request->input('company_id');
         $is_entered = Entry::
-                    where('user_id', $user->id)
+                    where('student_id', $user->id)
                     ->where('company_id', $company_id)
                     ->first();
         $message = '';
 
-        if($user->is_teacher){
+        if($user->is_teacher()){
             $message = 'あなたは教師なのでエントリーできません。';
         }else{
             $company = Company::find($company_id);
             if($is_entered){
                 $message = '過去にあなたは'.$company->name.'にエントリー済みです。';
             }else{
+                // dd($user->id);
                 Entry::create([
-                    'user_id' => $user->id,
-                    'company_id' => $company_id,
+                    'student_id' => $user->id,
+                    'company_id' => $company->id,
                 ]);
                 return redirect()->route('companies.show',['company' => $company_id])->with('status',$company->name.'にエントリーしました。');
             }
