@@ -1,11 +1,11 @@
 require('./bootstrap');
 
-import Siderbar from './components/SiderbarComponent.vue';
+import Sidebar from './components/SidebarComponent.vue';
 
 import { createApp } from 'vue';
 
 const app = createApp({
     components: {
-        Siderbar,
+        Sidebar,
     }
 }).mount('#app');
