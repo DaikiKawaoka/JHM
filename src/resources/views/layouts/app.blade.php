@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +19,13 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/siderbar.css') }}" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+
 </head>
+
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
@@ -26,7 +33,9 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'KBC就活管理アプリ') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -45,17 +54,19 @@
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register_confirm') }}">{{ __('ユーザ作成') }}</a>
+                                    <a class="nav-link"
+                                        href="{{ route('register_confirm') }}">{{ __('ユーザ作成') }}</a>
                                 </li>
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     求人 <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    @if(!(Auth::user()->is_teacher()))
+                                    @if (!Auth::user()->is_teacher())
                                         <a class="dropdown-item" href="{{ route('entries.index') }}">
                                             エントリー済み会社一覧
                                         </a>
@@ -67,14 +78,16 @@
                                         求人登録
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        style="display: none;">
                                         @csrf
                                     </form>
                                 </div>
                             </li>
-                            @if(Auth::user()->is_teacher())
+                            @if (Auth::user()->is_teacher())
                                 <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                         生徒 <span class="caret"></span>
                                     </a>
 
@@ -90,7 +103,8 @@
                                 </li>
                             @endif
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
@@ -100,7 +114,8 @@
                                     </a>
 
                                     <form method="post" name="logout_form" action="{{ route('auth_logout') }}">
-                                        <a href="javascript:logout_form.submit()" class="dropdown-item">{{ __('ログアウト') }}</a>
+                                        <a href="javascript:logout_form.submit()"
+                                            class="dropdown-item">{{ __('ログアウト') }}</a>
                                         @csrf
                                     </form>
 
@@ -115,18 +130,19 @@
             @guest
                 @yield('content')
             @else
-                @if(Auth::user()->is_teacher())
-                    <div class="d-flex flex-row container">
-                        <div class="alert alert-danger col-md-3">
-                            @foreach(Auth::user()->getTaughtClasses() as $class)
-                                <div class="card m-3">
-                                    <div class="card-body @if(session('workspace_id')==$class->id) alert-secondary @endif">
-                                        <a href="{{route('workspaces.change', $class->id)}}">{{__($class->class_name)}}</a>
+                @if (Auth::user()->is_teacher())
+                    <div class="main_container">
+
+                        <siderbar :items="{{ json_encode(Auth::user()->getTaughtClasses()) }}"></siderbar>
+                        <!-- @foreach (Auth::user()->getTaughtClasses() as $class)
+                                    <div class="card m-3">
+                                        <div class="card-body @if (session('workspace_id') == $class->id) alert-secondary @endif">
+                                            <a
+                                                href="{{ route('workspaces.change', $class->id) }}">{{ __($class->class_name) }}</a>
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="col-md-9">
+                                @endforeach -->
+                        <div class="side2">
                             @yield('content')
                         </div>
                     </div>
@@ -137,4 +153,5 @@
         </main>
     </div>
 </body>
+
 </html>
