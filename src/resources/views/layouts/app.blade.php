@@ -133,12 +133,11 @@
                 @if (Auth::user()->is_teacher())
                     <div class="main_container">
 
-                        <siderbar :items="{{ json_encode(Auth::user()->getTaughtClasses()) }}"></siderbar>
+                        <sidebar :classes="{{ json_encode(Auth::user()->getTaughtClasses()) }}"></sidebar>
                         <!-- @foreach (Auth::user()->getTaughtClasses() as $class)
                                     <div class="card m-3">
                                         <div class="card-body @if (session('workspace_id') == $class->id) alert-secondary @endif">
-                                            <a
-                                                href="{{ route('workspaces.change', $class->id) }}">{{ __($class->class_name) }}</a>
+                                            <a href="{{ route('workspaces.change', $class->id) }}">{{ __($class->class_name) }}</a>
                                         </div>
                                     </div>
                                 @endforeach -->

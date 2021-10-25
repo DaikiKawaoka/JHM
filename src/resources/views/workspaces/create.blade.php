@@ -29,9 +29,9 @@
                             <label for="year" class="col-md-4 col-form-label text-md-right">{{ __('年度') }}</label>
 
                             <div class="col-md-7">
-                                <select class="form-control" id="year" name="year" value="{{ old('year') }}" autocomplete="year">
+                                <select class="form-control" id="year" name="year" @if(old('year')) value="{{ old('year') }}" @endif>
                                     @foreach($years as $year)
-                                        <option value="{{$year}}" @if($year == $this_year) selected @endif>{{$year}}</option>
+                                        <option value="{{$year}}" @if($year==$this_year) selected @endif>{{$year}}</option>
                                     @endforeach
                                 </select>
 
