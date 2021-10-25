@@ -108,14 +108,14 @@ class CompaniesController extends Controller
      */
     public function show($id)
     {
-        $user = Auth::user();
+        $login_user = Auth::user();
         $company = Company::find($id);
-        $entry = $user->getMyEntry($company->id);
+        $entry = $login_user->getMyEntry($company->id);
         $progress_list = null;
         // エントリーしているか分岐\
         if($entry){
             $progress_list = Progress::
-                    where('user_id', $user->id)
+                    where('user_id', $login_user->id)
                     ->where('entry_id', $entry->id)
                     ->orderBy('action_date','asc')
                     ->get();
@@ -124,7 +124,7 @@ class CompaniesController extends Controller
             "company" => $company,
             "entry" => $entry,
             "progress_list" => $progress_list,
-            "user" => $user,
+            "user" => $login_user,
         ]);
     }
 
@@ -140,8 +140,8 @@ class CompaniesController extends Controller
         $login_user = Auth::user();
         $company = Company::find($id);
 
-        // dd($company->create_user_id);
-        // dd($login_user->id);
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
@@ -164,6 +164,9 @@ class CompaniesController extends Controller
 
         $login_user = Auth::user();
         $company = Company::find($id);
+
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
@@ -197,6 +200,9 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
+
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
