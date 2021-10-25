@@ -9,7 +9,7 @@ use App\Progress;
 class Entry extends Model
 {
     protected $fillable = [
-        'user_id','company_id'
+        'student_id','company_id','student_company_id'
     ];
     protected $table = 'entries';
 

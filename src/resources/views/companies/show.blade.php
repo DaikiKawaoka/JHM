@@ -28,18 +28,16 @@
       <table class="table table-bordered">
           <thead>
               <tr>
-              <th scope="col">ID</th>
               <th scope="col">会社名</th>
-              @if(!($user->is_teacher))
+              @if(!($user->is_teacher()))
                 <th scope="col">エントリー</th>
               @endif
               </tr>
           </thead>
           <tbody>
               <tr>
-                <td scope="row">{{ $company->id }}</th>
-                <td>{{ $company->name }}</th>
-                @if(!($user->is_teacher))
+                <td scope="row">{{ $company->name }}</th>
+                @if(!($user->is_teacher()))
                   @if (!($entry))
                     <td>
                     <form action="{{route('entries.store')}}" method='post'>

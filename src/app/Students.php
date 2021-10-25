@@ -56,7 +56,7 @@ class Students extends Authenticatable{
 
     public function getMyEntries()
     {
-        return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
+        return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
                 ->leftJoin('students', 'entries.student_id', '=', 'students.id')
                 ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
                 ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
@@ -65,10 +65,10 @@ class Students extends Authenticatable{
 
     public function getMyEntry($company_id)
     {
-        return Entry::select('entries.id','entries.user_id','entries.company_id','companies.name')
-                ->join('users', 'entries.user_id', '=', 'users.id')
+        return Entry::select('entries.id','entries.student_id','entries.company_id','companies.name')
+                ->join('students', 'entries.student_id', '=', 'students.id')
                 ->join('companies', 'entries.company_id', '=', 'companies.id')
-                ->where('users.id', $this->id)
+                ->where('students.id', $this->id)
                 ->where('companies.id', $company_id)
                 ->first();
     }
