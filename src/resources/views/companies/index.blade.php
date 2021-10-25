@@ -32,9 +32,10 @@
             <th scope="col">登録日</th>
             @if(!($user->is_teacher()))
               <th scope="col">エントリー</th>
+            @else
+              <th scope="col">編集</th>
+              <th scope="col">削除</th>
             @endif
-            <th scope="col">編集</th>
-            <th scope="col">削除</th>
             </tr>
         </thead>
         <tbody>
@@ -73,20 +74,22 @@
                   @endif
                 </td>
               @endif
-              @if($user->is_teacher() || $company->create_user_id == $user->id)
-                <td>
-                  <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
-                </td>
-                <td>
-                  <form action="{{route('companies.destroy', $company->id)}}" method='post' name="delete_form">
-                    {{ csrf_field() }}
-                    {{ method_field('DELETE') }}
-                    <input type="submit" name="delete" class="btn btn-danger" value="削除">
-                  </form>
-                </td>
-              @else
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+              @if($user->is_teacher())
+                @if($company->create_user_id == $user->id)
+                  <td>
+                    <a class="btn btn-secondary" href="/companies/{{ $company->id }}/edit" role="button">編集</a>
+                  </td>
+                  <td>
+                    <form action="{{route('companies.destroy', $company->id)}}" method='post' name="delete_form">
+                      {{ csrf_field() }}
+                      {{ method_field('DELETE') }}
+                      <input type="submit" name="delete" class="btn btn-danger" value="削除">
+                    </form>
+                  </td>
+                @else
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                @endif
               @endif
             </tr>
           @endforeach
