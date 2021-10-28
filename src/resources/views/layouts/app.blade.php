@@ -19,7 +19,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/siderbar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/teacher-style.css') }}" rel="stylesheet">
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
@@ -132,15 +132,7 @@
             @else
                 @if (Auth::user()->is_teacher())
                     <div class="main_container">
-
-                        <sidebar :classes="{{ json_encode(Auth::user()->getTaughtClasses()) }}"></sidebar>
-                        <!-- @foreach (Auth::user()->getTaughtClasses() as $class)
-                                    <div class="card m-3">
-                                        <div class="card-body @if (session('workspace_id') == $class->id) alert-secondary @endif">
-                                            <a href="{{ route('workspaces.change', $class->id) }}">{{ __($class->class_name) }}</a>
-                                        </div>
-                                    </div>
-                                @endforeach -->
+                        <sidebar :classes="{{ json_encode(Auth::user()->getTaughtClasses()) }}" :workspace_id="{{session('workspace_id')}}"></sidebar>
                         <div class="side2">
                             @yield('content')
                         </div>
