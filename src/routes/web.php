@@ -34,6 +34,9 @@ Route::post('students/authenticate', 'StudentsController@authenticate')->name('s
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
     Route::post('store', 'WorkSpacesController@store')->name('workspaces.store');
+    Route::get('{id}/edit', 'WorkSpacesController@edit')->name('workspaces.edit');
+    Route::put('{id}/update', 'WorkSpacesController@update')->name('workspaces.update');
+    Route::delete('{id}/destroy', 'WorkSpacesController@destroy')->name('workspaces.destroy');
     Route::get('{id}/change', 'WorkSpacesController@change')->name('workspaces.change');
     Route::get('showMember', 'WorkSpacesController@showMember')->name('workspaces.showMember');
 });
