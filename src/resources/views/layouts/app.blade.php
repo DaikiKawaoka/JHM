@@ -19,11 +19,10 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/siderbar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
-
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
 </head>
 
 <body>
@@ -126,7 +125,7 @@
                 </div>
             </div>
         </nav>
-        <main class="py-4">
+        <main>
             @guest
                 @yield('content')
             @else
@@ -135,12 +134,12 @@
 
                         <sidebar :classes="{{ json_encode(Auth::user()->getTaughtClasses()) }}"></sidebar>
                         <!-- @foreach (Auth::user()->getTaughtClasses() as $class)
-                                    <div class="card m-3">
-                                        <div class="card-body @if (session('workspace_id') == $class->id) alert-secondary @endif">
-                                            <a href="{{ route('workspaces.change', $class->id) }}">{{ __($class->class_name) }}</a>
+                                        <div class="card m-3">
+                                            <div class="card-body @if (session('workspace_id') == $class->id) alert-secondary @endif">
+                                                <a href="{{ route('workspaces.change', $class->id) }}">{{ __($class->class_name) }}</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                @endforeach -->
+                                    @endforeach -->
                         <div class="side2">
                             @yield('content')
                         </div>
