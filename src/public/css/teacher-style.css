@@ -10,7 +10,6 @@
   display: grid;
   grid-template-columns: 6em minmax(6.25rem, 100%);
 }
-
 .main_container .side1 {
   grid-column: 1/1;
   border-right: 0.1rem solid #8395a7;
@@ -19,12 +18,10 @@
   align-items: center;
   background-color: #485460;
 }
-
 .main_container .side1 a {
   text-decoration: none;
   color: #fff;
 }
-
 .main_container .side1 a .box1 {
   margin-top: 1rem;
   background-color: #636e72;
@@ -35,21 +32,17 @@
   text-align: center;
   display: flex;
 }
-
 .main_container .side1 a .box1:hover {
   border: 0.125rem solid #fff;
   box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
   transition: 0.3s;
 }
-
 .main_container .side1 a #selected {
   border-color: #4cd137;
 }
-
 .main_container .side1 a #selected:hover {
   box-shadow: none;
 }
-
 .main_container .side1 a .box2 {
   background-color: #00b894;
   height: 2.8rem;
@@ -59,13 +52,11 @@
   border-radius: 0.3rem;
   text-align: center;
 }
-
 .main_container .side1 a .box2:hover {
   border: 0.125rem solid #dfe6e9;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   transition: 0.5s;
 }
-
 .main_container .side1 .ope {
   margin-top: 1rem;
   background-color: #485460;
@@ -74,14 +65,12 @@
   margin-bottom: 1rem;
   border-radius: 0.3rem;
 }
-
 .main_container .side1 .ope:hover {
   -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);
   border: 0.125rem solid #fff;
   box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
 }
-
 .main_container .side1 .ope p {
   line-height: 2.8rem;
   text-align: center;
@@ -92,5 +81,3 @@
   grid-column: 2/-1;
   overflow: auto;
 }
-
-

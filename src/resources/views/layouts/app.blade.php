@@ -20,10 +20,11 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/teacher-style.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
 
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
 </head>
 
 <body>
@@ -126,7 +127,7 @@
                 </div>
             </div>
         </nav>
-        <main class="py-4">
+        <main>
             @guest
                 @yield('content')
             @else
