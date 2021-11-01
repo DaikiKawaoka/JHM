@@ -51939,6 +51939,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/sass/workspace_add_student.scss":
+/*!***************************************************!*\
+  !*** ./resources/sass/workspace_add_student.scss ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./node_modules/popper.js/dist/esm/popper.js":
 /*!***************************************************!*\
   !*** ./node_modules/popper.js/dist/esm/popper.js ***!
@@ -55197,6 +55210,7 @@ function compileToFunction(template, options) {
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/js/app": 0,
+/******/ 			"css/workspace_add_student": 0,
 /******/ 			"css/app": 0,
 /******/ 			"css/sidebar": 0,
 /******/ 			"css/_variables": 0
@@ -55249,10 +55263,11 @@ function compileToFunction(template, options) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/_variables.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/app.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/sidebar.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/workspace_add_student","css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/workspace_add_student","css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/_variables.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/workspace_add_student","css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/workspace_add_student","css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/sidebar.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/workspace_add_student","css/app","css/sidebar","css/_variables"], () => (__webpack_require__("./resources/sass/workspace_add_student.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

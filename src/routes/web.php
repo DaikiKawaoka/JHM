@@ -36,5 +36,8 @@ Route::prefix('workspaces')->group(function(){
     Route::post('store', 'WorkSpacesController@store')->name('workspaces.store');
     Route::get('{id}/change', 'WorkSpacesController@change')->name('workspaces.change');
     Route::get('showMember', 'WorkSpacesController@showMember')->name('workspaces.showMember');
+    Route::get('addStudentsShow', 'WorkSpacesController@addStudentsShow')->name('workspaces.addStudentsShow');
+    Route::post('addStudents', 'WorkSpacesController@addStudents')->name('workspaces.addStudents');
+
 });
 Route::get('/home', 'HomeController@index')->name('home');

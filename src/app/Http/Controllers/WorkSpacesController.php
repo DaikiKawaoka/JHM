@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\WorkSpaces;
+use App\Students;
+use App\Membership;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +47,7 @@ class WorkSpacesController extends Controller
             'class_name' => $request->input('name'),
             'year' => $request->input('year'),
         ]);
-        return redirect()->route('companies.index');
+        return redirect()->route('workspaces.addStudentsShow');
     }
 
     public function change($id, Request $request){
@@ -66,5 +68,45 @@ class WorkSpacesController extends Controller
         $workspace = WorkSpaces::find($workspace_id);
         $member = $workspace->getMember();
         return view('workspaces.showMember')->with(['member' => $member]);
+    }
+
+    public function addStudentsShow(){
+        $login_user = Auth::user();
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+        $workspace_id = Cookie::get('workspace_id');
+
+        $students = Students::all();
+        $added_students_id = \DB::table('membership')->select('student_id')->where('workspace_id',$workspace_id)->pluck('student_id');
+
+
+        return view('workspaces.addStudentsShow')->with(['students' => $students, 'added_students_id' => $added_students_id]);
+    }
+
+    public function addStudents(Request $request){
+        $login_user = Auth::user();
+        $workspace_id = Cookie::get('workspace_id');
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+
+        $added_students_id = \DB::table('membership')->select('student_id')->where('workspace_id',$workspace_id)->pluck('student_id');
+
+        foreach ($request->students as $student_id) {
+            $judg = 0;
+            foreach ($added_students_id as $added_student_id) {
+                if ($student_id == $added_student_id) {
+                    $judg = 1;
+                }
+            }
+
+            if ($judg == 0) {
+                membership::create([
+                    'workspace_id' => $workspace_id,
+                    'student_id' => $student_id,
+                ]);
+            }
+        }
+
+        return redirect()->route('workspaces.showMember');
     }
 }
