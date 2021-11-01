@@ -26,6 +26,14 @@ Route::put('users/updateStudentProfile/{id}', 'UsersController@updateStudentProf
 Route::put('users/updateTeacherProfile/{id}', 'UsersController@updateTeacherProfile')->name('users.updateTeacherProfile');
 Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name('users.updatePassword');
 Route::resource('companies', 'CompaniesController');
+
+Route::get('student/companies/create', 'StudentCompaniesController@create')->name('studentCompanies.create');
+Route::get('student/companies/{id}', 'StudentCompaniesController@show')->name('studentCompanies.show');
+Route::post('student/companies', 'StudentCompaniesController@store')->name('studentCompanies.store');
+Route::put('student/companies/{id}', 'StudentCompaniesController@update')->name('studentCompanies.update');
+Route::delete('student/companies/{id}', 'StudentCompaniesController@destroy')->name('studentCompanies.destroy');
+Route::get('student/companies/{id}/edit', 'StudentCompaniesController@edit')->name('studentCompanies.edit');
+
 Route::resource('entries', 'EntriesController');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
@@ -34,6 +42,9 @@ Route::post('students/authenticate', 'StudentsController@authenticate')->name('s
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
     Route::post('store', 'WorkSpacesController@store')->name('workspaces.store');
+    Route::get('{id}/edit', 'WorkSpacesController@edit')->name('workspaces.edit');
+    Route::put('{id}/update', 'WorkSpacesController@update')->name('workspaces.update');
+    Route::delete('{id}/destroy', 'WorkSpacesController@destroy')->name('workspaces.destroy');
     Route::get('{id}/change', 'WorkSpacesController@change')->name('workspaces.change');
     Route::get('showMember', 'WorkSpacesController@showMember')->name('workspaces.showMember');
     Route::get('addStudentsShow', 'WorkSpacesController@addStudentsShow')->name('workspaces.addStudentsShow');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class LoginController extends Controller
 {
@@ -43,5 +44,9 @@ class LoginController extends Controller
     {
         $user->login_at = now();
         $user->save();
+        //選択しているワークスペースをセッションに保存する
+        if($workspace_id = Cookie::get('workspace_id')){
+            $request->session()->put('workspace_id', $workspace_id);
+        }
     }
 }

@@ -2,14 +2,12 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">生徒進捗一覧</div>
-            </div>
-        </div>
-    </div>
     @if(!($students->isEmpty()))
+    <header class="header_container">
+      <div class="title_content">
+        <h5>{{$workspace->year}}年度 就職活動リスト</h5>
+        <h6>{{ $workspace->class_name }}科 / 担任：{{ Auth::user()->name }}</h6>
+      </div>
       <div class="btn-group">
         <form action="{{route('progress.excel_export')}}" method='post'>
             {{ csrf_field() }}
@@ -17,14 +15,13 @@
             <input type="submit" class="btn btn-success btn-lg mb-3 mr-2" value="Excelダウンロード">
         </form>
       </div>
-      <h5>{{$workspace->year}}年度 就職活動リスト</h5>
-      <h6>{{ $workspace->class_name }}科 / 担任：{{ Auth::user()->name }}</h6>
+    </header>
       <div style="overflow-y: scroll;">
         <table class="table table-bordered" style="width: {{$table_width_px}}px;">
           <thead>
               <tr>
-                <th rowspan="4" style="width: 65px; text-align: center; vertical-align: middle;  padding:0;">出席番号</th>
-                <th rowspan="4" style="width: 100px; text-align: center; vertical-align: middle;  padding:0;">学生氏名</th>
+                <th class="fixed" rowspan="4" style="width: 65px; text-align: center; vertical-align: middle;  padding:0;">出席番号</th>
+                <th class="fixed2" rowspan="4" style="width: 100px; text-align: center; vertical-align: middle;  padding:0;">学生氏名</th>
                 @for ($i = 0; $i < $most_many_entry_num ; $i++)
                   <th colspan="{{$max_progress_count}}" style="width: 400px; text-align: center; padding:0;">応募先企業名</th>
                 @endfor
@@ -50,9 +47,9 @@
           <tbody>
             @foreach($students as $student)
               <tr>
-                <td rowspan="4" style="width: 65px; text-align: center; vertical-align: middle;  padding:0;">{{$student->attend_num}}</td>
-                <td rowspan="4" style="width: 100px; text-align: center; vertical-align: middle;  padding:0;">{{$student->name}}</td>
-                <?php $i = 0;?>
+                <td class="fixed" rowspan="4" style="width: 65px; text-align: center; vertical-align: middle;  padding:0;">{{$student->attend_num}}</td>
+                <td class="fixed2" rowspan="4" style="width: 100px; text-align: center; vertical-align: middle;  padding:0;">{{$student->name}}</td>
+                <?php $i = 0; ?>
                 @foreach($student->getMyEntries() as $entry)
                   <td colspan="{{$max_progress_count}}" style="text-align: center; padding:0;">
                   @if($entry->company_name != null)
@@ -61,7 +58,7 @@
                     {{$entry -> student_company_name}}
                   @endif
                   </td>
-                  <?php $i++;?>
+                  <?php $i++; ?>
                 @endforeach
                 @if($i < $most_many_entry_num)
                   @for(; $i < $most_many_entry_num; $i++)
@@ -73,14 +70,14 @@
               </tr>
 
               <tr>
-                <?php $entry_count = 0;?>
+                <?php $entry_count = 0; ?>
                 <!-- 自分がエントリーした会社数分ループし値を代入 -->
                 @foreach($student->getMyEntries() as $entry)
-                  <?php $entry_count++;?>
-                  <?php $progress_count = 0;?>
+                  <?php $entry_count++; ?>
+                  <?php $progress_count = 0; ?>
                   <!-- 1つのエントリーに登録した進捗分ループし値を代入 -->
                   @foreach($entry->getProgressList() as $progress)
-                    <?php $progress_count++;?>
+                    <?php $progress_count++; ?>
                     <td style="width: 100px; text-align: center; padding:0;">
                       {{$progress->action}}
                     </td>
@@ -106,12 +103,12 @@
 
               <!-- 上のfor文と構造は同じ（1つのエントリーに5つの進捗を入れる） -->
               <tr>
-                <?php $entry_count = 0;?>
+                <?php $entry_count = 0; ?>
                 @foreach($student->getMyEntries() as $entry)
-                  <?php $entry_count++;?>
-                  <?php $progress_count = 0;?>
+                  <?php $entry_count++; ?>
+                  <?php $progress_count = 0; ?>
                   @foreach($entry->getProgressList() as $progress)
-                    <?php $progress_count++;?>
+                    <?php $progress_count++; ?>
                     <td style="width: 100px; text-align: center; padding:0;">
                       {{$progress->action_date->format('Y/m/d')}}
                     </td>
@@ -135,14 +132,20 @@
 
               <!-- 上のfor文と構造は同じ（1つのエントリーに5つの進捗を入れる） -->
               <tr>
-                <?php $entry_count = 0;?>
+                <?php $entry_count = 0; ?>
                 @foreach($student->getMyEntries() as $entry)
-                  <?php $entry_count++;?>
-                  <?php $progress_count = 0;?>
+                  <?php $entry_count++; ?>
+                  <?php $progress_count = 0; ?>
                   @foreach($entry->getProgressList() as $progress)
-                    <?php $progress_count++;?>
+                    <?php $progress_count++; ?>
                     <td style="width: 100px; text-align: center; padding:0;">
-                      {{$progress->state}}
+                      @if($progress->state == "◯")
+                        <i class="fas fa-check-circle my-success" aria-hidden="true"></i>
+                      @elseif($progress->state == "×")
+                      <i class="fas fa-times-circle my-fail" aria-hidden="true"></i>
+                      @else
+                        {{$progress->state}}
+                      @endif
                     </td>
                   @endforeach
                   @if($progress_count < $max_progress_count)

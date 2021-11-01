@@ -12,7 +12,7 @@
             @endif
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('companies.store') }}">
+                    <form method="POST" action="{{ route('studentCompanies.store') }}">
                         @csrf
 
                         <div class="form-group row">
@@ -50,43 +50,13 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="url" class="col-md-4 col-form-label text-md-right">{{ __('ホームページURL') }}</label>
-
+                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('確認') }}</label>
                             <div class="col-md-7">
-                                <input id="url" type="text" class="form-control @error('url') is-invalid @enderror" name="url" value="{{ old('url') }}" autocomplete="url" autofocus>
-
-                                @error('url')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
+                                <h6>※この会社情報は{{Auth::user()->name}}さんと先生のみ閲覧できます。</h6><br>
+                                <h6>※他の生徒がこの会社情報を見てエントリーすることはありません。</h6><br>
+                                <h6>※この会社情報は先生が{{Auth::user()->name}}さんの就活の進捗を確認するときに使用されます。</h6>
                             </div>
                         </div>
-
-                        <div class="form-group row">
-                            <label for="deadline" class="col-md-4 col-form-label text-md-right">応募締切</label>
-                            <div class="col-md-7">
-                                <input type="date" class="form-control  @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ old('deadline') }}" autocomplete="deadline">
-                                @error('deadline')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('備考') }}</label>
-                            <div class="col-md-7">
-                                <textarea id="remarks" class="form-control" name='remarks' placeholder="備考" rows="8">{{ old('remarks') }}</textarea>
-                                @error('remarks')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-                        </div>
-
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">

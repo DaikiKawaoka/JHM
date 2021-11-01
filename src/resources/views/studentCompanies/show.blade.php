@@ -19,57 +19,40 @@
             </div>
         </div>
     </div>
-    @if ($entry)
-        <div class="alert alert-success ">
-            あなたはこの求人にエントリー済みです。
-        </div>
-    @endif
     @if ($company)
       <table class="table table-bordered">
           <thead>
               <tr>
               <th scope="col">会社名</th>
-              <th scope="col">勤務先</th>
-              <th scope="col">ホームページURL</th>
-              <th scope="col">応募締切日</th>
-              <th scope="col">備考</th>
+              <th scope="col">登録者</th>
               @if(!(Auth::user()->is_teacher()))
-                <th scope="col">エントリー</th>
+                <th scope="col">編集</th>
+                <th scope="col">削除</th>
               @endif
               </tr>
           </thead>
           <tbody>
               <tr>
                 <td scope="row">{{ $company->name }}</th>
-                <td scope="row">{{ $company->prefecture }}</th>
-                <td scope="row">{{ $company->url }}</th>
-                <td scope="row">{{ $company->deadline }}</th>
-                <td scope="row">{{ $company->remarks }}</th>
-                @if(!(Auth::user()->is_teacher()))
-                  @if (!($entry))
-                    <td>
-                    <form action="{{route('entries.store')}}" method='post'>
+                <td scope="row">{{ $company->create_student_name }}</th>
+                @if($company->create_student_id == Auth::id() && !(Auth::user()->is_teacher()))
+                  <td>
+                    <a class="btn btn-secondary" href="/student/companies/{{ $company->id }}/edit" role="button">編集</a>
+                  </td>
+                  <td>
+                    <form action="{{route('studentCompanies.destroy', $company->id)}}" method='post' name="delete_form">
                       {{ csrf_field() }}
-                      {{ method_field('POST') }}
-                      <input type="submit" name="entry" value="エントリー" class="btn btn-success">
-                      <input type="hidden" name="company_id" value="{{ $company->id }}">
+                      {{ method_field('DELETE') }}
+                      <input type="submit" name="delete" class="btn btn-danger" value="削除">
                     </form>
-                    </td>
-                  @else
-                    <td>
-                      <form action="{{route('entries.destroy', $entry->id)}}" method="post">
-                        {{ csrf_field() }}
-                        {{ method_field('delete') }}
-                        <button type="submit" class="btn btn-danger">取り消し</button>
-                      </form>
-                    </td>
-                  @endif
+                  </td>
                 @endif
+
               </tr>
           </tbody>
       </table>
     @endif
-    @if ($entry)
+    @if ($entry && !Auth::user()->is_teacher())
       @if(!($progress_list->isEmpty()))
       <br/>
       <br/>
@@ -150,7 +133,7 @@
                 <input type="date" class="form-control" name="action_date" required autocomplete="action_date">
               </td>
               <td><input type="submit" name="progress" value="登録" class="btn btn-success"></td>
-              <input type="hidden" name="company_type" value="teacher_created_company">
+              <input type="hidden" name="company_type" value="student_created_company">
               <input type="hidden" name="company_id" value="{{ $company->id }}">
             </tr>
           </tbody>

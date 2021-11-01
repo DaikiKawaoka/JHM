@@ -77,12 +77,10 @@ class ProgressController extends Controller
 
     public function store(Request $request)
     {
-        $user = Auth::user();
+        $login_user = Auth::user();
 
-        if($user->is_teacher()){
-            $session_name = 'status-error';
-            $session_message = 'あなたは教師なので進捗登録できません。';
-            return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
+        if($login_user->is_teacher()){
+            return redirect()->route('companies.index')->with('status-error','処理権限がありません');
         }
 
         $request->validate([
@@ -106,10 +104,15 @@ class ProgressController extends Controller
         $action = $request->input('action');
         $state = $request->input('state');
         $action_date = $request->input('action_date');
-        $entry = Entry::
-                    where('student_id', $user->id)
-                    ->where('company_id', $company_id)
-                    ->first();
+        $entry = null;
+        if ($request->input('company_type') == 'teacher_created_company') {
+            //求人情報の会社のエントリー
+            $entry = $login_user->getEntry($company_id);
+        }else{
+            //生徒自身が登録した会社のエントリー
+            $entry = $login_user->getMyCompanyEntry($company_id);
+        }
+
         $session_name = '';
         $session_message = '';
         $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT');
@@ -118,12 +121,12 @@ class ProgressController extends Controller
         if($entry){
             // 会社にエントリーしている場合
             $progress = Progress::
-                    where('student_id', $user->id)
+                    where('student_id', $login_user->id)
                     ->where('entry_id', $entry->id)->get();
             if(!($progress) || $progress->count() < $MAX_PROGRESS_COUNT){
                 // 同じ進捗が登録されていない場合
                 Progress::create([
-                    'student_id' => $user->id,
+                    'student_id' => $login_user->id,
                     'entry_id' => $entry->id,
                     'action' => $action,
                     'state' => $state,
@@ -139,88 +142,92 @@ class ProgressController extends Controller
             $session_name = 'status-error';
             $session_message = 'エントリーしていないので進捗を登録できません。';
         }
-        return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
+
+        if ($request->input('company_type') == 'teacher_created_company') {
+            //求人情報の会社のエントリー
+            return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
+        }else{
+            //生徒自身が登録した会社のエントリー
+            return redirect()->route('studentCompanies.show', ['id' => $company_id])->with($session_name,$session_message);
+        }
     }
 
     public function update(Request $request , $progress_id)
     {
-        // $request->validate([
-        //     'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
-        //     'action_date' => ['required','date'],
-        //     'company_id' => ['required','integer'],
-        // ],[
-        //     'state.required' => '状態は必須です。',
-        //     'state.string' => '文字列で入力してください。',
-        //     'state.regex' => '選択欄からお選びください。',
-        //     'action_date.required' => '実施日は必須です。',
-        //     'action_date.date' => '日にちを入力してください。',
-        //     'company_id.required' => '会社詳細ページから変更してください。',
-        //     'company_id.integer' => '会社IDが不正です。',
-        // ]);
+        $request->validate([
+            'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
+            'action_date' => ['required','date'],
+            'company_id' => ['required','integer'],
+        ],[
+            'state.required' => '状態は必須です。',
+            'state.string' => '文字列で入力してください。',
+            'state.regex' => '選択欄からお選びください。',
+            'action_date.required' => '実施日は必須です。',
+            'action_date.date' => '日にちを入力してください。',
+            'company_id.required' => '会社詳細ページから変更してください。',
+            'company_id.integer' => '会社IDが不正です。',
+        ]);
 
-        // $user = Auth::user();
-        // $company_id = $request->input('company_id');
-        // $state = $request->input('state');
-        // $action_date = $request->input('action_date');
-        // $entry = Entry::
-        //             where('user_id', $user->id)
-        //             ->where('company_id', $company_id)
-        //             ->first();
-        // $session_name = '';
-        // $session_message = '';
+        $login_user = Auth::user();
+        $company_id = $request->input('company_id');
+        $state = $request->input('state');
+        $action_date = $request->input('action_date');
+        $entry = Entry::
+                    where('user_id', $login_user->id)
+                    ->where('company_id', $company_id)
+                    ->first();
+        $session_name = '';
+        $session_message = '';
 
-        // if($user->is_teacher){
-        //     $session_name = 'status-error';
-        //     $session_message = 'あなたは教師なのでこの処理はできません。';
-        //     return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
-        // }
+        if($login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        // if($entry){
-        //     // 会社にエントリーしている場合
-        //     $progress = Progress::where('id', $progress_id)
-        //                 ->where('user_id', $user->id)
-        //                 ->first();
-        //     if($progress){
-        //         // 進捗が登録されている場合update
-        //         $progress->state = $state;
-        //         $progress->action_date = $action_date;
-        //         $progress->save();
+        if($entry){
+            // 会社にエントリーしている場合
+            $progress = Progress::where('id', $progress_id)
+                        ->where('student_id', $login_user->id)
+                        ->first();
+            if($progress){
+                // 進捗が登録されている場合update
+                $progress->state = $state;
+                $progress->action_date = $action_date;
+                $progress->save();
 
-        //         $session_name = 'status';
-        //         $session_message = '進捗を変更しました。';
-        //     }else{
-        //         $session_name = 'status-error';
-        //         $session_message = "進捗が登録されていないのでこの処理はできません。";
-        //     }
-        // }else{
-        //     $session_name = 'status-error';
-        //     $session_message = "エントリーしていないのでこの処理はできません。";
-        // }
-        // return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
+                $session_name = 'status';
+                $session_message = '進捗を変更しました。';
+            }else{
+                $session_name = 'status-error';
+                $session_message = "進捗が登録されていないのでこの処理はできません。";
+            }
+        }else{
+            $session_name = 'status-error';
+            $session_message = "エントリーしていないのでこの処理はできません。";
+        }
+        return redirect()->route('companies.show', ['company' => $company_id])->with($session_name,$session_message);
     }
 
     public function destroy($progress_id)
     {
-        // $user = Auth::user();
-        // $progress = Progress::find($progress_id);
-        // $session_name = '';
-        // $session_message = '';
-        // if($progress){
-        //     if($user->id != $progress->user_id){
-        //         // 自分の進捗IDではない場合
-        //         $session_name = 'status-error';
-        //         $session_message = '他人の進捗は削除できません。';
-        //     }else{
-        //         // 進捗削除処理
-        //         Progress::destroy($progress->id);
-        //         $session_name = 'status';
-        //         $session_message = '進捗（'.$progress->action.'）を削除しました。';
-        //     }
-        // }else{
-        //     $session_name = 'status-error';
-        //     $session_message = '進捗の削除処理に失敗しました。';
-        // }
-        // return redirect()->back()->with($session_name,$session_message);
+        $login_user = Auth::user();
+        $progress = Progress::find($progress_id);
+        $session_name = '';
+        $session_message = '';
+        if($progress){
+            if($login_user->id != $progress->student_id){
+                // 自分の進捗IDではない場合
+                $session_name = 'status-error';
+                $session_message = '他人の進捗は削除できません。';
+            }else{
+                // 進捗削除処理
+                Progress::destroy($progress->id);
+                $session_name = 'status';
+                $session_message = '進捗（'.$progress->action.'）を削除しました。';
+            }
+        }else{
+            $session_name = 'status-error';
+            $session_message = '進捗の削除処理に失敗しました。';
+        }
+        return redirect()->back()->with($session_name,$session_message);
     }
 
     public function excel_export(Request $request)
