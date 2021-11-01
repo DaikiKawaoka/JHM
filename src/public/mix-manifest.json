@@ -2,5 +2,6 @@
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/css/sidebar.css": "/css/sidebar.css",
+    "/css/companies.css": "/css/companies.css",
     "/css/_variables.css": "/css/_variables.css"
 }
