@@ -63,13 +63,43 @@ class Students extends Authenticatable{
                 ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
     }
 
-    public function getMyEntry($company_id)
+    //求人情報にある会社のエントリーを取得
+    public function getEntry($company_id)
     {
-        return Entry::select('entries.id','entries.student_id','entries.company_id','companies.name')
-                ->join('students', 'entries.student_id', '=', 'students.id')
-                ->join('companies', 'entries.company_id', '=', 'companies.id')
-                ->where('students.id', $this->id)
-                ->where('companies.id', $company_id)
+        return Entry::select('entries.id')
+                ->where('student_id', $this->id)
+                ->where('company_id', $company_id)
                 ->first();
+    }
+
+    //自分で登録した会社のエントリーを取得
+    public function getMyCompanyEntry($company_id)
+    {
+        return Entry::select('entries.id')
+                ->where('student_id', $this->id)
+                ->where('student_company_id', $company_id)
+                ->first();
+    }
+
+    //求人情報からエントリーした会社一覧を取得
+    public function getEnteredCompanies()
+    {
+        return Company::select(['companies.id','companies.name'])
+                ->join('entries', 'companies.id', '=', 'entries.company_id')
+                ->join('students', 'entries.student_id', '=', 'students.id')
+                ->where('students.id', $this->id)
+                ->orderBy('entries.id', 'asc')
+                ->get();
+    }
+
+    //自分が登録した会社一覧を取得
+    public function getMyCompanies()
+    {
+        return StudentCompany::select(['student_companies.id','student_companies.name'])
+                ->join('entries', 'student_companies.id', '=', 'entries.student_company_id')
+                ->join('students', 'entries.student_id', '=', 'students.id')
+                ->where('students.id', $this->id)
+                ->orderBy('entries.id', 'asc')
+                ->get();
     }
 }

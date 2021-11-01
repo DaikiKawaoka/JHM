@@ -21,4 +21,15 @@ class Entry extends Model
                 ->orderBy('action_date','asc')
                 ->get();
     }
+
+    public function hasProgress()
+    {
+        $progress = Progress::where('entry_id', $this->id)
+                    ->orderBy('action_date','asc')
+                    ->first();
+        if($progress){
+            return true;
+        }
+        return false;
+    }
 }

@@ -8,7 +8,7 @@ use App\Company;
 use App\Entry;
 use App\User;
 use App\Progress;
-use App\StundentCompany;
+use App\StudentCompany;
 
 class CompaniesController extends Controller
 {
@@ -43,6 +43,9 @@ class CompaniesController extends Controller
      */
     public function create()
     {
+        $login_user = Auth::user();
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         return view('companies.create');
 
@@ -55,46 +58,29 @@ class CompaniesController extends Controller
     public function store(Request $request)
     {
         $login_user = Auth::user();
-        if($login_user->is_teacher()){
+        if(!$login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-            $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'prefecture' => ['nullable', 'string', 'max:3'],
-                'url' => ['url', 'nullable', 'max:255'],
-                'deadline' => ['date', 'nullable','after:yesterday'],
-                'remarks' => ['string','nullable'],
-            ],[
-                'name.required' => '会社名は必須項目です。',
-                'name.max' => '会社名は必須項目です。',
-                'deadline.after' => '締切日は本日以降にしてください。',
-            ]);
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'prefecture' => ['nullable', 'string', 'max:3'],
+            'url' => ['url', 'nullable', 'max:255'],
+            'deadline' => ['date', 'nullable','after:yesterday'],
+            'remarks' => ['string','nullable'],
+        ],[
+            'name.required' => '会社名は必須項目です。',
+            'name.max' => '会社名は必須項目です。',
+            'deadline.after' => '締切日は本日以降にしてください。',
+        ]);
 
-            Company::create([
-                'name' => $request->input('name'),
-                'prefecture' => $request->input('prefecture'),
-                'url' => $request->input('url'),
-                'remarks' => $request->input('remarks'),
-                'deadline' => $request->input('deadline'),
-                'create_user_id' => $login_user->id,
-            ]);
-
-        }else{
-
-            $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'prefecture' => ['nullable', 'string', 'max:3'],
-            ],[
-                'name.required' => '会社名は必須項目です。',
-                'name.max' => '会社名は必須項目です。',
-            ]);
-
-            StundentCompany::create([
-                'name' => $request->input('name'),
-                'prefecture' => $request->input('prefecture'),
-                'create_student_id' => $login_user->id,
-            ]);
-
-        }
+        Company::create([
+            'name' => $request->input('name'),
+            'prefecture' => $request->input('prefecture'),
+            'url' => $request->input('url'),
+            'remarks' => $request->input('remarks'),
+            'deadline' => $request->input('deadline'),
+            'create_user_id' => $login_user->id,
+        ]);
 
         return redirect()->route('companies.index');
     }
@@ -110,24 +96,26 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
-        $entry = $login_user->getMyEntry($company->id);
+
+        if(!$company)
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
+
+        $entry = null;
+
+        if(!$login_user->is_teacher()){
+            $entry = $login_user->getEntry($company->id);
+        }
         $progress_list = null;
         // エントリーしているか分岐\
         if($entry){
-            $progress_list = Progress::
-                    where('student_id', $login_user->id)
-                    ->where('entry_id', $entry->id)
-                    ->orderBy('action_date','asc')
-                    ->get();
+            $progress_list = $entry->getProgressList();
         }
         return view('companies.show')->with([
             "company" => $company,
             "entry" => $entry,
             "progress_list" => $progress_list,
-            "user" => $login_user,
         ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -140,13 +128,10 @@ class CompaniesController extends Controller
         $login_user = Auth::user();
         $company = Company::find($id);
 
-        if(!$login_user->is_teacher())
-            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
-
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if($company->create_user_id != $login_user->id)
+        if(!$login_user->is_teacher() || $company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         return view('companies.edit')->with('company', $company,);
@@ -165,13 +150,10 @@ class CompaniesController extends Controller
         $login_user = Auth::user();
         $company = Company::find($id);
 
-        if(!$login_user->is_teacher())
-            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
-
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if($company->create_user_id != $login_user->id)
+        if(!$login_user->is_teacher() || $company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         $request->validate([
@@ -185,6 +167,14 @@ class CompaniesController extends Controller
             'name.max' => '会社名は必須項目です。',
             'deadline.after' => '締切日は本日以降にしてください。',
         ]);
+
+        $company->name = $request->input('name');
+        $company->prefecture = $request->input('prefecture');
+        $company->url = $request->input('url');
+        $company->remarks = $request->input('remarks');
+        $company->deadline = $request->input('deadline');
+
+        $company->save();
 
         return redirect()->route('companies.show', $company->id)->with('status','会社情報を更新しました');
     }
@@ -201,13 +191,10 @@ class CompaniesController extends Controller
         $login_user = Auth::user();
         $company = Company::find($id);
 
-        if(!$login_user->is_teacher())
-            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
-
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if($company->create_user_id != $login_user->id)
+        if(!$login_user->is_teacher() || $company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         $company->delete();
