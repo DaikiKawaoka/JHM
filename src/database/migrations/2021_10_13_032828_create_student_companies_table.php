@@ -19,7 +19,6 @@ class CreateStudentCompaniesTable extends Migration
             $table->string('prefecture')->nullable();
             $table->unsignedBigInteger('create_student_id');
             $table->foreign('create_student_id')->references('id')->on('students'); //外部キー参照
-            $table->softDeletes();
             $table->timestamps();
         });
     }

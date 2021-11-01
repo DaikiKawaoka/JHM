@@ -26,6 +26,14 @@ Route::put('users/updateStudentProfile/{id}', 'UsersController@updateStudentProf
 Route::put('users/updateTeacherProfile/{id}', 'UsersController@updateTeacherProfile')->name('users.updateTeacherProfile');
 Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name('users.updatePassword');
 Route::resource('companies', 'CompaniesController');
+
+Route::get('student/companies/create', 'StudentCompaniesController@create')->name('studentCompanies.create');
+Route::get('student/companies/{id}', 'StudentCompaniesController@show')->name('studentCompanies.show');
+Route::post('student/companies', 'StudentCompaniesController@store')->name('studentCompanies.store');
+Route::put('student/companies/{id}', 'StudentCompaniesController@update')->name('studentCompanies.update');
+Route::delete('student/companies/{id}', 'StudentCompaniesController@destroy')->name('studentCompanies.destroy');
+Route::get('student/companies/{id}/edit', 'StudentCompaniesController@edit')->name('studentCompanies.edit');
+
 Route::resource('entries', 'EntriesController');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');

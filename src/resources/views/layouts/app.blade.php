@@ -67,16 +67,20 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    @if (!Auth::user()->is_teacher())
+                                    @if (Auth::user()->is_teacher())
+                                        <a class="dropdown-item" href="{{ route('companies.create') }}">
+                                            求人登録
+                                        </a>
+                                    @else
                                         <a class="dropdown-item" href="{{ route('entries.index') }}">
                                             エントリー済み会社一覧
+                                        </a>
+                                        <a class="dropdown-item" href="{{ route('studentCompanies.create') }}">
+                                            求人登録
                                         </a>
                                     @endif
                                     <a class="dropdown-item" href="{{ route('companies.index') }}">
                                         求人一覧
-                                    </a>
-                                    <a class="dropdown-item" href="{{ route('companies.create') }}">
-                                        求人登録
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST"

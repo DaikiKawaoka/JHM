@@ -23,7 +23,6 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-            <th scope="col">ID</th>
             <th scope="col">会社名</th>
             <th scope="col">勤務場所</th>
             <th scope="col">URL</th>
@@ -41,7 +40,6 @@
         <tbody>
           @foreach ($companies as $company)
             <tr>
-              <td scope="row">{{ $company->id }}</th>
               <td><a class="" href="/companies/{{ $company->id }}">{{ $company->name }}</a></th>
               <td>{{ $company->prefecture }}</td>
               <td>{{ $company->url }}</td>

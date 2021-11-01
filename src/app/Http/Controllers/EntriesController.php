@@ -19,13 +19,17 @@ class EntriesController extends Controller
     public function index()
     {
 
-        $user = Auth::user();
-        if(!$user->is_teacher()){
-            $entered_companies = $user->getMyEntries();
-            return view('entries/index')->with('entered_companies', $entered_companies);
+        $login_user = Auth::user();
+        if($login_user->is_teacher()){
+            // 教師はエントリー一覧ページに遷移できない
+            return redirect()->route('home');
         }
-        // 教師はエントリー一覧ページに遷移できない
-        return redirect()->route('home');
+
+        $entered_companies = $login_user->getEnteredCompanies();
+        $entered_student_companies = $login_user->getMyCompanies();
+        return view('entries/index')
+        ->with(['entered_companies' => $entered_companies,"entered_student_companies" => $entered_student_companies]);
+
     }
     /**
      * Show the form for creating a new resource.
@@ -58,7 +62,6 @@ class EntriesController extends Controller
             if($is_entered){
                 $message = '過去にあなたは'.$company->name.'にエントリー済みです。';
             }else{
-                // dd($user->id);
                 Entry::create([
                     'student_id' => $user->id,
                     'company_id' => $company->id,
@@ -115,16 +118,16 @@ class EntriesController extends Controller
     public function destroy($id)
     {
         $message = '';
-        $user = Auth::user();
+        $login_user = Auth::user();
         $entry = Entry::find($id);
-        if(!($user->is_teacher)){
+        if(!($login_user->is_teacher())){
             if($entry){
                 //エントリーしていれば
                 $entry -> delete();
             }else{
                 $message = 'あなたはエントリーしていないのでこの処理はできません。';
             }
-            return redirect()->route('companies.index')->with('status-error',$message);;
+            return redirect()->route('entries.index')->with('status-error',$message);;
         }else{
             $message = 'あなたは教師なのでこの処理はできません。';
             return redirect()->route('home')->with('status-error',$message);
