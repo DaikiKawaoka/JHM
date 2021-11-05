@@ -30,6 +30,13 @@
             </a>
         </div>
         <div class="ope">
+            <a href="/workspaces/calendar">
+                <p>
+                    <i class="far fa-calendar-alt"></i>
+                </p>
+            </a>
+        </div>
+        <div class="ope">
             <a :href="'/workspaces/' + workspace_id + '/edit'">
                 <p>
                     <i class="fas fa-cog"></i>

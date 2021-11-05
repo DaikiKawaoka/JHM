@@ -130,7 +130,7 @@ class WorkSpacesController extends Controller
         $member = $workspace->getMember();
         return view('workspaces.showMember')->with(['member' => $member]);
     }
-
+   
     public function addStudentsShow(){
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
@@ -148,7 +148,7 @@ class WorkSpacesController extends Controller
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $workspace_id = Cookie::get('workspace_id');
-        $workspace = WorkSpaces::find($workspace_id);
+        $workspace = WorkSpaces::find($workspace_id);    
 
         if ($workspace->getMember()) {
             return redirect()->route('workspaces.addStudentsShow');
@@ -157,6 +157,14 @@ class WorkSpacesController extends Controller
         $students = Students::all();
 
         return view('workspaces.createWorkspaceStudents')->with(['students' => $students]);
+    }
+  
+    public function calendar(Request $request){
+        //ワークスペース作成者でなければ、アクセスさせない
+        if($login_user->id != $workspace->teacher_id)
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+        $progress = $login_user->getMemberProgress($workspace_id);
+        return view('workspaces.calendar')->with('progress', $progress);
     }
 
     public function addStudents(Request $request){

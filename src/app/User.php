@@ -83,4 +83,17 @@ class User extends Authenticatable
         }
         return $most_many_entry_num;
     }
+
+    //生徒の進捗を取得する
+    public function getMemberProgress($workspace_id){
+        $progress = Progress::select([
+            'progress.action', 'progress.state', 'progress.action_date', 'students.name'
+        ])
+            ->join('membership', 'membership.student_id', 'progress.student_id')
+            ->join('students', 'students.id', 'progress.student_id')
+            ->where('membership.workspace_id', $workspace_id)
+            ->orderBy('progress.action_date')
+            ->get();
+        return $progress;
+    }
 }

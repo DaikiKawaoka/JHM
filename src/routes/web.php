@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WorkSpacesController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -47,6 +48,7 @@ Route::prefix('workspaces')->group(function(){
     Route::delete('{id}/destroy', 'WorkSpacesController@destroy')->name('workspaces.destroy');
     Route::get('{id}/change', 'WorkSpacesController@change')->name('workspaces.change');
     Route::get('showMember', 'WorkSpacesController@showMember')->name('workspaces.showMember');
+    Route::get('calendar', 'WorkSpacesController@calendar')->name('workspaces.calendar');
     Route::get('addStudentsShow', 'WorkSpacesController@addStudentsShow')->name('workspaces.addStudentsShow');
     Route::get('createStudentsShow', 'WorkSpacesController@createStudentsShow')->name('workspaces.createStudentsShow');
     Route::post('addStudents', 'WorkSpacesController@addStudents')->name('workspaces.addStudents');
