@@ -25,6 +25,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
 
+    <link rel="stylesheet" href="{{ asset('css/workspace_add_student.css') }}" />
+
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
 </head>
 
@@ -101,7 +103,7 @@
                                         <a class="dropdown-item" href="{{ route('workspaces.showMember') }}">
                                             生徒一覧
                                         </a>
-                                        <a class="dropdown-item" href="{{ route('users.create') }}">
+                                        <a class="dropdown-item" href="{{ route('workspaces.addStudentsShow') }}">
                                             生徒登録
                                         </a>
 
