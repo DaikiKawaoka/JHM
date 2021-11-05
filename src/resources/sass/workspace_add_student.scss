@@ -1,0 +1,97 @@
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans);
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+
+    .container {
+        right: 10%;
+
+        #student-add-col {
+            margin-top: 100px;
+
+            .student-add-checkbox {
+                position: absolute;
+                left: -9999px;
+
+                &:focus + label {
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+                }
+
+                &:checked + label {
+                    background-color: #98b3d1;
+                    color: #fff;
+
+                    &::before {
+                        background-color: #fff;
+                    }
+                }
+            }
+            .student-add-label {
+                display: block;
+                position: relative;
+                margin: 20px;
+                padding: 15px 30px 15px 62px;
+                border: 3px solid #6a8494;
+                border-radius: 100px;
+                background-color: #fff;
+                white-space: nowrap;
+                cursor: pointer;
+                user-select: none;
+                font: 1.4em/1 'Noto Sans', sans-serif;
+
+                &::before {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    top: 10px;
+                    bottom: 10px;
+                    left: 10px;
+                    width: 32px;
+                    border: 3px solid #6a8494;
+                    border-radius: 100px;
+                    transition: background-color .2s;
+                }
+                &:hover {
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+                }
+            }
+            .student-add-btn{
+                width: 200px;
+                font-size: 1.6rem;
+                font-weight: 700;
+                line-height: 1;
+                position: relative;
+                display: inline-block;
+                padding: 15px 30px 15px 30px;
+                margin: 20px;
+                margin-left: 30%;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                -webkit-transition: all 0.3s;
+                transition: all 0.3s;
+                text-align: center;
+                vertical-align: middle;
+                text-decoration: none;
+                letter-spacing: 0.1em;
+                color: #212529;
+                border-radius: 0.5rem;
+                border: 3px solid #6a8494;
+                background-color: white;
+                border-radius: 100vh;
+
+                &:hover{
+                    color: white;
+                    background-color: #98b3d1;
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+                }
+            }
+        }
+    }
+}
