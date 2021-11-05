@@ -148,7 +148,7 @@ class WorkSpacesController extends Controller
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $workspace_id = Cookie::get('workspace_id');
-        $workspace = WorkSpaces::find($workspace_id);    
+        $workspace = WorkSpaces::find($workspace_id);
 
         if ($workspace->getMember()) {
             return redirect()->route('workspaces.addStudentsShow');
@@ -160,6 +160,9 @@ class WorkSpacesController extends Controller
     }
   
     public function calendar(Request $request){
+        $login_user = Auth::user();
+        $workspace_id = Cookie::get('workspace_id');
+        $workspace = WorkSpaces::find($workspace_id);
         //ワークスペース作成者でなければ、アクセスさせない
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
