@@ -99,6 +99,8 @@ class WorkSpacesController extends Controller
         $workspace = WorkSpaces::find($id);
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('progress.index')->with('status-error', 'アクセス権限がありません');
+        //所属している生徒をワークスペースから削除する
+        Membership::where('workspace_id', $id)->delete();
         $workspace->delete();
         Cookie::queue('workspace_id', null, 1000000);
         return redirect()->route('progress.index')->with('status', 'ワークスペースの削除に成功しました');
