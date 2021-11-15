@@ -51,6 +51,7 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
@@ -63,6 +64,13 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                @if(Auth::user()->is_teacher())
+                                    <a class="nav-link mr-3" href="{{ route('workspaces.calendar') }}"><i class="far fa-calendar-alt"></i></a>
+                                @else
+                                    <a class="nav-link mr-3" href="{{ route('schedules.calendar') }}"><i class="far fa-calendar-alt"></i></a>
+                                @endif
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

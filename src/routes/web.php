@@ -54,4 +54,12 @@ Route::prefix('workspaces')->group(function(){
     Route::post('addStudents', 'WorkSpacesController@addStudents')->name('workspaces.addStudents');
     Route::post('createWorkspaceStudents', 'WorkSpacesController@createWorkspaceStudents')->name('workspaces.createWorkspaceStudents');
 });
+
+Route::prefix('schedule')->group(function(){
+    Route::post('store', 'CompanyScheduleController@store');
+    Route::post('{id}/update', 'CompanyScheduleController@update');
+    Route::delete('{id}/destroy', 'CompanyScheduleController@destroy');
+    Route::get('calendar', 'CompanyScheduleController@calendar')->name('schedules.calendar');
+});
+
 Route::get('/home', 'HomeController@index')->name('home');

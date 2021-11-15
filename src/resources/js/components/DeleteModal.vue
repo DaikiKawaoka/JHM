@@ -1,7 +1,7 @@
 <template>
     <div>
-        <button type="button" class="btn btn-danger mr-4" @click="show">削除</button>
-        <div class="card" v-show="showModal">
+        <button type="button" class="btn btn-danger mr-4" @click="show" v-if="is_delete_btn">削除</button>
+        <div class="card" v-if="showModal">
             <div class="card-body rounded" id="modal-box">
                 <form :action="delete_url" method="POST">
                     <input type="hidden" name="_method" value="delete">
@@ -15,7 +15,7 @@
                 </form>
             </div>
         </div>
-        <div id="back" v-show="showModal" @click="exit">
+        <div id="back" @click="exit" v-if="showModal">
         </div>
     </div>
 </template>
@@ -25,7 +25,7 @@
 export default {
     data(){
         return{
-            showModal: false,
+            showModal: true,
         }
     },
     methods:{
@@ -34,27 +34,33 @@ export default {
         },
         exit(){
             this.showModal = false;
+            this.$emit('exitDeleteModal', false);
         }
     },
     computed:{
     },
-    mounted(){
+    created(){
+        //モーダルを表示するボタンをこのテンプレート内のものを利用するとき
+        if(this.is_delete_btn){
+            //このコンポーネント自体は表示し、モーダルと黒背景は隠す
+            this.showModal = false;
+        }
     },
-    props: ['delete_url' ,'csrf'],
+    props: ['delete_url' ,'csrf', 'is_delete_btn'],
 }
 </script>
 
 <style scoped lang='scss'>
     #modal-box{
         position: fixed;
-        z-index: 2;
+        z-index: 22;
         background: #ddd;
         width: 30%;
         top: 30%;
         left: 35%;
     }
     #back {
-        z-index: 1;
+        z-index: 21;
         height: 150%;
         width: 150%;
         top: 0;

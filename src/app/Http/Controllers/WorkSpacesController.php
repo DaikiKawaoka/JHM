@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Rules\WorkSpaceYear;
-
+use App\User;
 
 class WorkSpacesController extends Controller
 {
@@ -167,7 +167,12 @@ class WorkSpacesController extends Controller
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $progress = $login_user->getMemberProgress($workspace_id);
-        return view('workspaces.calendar')->with('progress', $progress);
+        $schedule = $workspace->getWorkspaceSchedule();
+        return view('workspaces.calendar')->with([
+            'progress' => $progress,
+            'schedule' => $schedule,
+            'is_teacher' => $login_user->is_teacher()
+        ]);
     }
 
     public function addStudents(Request $request){
