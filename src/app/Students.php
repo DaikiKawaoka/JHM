@@ -102,4 +102,12 @@ class Students extends Authenticatable{
                 ->orderBy('entries.id', 'asc')
                 ->get();
     }
+
+    public function getSchedule(){
+        return Schedules::select('content', 'schedule_date')
+            ->join('workspaces', 'workspaces.id', 'workspace_id')
+            ->join('membership', 'workspaces.id', 'membership.workspace_id')
+            ->where('membership.student_id', $this->id)
+            ->get();
+    }
 }
