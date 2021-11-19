@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Students extends Authenticatable{
 
@@ -54,6 +55,7 @@ class Students extends Authenticatable{
         return $this->belongsToMany(Company::class,'entries','user_id','company_id');
     }
 
+    // エントリーを取得
     public function getMyEntries()
     {
         return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
@@ -61,6 +63,20 @@ class Students extends Authenticatable{
                 ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
                 ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
                 ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
+    }
+
+    // 現在進行中のエントリーを取得 (×が付いていないエントリー)
+    public function getMyOngoingEntries()
+    {
+
+        $entries = Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name','progress.state'])
+                ->leftJoin('students', 'entries.student_id', '=', 'students.id')
+                ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
+                ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
+                ->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')
+                ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
+
+        return $entries = $entries->except(DB::table('entries')->leftJoin('students', 'entries.student_id', '=', 'students.id')->leftJoin('companies', 'entries.company_id', '=', 'companies.id')->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')->where('students.id', $this->id)->where('progress.state', '=', '×')->distinct()->pluck('entries.id')->toArray());
     }
 
     //求人情報にある会社のエントリーを取得
