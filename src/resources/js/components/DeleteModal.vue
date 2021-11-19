@@ -37,8 +37,6 @@ export default {
             this.$emit('exitDeleteModal', false);
         }
     },
-    computed:{
-    },
     created(){
         //モーダルを表示するボタンをこのテンプレート内のものを利用するとき
         if(this.is_delete_btn){

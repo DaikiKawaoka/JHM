@@ -194,9 +194,6 @@ export default {
             return 'inline';
         }
     },
-    mounted(){
-        console.log(this.is_teacher);
-    },
     props: ['progress', 'schedules', 'is_teacher', 'csrf'],
 }
 </script>

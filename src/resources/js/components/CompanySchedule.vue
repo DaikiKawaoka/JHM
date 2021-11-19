@@ -74,9 +74,6 @@ export default {
             return schedule_info;
         }
     },
-    mounted(){
-        console.log(this.is_teacher);
-    },
     props: ["schedules", "date", "is_teacher", "csrf"],
 }
 </script>
