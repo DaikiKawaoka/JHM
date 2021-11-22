@@ -30,7 +30,7 @@ export default {
         }
     },
     created() {
-        setTimeout(() => {this.is_show = false;}, 3000);
+        setTimeout(() => {this.is_show = false;}, 5000);
     },
     props: ["is_success", "message"]
 }
@@ -59,14 +59,14 @@ export default {
     }
 }
 .success-message{
-    border: 1px solid #3742fa;
-    background: rgba(112, 161, 255, 0.6);
-    color: #3742fa;
+    border: 1px solid #bee5eb;
+    background: #d1ecf1;
+    color: #0c5460;
 }
 .error-message{
-    border: 1px solid #f39c12;
-    background: rgba(236, 204, 104, 0.8);
-    color: #f39c12;
+    border: 1px solid #ffeeba;
+    background: #fff3cd;
+    color: #e58e26;
 }
 .message-box-leave{
     opacity: 0;

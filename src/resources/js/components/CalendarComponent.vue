@@ -1,13 +1,13 @@
 <template>
         <div id="container-main" :style="{ display: getDisplayValue }">
-            <calendar-sidebar v-on:showAddModal="is_add_modal = $event" v-on:showSchedule="show_schedule = $event" v-on:showProgress="show_schedule = $event" v-if="is_teacher"></calendar-sidebar>
+            <calendar-sidebar v-on:showAddModal="is_add_modal = $event" v-on:showSchedule="show_schedule = $event" v-on:showProgress="show_schedule = $event" v-on:changeProgress="get_type = $event" v-on:changeSchedule="get_type = $event" v-if="is_teacher"></calendar-sidebar>
 
             <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <button class="page-link text-reset ml-5" @click="reduceMonth">&laquo;</button>
                         <div class="col text-center mt-2">
-                            {{current.year()}}年 {{current.month() + 1}}月
+                            {{current.year()}}年 {{current.month() + 1}}月 の {{get_type}}
                         </div>
                         <button class="page-link text-reset mr-5" @click="addMonth">&raquo;</button>
                     </div>
@@ -72,6 +72,7 @@ export default {
             current: moment(),
             show_schedule: true,
             is_add_modal: false,
+            get_type: '予定',
         }
     },
     methods:{

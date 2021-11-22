@@ -50,6 +50,10 @@ export default {
 
 <style scoped lang="scss">
 #content-modal{
+    *{
+        margin: 0;
+        padding: 0;
+    }
     #modal-bg{
         z-index: 1;
         height: 150%;
@@ -64,23 +68,23 @@ export default {
         justify-content: center;
     }
     #modal-box{
-        border-radius: .3rem;
         position: fixed;
         z-index: 2;
-        padding: .5rem;
         width: 40%;
-        height: 45%;
+        height: 40%;
         top: 20%;
         left: 30%;
         border-radius: .5rem;
         overflow: scroll;
+        background: #eee;
+        border: 1px solid #ccc;
         .modal-header{
             font-size: 1.1rem;
-            background: #fab1a0;
+            background: #e67e22;
             color: #fff;
+            padding: .6rem;
         }
         .modal-body{
-            background: #ddd;
             .form-row{
                 width: 90%;
                 margin: 2rem auto;
@@ -89,22 +93,21 @@ export default {
                     margin: auto;
                     input, textarea{
                         width: 100%;
-                        border: none;
-                        background: #eee;
-                        color: #aaa;
+                        border: 1px solid #444;
+                        background: #ddd;
+                        color: #444;
                         outline: none;
                     }
                 }
                 button{
                     border-radius: .4rem;
-                    background: #fab1a0;
+                    background: #e67e22;
                     padding: .2rem .5rem;
                     color: #fff;
                     border: none;
                     margin: 0 auto;
                     &:hover{
                         opacity: .7;
-                        background: #e67e22;
                     }
                 }
             }
