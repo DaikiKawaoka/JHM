@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import DeleteModal from './DeleteModal.vue';
+import DeleteModal from '../DeleteModal.vue';
 export default {
   components: { DeleteModal },
     data(){
