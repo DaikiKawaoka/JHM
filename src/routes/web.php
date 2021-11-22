@@ -29,6 +29,7 @@ Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name(
 Route::resource('companies', 'CompaniesController');
 
 Route::get('student/companies/create', 'StudentCompaniesController@create')->name('studentCompanies.create');
+Route::get('student/companies/identityRegister', 'StudentCompaniesController@identityRegister')->name('studentCompanies.identityRegister');
 Route::get('student/companies/{id}', 'StudentCompaniesController@show')->name('studentCompanies.show');
 Route::post('student/companies', 'StudentCompaniesController@store')->name('studentCompanies.store');
 Route::put('student/companies/{id}', 'StudentCompaniesController@update')->name('studentCompanies.update');
@@ -39,6 +40,7 @@ Route::resource('entries', 'EntriesController');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
+Route::get('students/show', 'StudentsController@show')->name('students.show');
 
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
