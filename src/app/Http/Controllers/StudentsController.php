@@ -13,6 +13,11 @@ class StudentsController extends Controller
 
     use AuthenticatesUsers;
 
+    public function __construct()
+    {
+        $this->middleware(['auth:web,student']);
+    }
+
     protected function guard()
     {
         return Auth::guard('student');  //変更
@@ -43,5 +48,10 @@ class StudentsController extends Controller
             'auth:student' => ['認証に失敗しました']
         ]);
 
+    }
+
+    public function show(Request $request)
+    {
+        return view('students.show');
     }
 }
