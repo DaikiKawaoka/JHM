@@ -91,6 +91,9 @@
                                         <a class="dropdown-item" href="{{ route('entries.index') }}">
                                             エントリー済み会社一覧
                                         </a>
+                                        <a class="dropdown-item" href="{{ route('studentCompanies.identityRegister') }}">
+                                            本人登録会社一覧
+                                        </a>
                                         <a class="dropdown-item" href="{{ route('studentCompanies.create') }}">
                                             求人登録
                                         </a>
@@ -130,6 +133,10 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('students.show')}}">
+                                            プロフィール
+                                    </a>
+
                                     <a class="dropdown-item" href="{{ route('users.edit', Auth::user()->id) }}">
                                         {{ __('プロフィール編集') }}
                                     </a>
