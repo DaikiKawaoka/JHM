@@ -93,8 +93,6 @@ export default {
             return progress_info;
         }
     },
-    mounted(){
-    },
     props: ["progress", "date"],
 }
 </script>

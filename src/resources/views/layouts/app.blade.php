@@ -32,6 +32,11 @@
 
 <body>
     <div id="app">
+        @if(session('status'))
+            <head-message is_success="{{true}}" message="{{session('status')}}"></head-message>
+        @elseif(session('status-error'))
+            <head-message is_success="{{false}}" message="{{session('status-error')}}"></head-message>
+        @endif
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">

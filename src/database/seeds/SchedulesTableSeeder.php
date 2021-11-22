@@ -37,5 +37,15 @@ class SchedulesTableSeeder extends Seeder
             'content' => 'Test４会社説明会',
             'schedule_date' => '2021-11-15'
         ]);
+        DB::table('schedules')->insert([
+            'workspace_id' => 1,
+            'content' => 'DITセミナー（コミセン）',
+            'schedule_date' => '2021-11-17'
+        ]);
+        DB::table('schedules')->insert([
+            'workspace_id' => 1,
+            'content' => 'DIT Webセミナー',
+            'schedule_date' => '2021-11-25'
+        ]);
     }
 }

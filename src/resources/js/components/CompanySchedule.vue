@@ -2,7 +2,7 @@
     <div id="main-content">
         <div v-if="getSchedule.count > 0" id="multiple-schedule">
             <div class="show-btn" @click="showModal">
-                <span v-if="getSchedule.count > 1">複数の予定</span>
+                <span v-if="getSchedule.count > 1">{{getSchedule.count}}件の予定</span>
                 <span v-else>{{getSchedule.schedules[0].content}}</span>
             </div>
             <div id="modal-bg" v-show="isShowModal" @click="exitModal"></div>
@@ -73,9 +73,6 @@ export default {
             }
             return schedule_info;
         }
-    },
-    mounted(){
-        console.log(this.is_teacher);
     },
     props: ["schedules", "date", "is_teacher", "csrf"],
 }
