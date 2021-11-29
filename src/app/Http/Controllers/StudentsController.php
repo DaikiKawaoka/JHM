@@ -13,11 +13,6 @@ class StudentsController extends Controller
 
     use AuthenticatesUsers;
 
-    public function __construct()
-    {
-        $this->middleware(['auth:web,student']);
-    }
-
     protected function guard()
     {
         return Auth::guard('student');  //変更
@@ -52,6 +47,10 @@ class StudentsController extends Controller
 
     public function show(Request $request)
     {
+        $login_user = Auth::user();
+        if($login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+
         return view('students.show');
     }
 }
