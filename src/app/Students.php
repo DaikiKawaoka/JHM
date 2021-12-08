@@ -85,11 +85,21 @@ class Students extends Authenticatable{
     public function getEnteredCompanies()
     {
         return Company::select(['companies.id','companies.name'])
-                ->join('entries', 'companies.id', '=', 'entries.company_id')
-                ->join('students', 'entries.student_id', '=', 'students.id')
-                ->where('students.id', $this->id)
-                ->orderBy('entries.id', 'asc')
-                ->get();
+        ->join('entries', 'companies.id', '=', 'entries.company_id')
+        ->join('students', 'entries.student_id', '=', 'students.id')
+        ->where('students.id', $this->id)
+        ->orderBy('entries.id', 'desc')
+        ->get();
+    }
+
+    //最近エントリーした会社取得(6件)
+    public function getRecentlyEnteredCompaniesInfo()
+    {
+        return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
+                ->leftJoin('students', 'entries.student_id', '=', 'students.id')
+                ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
+                ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
+                ->where('students.id', $this->id)->orderBy('entries.id', 'desc')->limit(6)->get();
     }
 
     //自分が登録した会社一覧を取得
@@ -99,9 +109,10 @@ class Students extends Authenticatable{
                 ->join('entries', 'student_companies.id', '=', 'entries.student_company_id')
                 ->join('students', 'entries.student_id', '=', 'students.id')
                 ->where('students.id', $this->id)
-                ->orderBy('entries.id', 'asc')
+                ->orderBy('entries.id', 'desc')
                 ->get();
     }
+
 
     public function getSchedule(){
         return Schedules::select('content', 'schedule_date')

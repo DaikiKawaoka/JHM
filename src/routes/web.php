@@ -40,7 +40,16 @@ Route::resource('entries', 'EntriesController');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
-Route::get('students/show', 'StudentsController@show')->name('students.show');
+
+Route::group(['middleware' => 'auth:web,student'], function () {
+    Route::get('students/show', 'StudentsController@show')->name('students.show');
+});
+
+Route::group(['prefix' => 'api'], function(){
+    Route::get('/student/openview', 'api\StudentProfileController@openview');
+    Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
+    Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
+});
 
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
