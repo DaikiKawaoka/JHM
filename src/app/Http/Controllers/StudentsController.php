@@ -44,4 +44,13 @@ class StudentsController extends Controller
         ]);
 
     }
+
+    public function show(Request $request)
+    {
+        $login_user = Auth::user();
+        if($login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+
+        return view('students.show');
+    }
 }

@@ -29,6 +29,7 @@ Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name(
 Route::resource('companies', 'CompaniesController');
 
 Route::get('student/companies/create', 'StudentCompaniesController@create')->name('studentCompanies.create');
+Route::get('student/companies/identityRegister', 'StudentCompaniesController@identityRegister')->name('studentCompanies.identityRegister');
 Route::get('student/companies/{id}', 'StudentCompaniesController@show')->name('studentCompanies.show');
 Route::post('student/companies', 'StudentCompaniesController@store')->name('studentCompanies.store');
 Route::put('student/companies/{id}', 'StudentCompaniesController@update')->name('studentCompanies.update');
@@ -39,6 +40,16 @@ Route::resource('entries', 'EntriesController');
 Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
+
+Route::group(['middleware' => 'auth:web,student'], function () {
+    Route::get('students/show', 'StudentsController@show')->name('students.show');
+});
+
+Route::group(['prefix' => 'api'], function(){
+    Route::get('/student/openview', 'api\StudentProfileController@openview');
+    Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
+    Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
+});
 
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
@@ -54,4 +65,12 @@ Route::prefix('workspaces')->group(function(){
     Route::post('addStudents', 'WorkSpacesController@addStudents')->name('workspaces.addStudents');
     Route::post('createWorkspaceStudents', 'WorkSpacesController@createWorkspaceStudents')->name('workspaces.createWorkspaceStudents');
 });
+
+Route::prefix('schedule')->group(function(){
+    Route::post('store', 'CompanyScheduleController@store');
+    Route::post('{id}/update', 'CompanyScheduleController@update');
+    Route::delete('{id}/destroy', 'CompanyScheduleController@destroy');
+    Route::get('calendar', 'CompanyScheduleController@calendar')->name('schedules.calendar');
+});
+
 Route::get('/home', 'HomeController@index')->name('home');

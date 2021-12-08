@@ -32,6 +32,11 @@
 
 <body>
     <div id="app">
+        @if(session('status'))
+            <head-message is_success="{{true}}" message="{{session('status')}}"></head-message>
+        @elseif(session('status-error'))
+            <head-message is_success="{{false}}" message="{{session('status-error')}}"></head-message>
+        @endif
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -51,6 +56,7 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
@@ -63,6 +69,13 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                @if(Auth::user()->is_teacher())
+                                    <a class="nav-link mr-3" href="{{ route('workspaces.calendar') }}"><i class="far fa-calendar-alt"></i></a>
+                                @else
+                                    <a class="nav-link mr-3" href="{{ route('schedules.calendar') }}"><i class="far fa-calendar-alt"></i></a>
+                                @endif
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -77,6 +90,9 @@
                                     @else
                                         <a class="dropdown-item" href="{{ route('entries.index') }}">
                                             エントリー済み会社一覧
+                                        </a>
+                                        <a class="dropdown-item" href="{{ route('studentCompanies.identityRegister') }}">
+                                            本人登録会社一覧
                                         </a>
                                         <a class="dropdown-item" href="{{ route('studentCompanies.create') }}">
                                             求人登録
@@ -117,6 +133,10 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('students.show')}}">
+                                            プロフィール
+                                    </a>
+
                                     <a class="dropdown-item" href="{{ route('users.edit', Auth::user()->id) }}">
                                         {{ __('プロフィール編集') }}
                                     </a>

@@ -188,4 +188,9 @@ class StudentCompaniesController extends Controller
 
         return redirect()->route('entries.index')->with('status', '会社情報を削除しました');
     }
+
+    public function identityRegister()
+    {
+        
+    }
 }

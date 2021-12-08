@@ -1,14 +1,14 @@
 <template>
     <div id="main-content">
         <div v-if="getProgress.count > 1" id="multiple-progress">
-            <span class="show-btn" @click="showModal">
-                <i class="fas fa-angle-up"></i>複数進捗
-            </span>
-            <div id="dark-bg" v-show="isShowModal" @click="exitModal"></div>
+            <div class="show-btn" @click="showModal">
+                {{getProgress.progresses[0].name}}さんと他{{getProgress.progresses.length-1}}名
+            </div>
+            <div id="modal-bg" v-show="isShowModal" @click="exitModal"></div>
             <transition name="progress-modal">
                 <div class="card" v-show="isShowModal" id="modal-box">
                     <div class="card-header modal-header">
-                        {{this.month}}月{{this.date.date}}日
+                        {{this.date.month}}月{{this.date.date}}日
                     </div>
                     <div class="card-body">
                         <div class="process-date-modal">
@@ -51,7 +51,7 @@ export default {
         },
         exitModal(){
             this.isShowModal = false;
-        }
+        },
     },
     computed:{
         getProgress(){
@@ -62,8 +62,8 @@ export default {
                     state: '',
                 },
             };
-            const strDate = String(this.year) + '-' + String(this.month) + '-' + String(this.date.date);
-            const calendarDate = moment(strDate);
+            const strDate = String(this.date.year) + '-' + String(this.date.month) + '-' + String(this.date.date);
+            const calendarDate = moment(strDate, "YYYY-MM-DD");
             for(let key in this.progress){
                 let progressDate = moment(this.progress[key].action_date);
                 if(
@@ -93,9 +93,7 @@ export default {
             return progress_info;
         }
     },
-    mounted(){
-    },
-    props: ["progress", "year", "month", "date"],
+    props: ["progress", "date"],
 }
 </script>
 
@@ -107,29 +105,29 @@ export default {
     #main-content{
         #multiple-progress{
             .show-btn{
+                width: 80%;
                 font-size: 0.7rem;
                 background: #dfe6e9;
                 color: #333;
-                border-radius: 1rem;
-                padding: .3rem;
-                padding-right: .4rem;
-                margin: 1.0rem .3rem 1.0rem;
+                border-radius: .5rem;
+                padding: .5rem;
+                margin: auto;
                 cursor: pointer;
-                &hover{
+                &:hover{
                     opacity: .7;
                 }
                 .fa-angle-up{
                     padding: 0 .3rem;
                 }
             }
-            #dark-bg{
+            #modal-bg{
                 z-index: 1;
-                height: 100%;
-                width: 100%;
+                height: 150%;
+                width: 150%;
                 top: 0;
                 left: 0;
-                background: #000;
-                opacity: 0.7;
+                background: #ddd;
+                opacity: 0.1;
                 position: fixed;
                 display: flex;
                 align-items: center;
@@ -145,7 +143,7 @@ export default {
                 left: 35%;
                 border-radius: .5rem;
                 overflow: scroll;
-                background: #dfe6e9;
+                background: #fff;
                 .modal-header{
                     font-size: 1.1rem;
                 }
@@ -176,16 +174,16 @@ export default {
         #one-progress{
             font-size: 0.7rem;
             ul{
-                width: 4.5rem;
-                height: 4.0rem;
+                width: 5.0rem;
+                height: 4.5rem;
                 background: #dfe6e9;
                 color: #333;
                 list-style: none;
                 border-radius: .5rem;
-                margin-left: .5rem;
-                margin-bottom: .1rem;
+                margin: auto;
                 padding: .5rem;
                 overflow: scroll;
+                text-align: center;
             }
         }
     }

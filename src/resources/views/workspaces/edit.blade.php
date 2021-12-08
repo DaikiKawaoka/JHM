@@ -48,7 +48,7 @@
                                 <button type="submit" class="btn btn-primary mr-4">
                                     {{ __('更新') }}
                                 </button>
-                                <delete-modal delete_url="{{route('workspaces.destroy', $workspace->id)}}" :csrf="{{json_encode(csrf_token())}}"></delete-modal>
+                                <delete-modal delete_url="{{route('workspaces.destroy', $workspace->id)}}" :csrf="{{json_encode(csrf_token())}}" is_delete_btn=true></delete-modal>
                             </div>
                         </div>
                     </form>

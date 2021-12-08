@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Entry;
 use App\Company;
 use App\User;
+use App\Progress;
 
 class EntriesController extends Controller
 {
@@ -20,16 +21,33 @@ class EntriesController extends Controller
     {
 
         $login_user = Auth::user();
+        $entry = null;
+        $progress_list = array();
+
+
         if($login_user->is_teacher()){
             // 教師はエントリー一覧ページに遷移できない
             return redirect()->route('home');
         }
-
         $entered_companies = $login_user->getEnteredCompanies();
         $entered_student_companies = $login_user->getMyCompanies();
-        return view('entries/index')
-        ->with(['entered_companies' => $entered_companies,"entered_student_companies" => $entered_student_companies]);
+        if(!$entered_companies)
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
+        foreach ($entered_companies as $entered_company) {
+            if(!$login_user->is_teacher()){
+                $entry = $login_user->getEntry($entered_company->id);
+            }
+            // エントリーしているか分岐\
+            if($entry){
+                foreach($entry->getProgressList() as $provis) {
+                    array_push($progress_list, array($entered_company->id=>$provis));
+                }
+            }
+        }
+
+        return view('entries/index')
+        ->with(['entered_companies' => $entered_companies,"entered_student_companies" => $entered_student_companies, "entry" => $entry,"progress_list" => $progress_list,]);
     }
     /**
      * Show the form for creating a new resource.
