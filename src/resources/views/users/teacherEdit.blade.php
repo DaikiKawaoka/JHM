@@ -40,18 +40,6 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="class" class="col-md-4 col-form-label text-md-right">{{ __('クラス') }}</label>
-                                        <div class="col-md-6">
-                                            <input id="class" type="text" class="form-control @error('class') is-invalid @enderror" name="class" value="{{ old('class') ?? $user->class }}"  autofocus>
-                                        </div>
-                                        @error('class')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group row">
                                         <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('教師メールアドレス') }}</label>
 
                                         <div class="col-md-6">
