@@ -84,7 +84,7 @@ class Students extends Authenticatable{
     //求人情報からエントリーした会社一覧を取得
     public function getEnteredCompanies()
     {
-        return Company::select(['companies.id','companies.name'])
+        return Company::select(['companies.id','companies.name','companies.prefecture','companies.url','companies.remarks','companies.deadline'])
                 ->join('entries', 'companies.id', '=', 'entries.company_id')
                 ->join('students', 'entries.student_id', '=', 'students.id')
                 ->where('students.id', $this->id)
@@ -101,5 +101,14 @@ class Students extends Authenticatable{
                 ->where('students.id', $this->id)
                 ->orderBy('entries.id', 'asc')
                 ->get();
+    }
+
+    //自分が登録している１つの会社の進捗
+    public function getMyProgressByCompany($company_id){
+        return Progress::select(['progress.action', 'progress.state', 'progress.action_date'])
+        ->join('entries', 'progress.entry_id', '=', 'entries.id')
+        ->where('progress.student_id', $this->id)
+        ->where('entries.company_id', $company_id)
+        ->get();
     }
 }
