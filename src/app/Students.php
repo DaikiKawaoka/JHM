@@ -113,8 +113,18 @@ class Students extends Authenticatable{
                 ->get();
     }
 
+    //自分が登録している１つの会社の進捗
+    public function getMyProgressByCompany($company_id)
+    {
+        return Progress::select(['progress.action', 'progress.state', 'progress.action_date'])
+        ->join('entries', 'progress.entry_id', '=', 'entries.id')
+        ->where('progress.student_id', $this->id)
+        ->where('entries.company_id', $company_id)
+        ->get();
+    }
 
-    public function getSchedule(){
+    public function getSchedule()
+    {
         return Schedules::select('content', 'schedule_date')
             ->join('workspaces', 'workspaces.id', 'workspace_id')
             ->join('membership', 'workspaces.id', 'membership.workspace_id')

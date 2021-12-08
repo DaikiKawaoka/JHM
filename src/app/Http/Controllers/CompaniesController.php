@@ -96,6 +96,7 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
+        $status = $login_user->getMyProgressByCompany($id);
 
         if(!$company)
             return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
@@ -110,10 +111,13 @@ class CompaniesController extends Controller
         if($entry){
             $progress_list = $entry->getProgressList();
         }
+        $entered_companies = $login_user->getEnteredCompanies();
         return view('companies.show')->with([
+            "status" => $status,
             "company" => $company,
             "entry" => $entry,
             "progress_list" => $progress_list,
+            'entered_companies' => $entered_companies,
         ]);
     }
 
