@@ -132,7 +132,7 @@ class WorkSpacesController extends Controller
         $member = $workspace->getMember();
         return view('workspaces.showMember')->with(['member' => $member]);
     }
-   
+
     public function addStudentsShow(){
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
