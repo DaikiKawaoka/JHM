@@ -122,9 +122,9 @@
               </td>
               <td>
                 <select class="form-select" name="state">
-                  <option value="待ち">待ち</option>
-                  <option value="◯">◯</option>
-                  <option value="×">×</option>
+                  <option value="結果待ち">結果待ち</option>
+                  <option value="合格">合格</option>
+                  <option value="不合格">不合格</option>
                   <option value="内々定">内々定</option>
                   <option value="欠席">欠席</option>
                 </select>

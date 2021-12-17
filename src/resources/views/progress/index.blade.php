@@ -139,9 +139,9 @@
                   @foreach($entry->getProgressList() as $progress)
                     <?php $progress_count++; ?>
                     <td style="width: 100px; text-align: center; padding:0;">
-                      @if($progress->state == "◯")
+                      @if($progress->state == "合格")
                         <i class="fas fa-check-circle my-success" aria-hidden="true"></i>
-                      @elseif($progress->state == "×")
+                      @elseif($progress->state == "不合格")
                       <i class="fas fa-times-circle my-fail" aria-hidden="true"></i>
                       @else
                         {{$progress->state}}
