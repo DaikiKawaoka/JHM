@@ -9,14 +9,14 @@ class Company extends Model
 {
     use SoftDeletes;
     protected $fillable = [
-        'name','create_user_name', 'prefecture', 'url','remarks','deadline','create_user_id'
+        'name', 'create_user_name', 'prefecture', 'url', 'remarks', 'deadline', 'create_user_id', 'image_path',
     ];
     protected $dates = ['deadline'];
     protected $table = 'companies';
 
     public function getAllCompanies()
     {
-        return Company::select(['companies.id','companies.name as name','prefecture','url','remarks','deadline',
+        return Company::select(['companies.id','companies.name as name','prefecture','url','remarks','deadline', 'image_path',
                         'create_user_id','users.name as create_user_name','companies.created_at'])
                         ->join('users', 'companies.create_user_id', '=', 'users.id')
                         ->latest()

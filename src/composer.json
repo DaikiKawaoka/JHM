@@ -12,7 +12,9 @@
         "fideloper/proxy": "^4.4",
         "laravel/framework": "^6.20.26",
         "laravel/tinker": "^2.5",
-        "phpoffice/phpspreadsheet": "^1.18"
+        "phpoffice/phpspreadsheet": "^1.18",
+        "spatie/pdf-to-image": "^2.1",
+        "stechstudio/laravel-zipstream": "^4.5"
     },
     "require-dev": {
         "facade/ignition": "^1.16.15",

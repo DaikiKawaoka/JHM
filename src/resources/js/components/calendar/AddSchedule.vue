@@ -1,7 +1,7 @@
 <template>
     <div id="content-modal">
         <div id="modal-bg" @click="exitAddModal"></div>
-        <transition name="add-modal">
+        <transition name="add-modal" appear>
             <div id="modal-box">
                 <div class="modal-header">
                     予定を追加する

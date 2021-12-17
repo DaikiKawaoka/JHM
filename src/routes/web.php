@@ -26,7 +26,10 @@ Route::resource('users', 'UsersController');
 Route::put('users/updateStudentProfile/{id}', 'UsersController@updateStudentProfile')->name('users.updateStudentProfile');
 Route::put('users/updateTeacherProfile/{id}', 'UsersController@updateTeacherProfile')->name('users.updateTeacherProfile');
 Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name('users.updatePassword');
+
+//companyに関連するアクセス方法
 Route::resource('companies', 'CompaniesController');
+Route::get('companies/{id}/download_pdf', 'CompaniesController@downloadPdf')->name('companies.download_pdf');
 
 Route::get('student/companies/create', 'StudentCompaniesController@create')->name('studentCompanies.create');
 Route::get('student/companies/identityRegister', 'StudentCompaniesController@identityRegister')->name('studentCompanies.identityRegister');
@@ -37,7 +40,7 @@ Route::delete('student/companies/{id}', 'StudentCompaniesController@destroy')->n
 Route::get('student/companies/{id}/edit', 'StudentCompaniesController@edit')->name('studentCompanies.edit');
 
 Route::resource('entries', 'EntriesController');
-Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
+Route::resource('progress', 'ProgressController', ['only' => ['index', 'store', 'update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
 

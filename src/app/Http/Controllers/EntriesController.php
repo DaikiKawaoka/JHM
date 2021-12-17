@@ -142,10 +142,12 @@ class EntriesController extends Controller
             if($entry){
                 //エントリーしていれば
                 $entry -> delete();
-            }else{
-                $message = 'あなたはエントリーしていないのでこの処理はできません。';
+                $message = 'エントリーを取り消しました。';
+                $company_id = $entry->company_id;
+                return redirect()->route('companies.show', $company_id)->with('status',$message);
             }
-            return redirect()->route('entries.index')->with('status-error',$message);;
+            $message = 'あなたはエントリーしていないのでこの処理はできません。';
+            return redirect()->route('entries.index')->with('status-error',$message);
         }else{
             $message = 'あなたは教師なのでこの処理はできません。';
             return redirect()->route('home')->with('status-error',$message);
