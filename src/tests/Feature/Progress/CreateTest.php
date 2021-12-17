@@ -22,7 +22,7 @@ class CreateTest extends TestCase
         $response->assertStatus(200);
 
         // 2個目登録（1個目はseederで作成済み）
-        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '合格', 'action_date' => '2021-06-10','company_id' => $company->id]);
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status", "進捗を登録しました。");
@@ -30,18 +30,18 @@ class CreateTest extends TestCase
             'user_id' => $student->id,
             'entry_id' => 1,
             'action' => "面接",
-            'state' => "◯",
+            'state' => "合格",
         ]);
 
         // 3,4,5個目登録 (5個が作成限度)
         for($i = 2; $i < 5; $i++){
-            $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+            $response = $this->post(route('progress.store'), ['action' => '面接','state' => '合格', 'action_date' => '2021-06-10','company_id' => $company->id]);
             $response->assertStatus(302);
             $response->assertRedirect('companies/'.$company->id);
             $response->assertSessionHas("status", "進捗を登録しました。");
         }
         // 6個目登録
-        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '合格', 'action_date' => '2021-06-10','company_id' => $company->id]);
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status-error", "進捗は5件までしか登録することができません。");
@@ -56,7 +56,7 @@ class CreateTest extends TestCase
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
-        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '合格', 'action_date' => '2021-06-10','company_id' => $company->id]);
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status-error", "エントリーしていないので進捗を登録できません。");
@@ -71,7 +71,7 @@ class CreateTest extends TestCase
             ->get('companies/' . $company->id);
         $response->assertStatus(200);
 
-        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '◯', 'action_date' => '2021-06-10','company_id' => $company->id]);
+        $response = $this->post(route('progress.store'), ['action' => '面接','state' => '合格', 'action_date' => '2021-06-10','company_id' => $company->id]);
         $response->assertStatus(302);
         $response->assertRedirect('companies/'.$company->id);
         $response->assertSessionHas("status-error", "あなたは教師なので進捗登録できません。");

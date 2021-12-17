@@ -79,9 +79,9 @@ export default {
                     }
                     progress_info.progresses.push(this.progress[key]);
                     const state = this.progress[key].state;
-                    if(state == '◯'){
+                    if(state == '合格'){
                         progress_info.class.state += ' success';
-                    }else if(state == '×'){
+                    }else if(state == '不合格'){
                         progress_info.class.state += ' unsuccess';
                     }else if(state == '内々定'){
                         progress_info.class.state += ' early-offer';
