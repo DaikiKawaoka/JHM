@@ -30,7 +30,9 @@ export default {
         }
     },
     created() {
-        setTimeout(() => {this.is_show = false;}, 5000);
+        if(this.is_success){
+            setTimeout(() => {this.is_show = false;}, 5000);
+        }
     },
     props: ["is_success", "message"]
 }

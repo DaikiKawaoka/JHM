@@ -2,7 +2,8 @@
     <div class="entryComponent">
         <div class="entryComponent-left-part">
             <div class="show-pdf">
-                <img src="http://localhost:8000/img/no_image_square.jpg" class="companies_pic">
+                <img :src="'http://localhost:8000/storage/pdf_image/'+company.image_path+'.jpg'" class="companies_pic" v-if="company.image_path">
+                <img src="http://localhost:8000/img/no_image_square.jpg" class="companies_pic" v-else>
             </div>
         </div>
         <div class="entryComponent-right-part">
@@ -11,98 +12,78 @@
                     <table>
                         <tr>
                             <th>会社名</th>
-                            <td>{{companies['name']}}</td>
+                            <td>{{company.name}}</td>
                         </tr>
                         <tr>
                             <th>勤務先</th>
-                            <td>{{companies['prefecture']}}</td>
+                            <td>{{company.prefecture}}</td>
                         </tr>
                         <tr>
                             <th>URL</th>
-                            <td>{{companies['url']}}</td>
+                            <td>{{company.url}}</td>
                         </tr>
                         <tr>
                             <th>備考</th>
-                            <td>{{companies['remarks']}}</td>
+                            <td>{{company.remarks}}</td>
                         </tr>
                         <tr>
                             <th>応募締切日</th>
-                            <td>{{companies['deadline']}}</td>
+                            <td>{{company.deadline}}</td>
                         </tr>
                     </table>
                 </div>
-                <div class="entry-delete">
-                    <button class="btn btn-success" v-if="statuses.length == 0" >エントリー</button>
-                    <button class="btn btn-danger" v-else-if="statuses.length > 0">取り消し</button>
+                <div class="entry-field">
+                    <form v-if="entry" :action="'/entries/'+entry.id" method="post">
+                        <input type="hidden" name="_method" value="delete">
+                        <input type="hidden" name="_token" :value="csrf">
+                        <button class="btn btn-danger">取り消し</button>
+                    </form>
+                    <form v-else action="/entries" method="post">
+                        <input type="hidden" name="_method" value="post">
+                        <input type="hidden" name="_token" :value="csrf">
+                        <input type="hidden" :value="company.id" name="company_id">
+                        <button class="btn btn-success">エントリー</button>
+                    </form>
+                    <a :href="'/companies/'+company.id+'/download_pdf'" class="btn btn-info active mt-4" role="button" v-if="company.image_path">PDFダウンロード</a>
                 </div>
             </div>
-                
-            <div class="event-form radius margin-top font-size">
-                <form action="">
-                    <p>進捗登録</p>
-                    <span>
-                        イベント
-                        <select >
-                            <option v-for="event in events" v-bind:key="event">{{event}}</option>
-                        </select>
-                    </span>
-                    <span>
-                        状況
-                        <select>
-                            <option v-for="progresStatus in progresStatuses" v-bind:key="progresStatus">{{progresStatus}}</option>
-                        </select>
-                    </span>
-                    <span>
-                        実施日
-                        <input type="date" name="implementation-date">
-                    </span>
-                    <button type="submit" class="btn btn-success">登録</button>
-                </form>
-            </div>
-            <div class="entry-company ">
-                <table class="radius font-size">
-                    <tr v-for="status in statuses" :key="status">
-                        <edit-progress :status="status"></edit-progress>
-                    </tr>
-                    
-                </table>
-                
+            <add-progress :company_id="company.id" :csrf="csrf" :entry="entry"></add-progress>
+            <div class="entry-company">
+                <div class="radius progress-area">
+                    <div v-for="status in statuses" :key="status">
+                        <edit-progress :status="status" :csrf="csrf" :company_id="company.id"></edit-progress>
+                    </div>
+                </div>
             </div>
         </div>
-        
-            
-            
-            
     </div>
-
 </template>
 
 <script>
+import AddProgress from './AddProgress.vue';
 
 import EditProgress from './EditProgress.vue';
 
 export default {
     components:{
         EditProgress,
+        AddProgress,
     },
     data(){
         return{
             events:[
-                '説明会','試験受験（SPI,筆記など）','面接','社長面接'
+                '説明会','試験受験','面接','社長面接'
             ],
             progresStatuses:[
-                '待ち','◯','✕','内々定','欠席'
+                '結果待ち','合格','不合格','内々定','欠席'
             ]
         }
     },
     methods:{
-        
     },
     computed:{
     },
-    mounted(){
-    },
-    props: ['entries','statuses','companies'],
+    props: ['entry','statuses','company', 'csrf'],
 }
 </script>
 
@@ -113,8 +94,11 @@ export default {
         .entryComponent-left-part{
             width: 80%;
             .show-pdf{
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 img{
-                    width: 100%;
+                    height: 40rem;
                 }
             }
         }
@@ -138,12 +122,16 @@ export default {
                         }
                     }
                 }
-                .entry-delete{
+                .entry-field{
                     margin: 3% 3%;
-                    button{
+                    button, a{
+                        width: 12rem;
+                        height: 4rem;
                         color: #ffffff;
-                        font-size: 120%; 
-                        padding: 17px 40px 17px 40px;
+                        font-size: 1.2rem;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
                     }
                 }
             }
@@ -158,12 +146,10 @@ export default {
                 }
             }
             .entry-company{
-                table{
+                .progress-area{
                     width: 100%;
-                    tr{
-                        text-align: center;
-                        border-bottom:solid 1px #ccc;
-                    }
+                    text-align: center;
+                    overflow: scroll;
                 }
             }
         }
@@ -177,6 +163,6 @@ export default {
     .font-size{
         font-size: 1.3em;
     }
-    }
+}
 
 </style>

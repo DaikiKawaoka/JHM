@@ -4,22 +4,32 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+
             <div class="card">
-            @if(Auth::user()->is_teacher())
                 <div class="card-header">{{ __('求人登録') }}</div>
-            @else
-                <div class="card-header">{{ __('') }}</div>
-            @endif
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('companies.store') }}">
+                    <form method="POST" action="{{ route('companies.store') }}" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="form-group row">
+                        <company-create :errors="{{json_encode([
+                                'name' => $errors->get('name'),
+                                'prefecture' => $errors->get('prefecture'),
+                                'url' => $errors->get('url'),
+                                'deadline' => $errors->get('deadline'),
+                                'remarks' => $errors->get('remarks'),
+                            ])}}" :company="{{json_encode([
+                                'name' => old('name'),
+                                'prefecture' => old('prefecture'),
+                                'url' => old('url'),
+                                'deadline' => old('deadline'),
+                                'remarks' => old('remarks'),
+                            ])}}"></company-create>
+                        <!-- <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('会社名') }}</label>
 
                             <div class="col-md-7">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', isset($company->name) ? $company->name : '') }}" required autocomplete="name" autofocus>
 
                                 @error('name')
                                 <span class="invalid-feedback" role="alert">
@@ -32,7 +42,7 @@
                         <div class="form-group row">
                             <label for="prefecture" class="col-md-4 col-form-label text-md-right">勤務先</label>
                             <div class="col-md-7">
-                                <select class="form-control" id="prefecture" name="prefecture" value="{{ old('prefecture') }}" autocomplete="prefecture">
+                                <select class="form-control" id="prefecture" name="prefecture" value="{{ old('prefecture') }}">
                                     <option value="北海道">北海道</option>
                                     <option value="青森">青森</option>
                                     <option value="東京">東京</option>
@@ -76,6 +86,13 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="pdf" class="col-md-4 col-form-label text-md-right">PDF</label>
+                            <div class="col-md-7">
+                                <input type="file" class="form-control" id="pdf" name="pdf" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('備考') }}</label>
                             <div class="col-md-7">
                                 <textarea id="remarks" class="form-control" name='remarks' placeholder="備考" rows="8">{{ old('remarks') }}</textarea>
@@ -94,7 +111,7 @@
                                     {{ __('登録') }}
                                 </button>
                             </div>
-                        </div>
+                        </div> -->
                     </form>
                 </div>
             </div>

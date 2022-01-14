@@ -9,12 +9,7 @@
             </div>
         </div>
     </div>
-    @if ($entry)
-        <div class="alert alert-success ">
-            あなたはこの求人にエントリー済みです。
-        </div>
-    @endif
-    <entry-component :entries="{{json_encode($entered_companies)}}" :statuses="{{json_encode($status)}}" :companies="{{json_encode($company)}}"></entry-component>
+    <entry-component :entry="{{json_encode($entry)}}" :statuses="{{json_encode($status)}}" :company="{{json_encode($company)}}" :csrf="{{json_encode(csrf_token())}}"></entry-component>
 </div>
 @endsection
 

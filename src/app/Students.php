@@ -116,7 +116,7 @@ class Students extends Authenticatable{
     //自分が登録している１つの会社の進捗
     public function getMyProgressByCompany($company_id)
     {
-        return Progress::select(['progress.action', 'progress.state', 'progress.action_date'])
+        return Progress::select(['progress.id', 'progress.action', 'progress.state', 'progress.action_date'])
         ->join('entries', 'progress.entry_id', '=', 'entries.id')
         ->where('progress.student_id', $this->id)
         ->where('entries.company_id', $company_id)
