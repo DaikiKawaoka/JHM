@@ -49,7 +49,7 @@ Route::group(['middleware' => 'auth:web,student'], function () {
 });
 
 Route::group(['prefix' => 'api'], function(){
-    Route::get('/student/openview', 'api\StudentProfileController@openview');
+    Route::get('/student/overview', 'api\StudentProfileController@overview');
     Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
     Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
 });

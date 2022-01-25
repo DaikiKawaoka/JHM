@@ -21,6 +21,9 @@ class CreateEntriesTable extends Migration
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('company_id')->references('id')->on('companies');
             $table->foreign('student_company_id')->references('id')->on('student_companies');
+            $table->string('create_year', 4);
+            $table->string('create_month', 2);
+            $table->string('create_day', 2);
             $table->timestamps();
         });
     }
