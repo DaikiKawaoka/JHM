@@ -23,10 +23,6 @@
                             <td>{{company.url}}</td>
                         </tr>
                         <tr>
-                            <th>備考</th>
-                            <td>{{company.remarks}}</td>
-                        </tr>
-                        <tr>
                             <th>応募締切日</th>
                             <td>{{company.deadline}}</td>
                         </tr>
@@ -47,12 +43,11 @@
                     <a :href="'/companies/'+company.id+'/download_pdf'" class="btn btn-info active mt-4" role="button" v-if="company.image_path">PDFダウンロード</a>
                 </div>
             </div>
-            <add-progress :company_id="company.id" :csrf="csrf" :entry="entry"></add-progress>
-            <div class="entry-company">
-                <div class="radius progress-area">
-                    <div v-for="status in statuses" :key="status">
-                        <edit-progress :status="status" :csrf="csrf" :company_id="company.id"></edit-progress>
-                    </div>
+            <add-progress :company_id="company.id" :csrf="csrf" :entry="entry" :statuses="statuses"></add-progress>
+            <div class="company-remarks radius margin-top my-3" v-show="company.remarks">
+                <p class="font-size remarks-title">詳細説明</p>
+                <div class="mx-3">
+                    {{company.remarks}}
                 </div>
             </div>
         </div>
@@ -62,11 +57,8 @@
 <script>
 import AddProgress from './AddProgress.vue';
 
-import EditProgress from './EditProgress.vue';
-
 export default {
     components:{
-        EditProgress,
         AddProgress,
     },
     data(){
@@ -90,15 +82,18 @@ export default {
 <style scoped lang='scss'>
 
     .entryComponent{
+        margin-top: 1rem;
         display: flex;
         .entryComponent-left-part{
-            width: 80%;
+            // width: 80%;
             .show-pdf{
+                margin-top: 1rem;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 img{
-                    height: 40rem;
+                    width: 35rem;
+                    height: 35rem;
                 }
             }
         }
@@ -110,7 +105,9 @@ export default {
                 display: flex;
                 .company-detail{
                     width: 70%;
-                    border: solid 1px #000000;
+                    background: #fff;
+                    border: solid 1px #aaa;
+                    box-shadow: 0 0 20px rgba(170, 170, 170, .1);
                     table{
                         tr{
                             th{
@@ -150,6 +147,14 @@ export default {
                     width: 100%;
                     text-align: center;
                     overflow: scroll;
+                }
+            }
+            .company-remarks{
+                background: #fff;
+                border: solid 1px #aaa;
+                box-shadow: 0 0 20px rgba(170, 170, 170, .1);
+                .remarks-title{
+                    font-weight: bold;
                 }
             }
         }

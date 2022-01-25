@@ -7,11 +7,12 @@ import HeadMessage from './components/HeadMessage.vue';
 import StudentProfileComponent from './components/students/StudentProfileComponent.vue';
 import CompanyCreate from './components/company/create.vue';
 import EntryComponent from './components/entry/EntryComponent';
+import CompanyShow from './components/company/show.vue';
 
 import { createApp } from 'vue';
 
 const app = createApp({
     components: {
-        Sidebar, DeleteModal, CalendarComponent, StudentProfileComponent, HeadMessage, CompanyCreate, EntryComponent,
+        Sidebar, DeleteModal, CalendarComponent, StudentProfileComponent, HeadMessage, CompanyCreate, EntryComponent, CompanyShow
     }
 }).mount('#app');

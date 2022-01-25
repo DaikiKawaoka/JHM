@@ -15,6 +15,7 @@ use App\Rules\PdfRule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Cookie;
 
 class CompaniesController extends Controller
 {
@@ -150,29 +151,42 @@ class CompaniesController extends Controller
     {
         $login_user = Auth::user();
         $company = Company::find($id);
-        $status = $login_user->getMyProgressByCompany($id);
 
-        if(!$company)
-            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
+        if($login_user->is_teacher()){
+            //先生の場合
+            $workspace_id = Cookie::get('workspace_id');
+            //全生徒のうちのエントリー数
+            $allEntryCount = $company->getEntryCount();
+            //ワークスペースの生徒のうちのエントリー数
+            $classEntry = $company->getClassEntry($workspace_id);
+            return view('companies.show')->with([
+                "company" => $company,
+                "allEntryCount" => $allEntryCount,
+                "classEntry" => $classEntry,
+            ]);
+        }else{
+            //生徒の場合
+            $status = $login_user->getMyProgressByCompany($id);
 
-        $entry = null;
+            if(!$company)
+                return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
-        if(!$login_user->is_teacher()){
             $entry = $login_user->getEntry($company->id);
+            $progress_list = null;
+            // エントリーしているか分岐\
+            if($entry){
+                $progress_list = $entry->getProgressList();
+            }
+            $entered_companies = $login_user->getEnteredCompanies();
+            return view('companies.show')->with([
+                "status" => $status,
+                "company" => $company,
+                "entry" => $entry,
+                "progress_list" => $progress_list,
+                'entered_companies' => $entered_companies,
+            ]);
         }
-        $progress_list = null;
-        // エントリーしているか分岐\
-        if($entry){
-            $progress_list = $entry->getProgressList();
-        }
-        $entered_companies = $login_user->getEnteredCompanies();
-        return view('companies.show')->with([
-            "status" => $status,
-            "company" => $company,
-            "entry" => $entry,
-            "progress_list" => $progress_list,
-            'entered_companies' => $entered_companies,
-        ]);
+
     }
 
     /**
