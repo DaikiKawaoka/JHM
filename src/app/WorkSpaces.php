@@ -22,4 +22,8 @@ class WorkSpaces extends Model
                 ->get();
     }
 
+    public function getWorkspaceSchedule(){
+        return Schedules::where('workspace_id', $this->id)->get();
+    }
+
 }

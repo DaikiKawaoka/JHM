@@ -63,7 +63,11 @@ DB_TESTING_PORT=13307
 
 19 $ composer require phpoffice/phpspreadsheet
 
-20 $ exit
+20 apt install imagemagick
+
+21 apt install ghostscript
+
+22 $ exit
 
 
 

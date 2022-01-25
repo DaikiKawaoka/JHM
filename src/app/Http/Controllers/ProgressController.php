@@ -154,6 +154,7 @@ class ProgressController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request);
         $login_user = Auth::user();
 
         if($login_user->is_teacher()){
@@ -162,7 +163,7 @@ class ProgressController extends Controller
 
         $request->validate([
             'action' => ['required','string','regex:/^[説明会|試験受験|面接|社長面接]+$/u'],
-            'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
+            'state' => ['required','string','regex:/^[結果待ち|合格|不合格|内々定|欠席]+$/u'],
             'action_date' => ['required','date'],
             'company_id' => ['required'],
         ],[
@@ -193,7 +194,6 @@ class ProgressController extends Controller
         $session_name = '';
         $session_message = '';
         $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT');
-
 
         if($entry){
             // 会社にエントリーしている場合
@@ -232,15 +232,12 @@ class ProgressController extends Controller
     public function update(Request $request , $progress_id)
     {
         $request->validate([
-            'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
-            'action_date' => ['required','date'],
+            'state' => ['required','string','regex:/^[結果待ち|合格|不合格|内々定|欠席]+$/u'],
             'company_id' => ['required','integer'],
         ],[
             'state.required' => '状態は必須です。',
             'state.string' => '文字列で入力してください。',
             'state.regex' => '選択欄からお選びください。',
-            'action_date.required' => '実施日は必須です。',
-            'action_date.date' => '日にちを入力してください。',
             'company_id.required' => '会社詳細ページから変更してください。',
             'company_id.integer' => '会社IDが不正です。',
         ]);
@@ -248,11 +245,9 @@ class ProgressController extends Controller
         $login_user = Auth::user();
         $company_id = $request->input('company_id');
         $state = $request->input('state');
-        $action_date = $request->input('action_date');
-        $entry = Entry::
-                    where('user_id', $login_user->id)
+        $entry = Entry::where('student_id', $login_user->id)
                     ->where('company_id', $company_id)
-                    ->first();
+                    ->get();
         $session_name = '';
         $session_message = '';
 
@@ -267,7 +262,6 @@ class ProgressController extends Controller
             if($progress){
                 // 進捗が登録されている場合update
                 $progress->state = $state;
-                $progress->action_date = $action_date;
                 $progress->save();
 
                 $session_name = 'status';
@@ -455,7 +449,7 @@ class ProgressController extends Controller
                     $sheet->setCellValueByColumnAndRow($write_cell_row_num + $p_index , $write_cell_col_num + 2, $progress->action_date->format('Y/m/d'));
                     $sheet->setCellValueByColumnAndRow($write_cell_row_num + $p_index , $write_cell_col_num + 3, $progress->state);
                     if($progress->state == "内々定") $has_got_informal_offer = true;
-                    if($progress->state == "×") $is_failed = true;
+                    if($progress->state == "不合格") $is_failed = true;
                 }
                 if($has_got_informal_offer){
                     // 数字からアルファベットに変換

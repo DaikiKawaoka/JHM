@@ -11,6 +11,9 @@ $font:'Noto Sans JP', sans-serif;
         flex-wrap: wrap;
         list-style: none;
         grid-template-columns: 550px 550px;
+        &:hover {
+            text-decoration: none;
+        }
         .companies_elements {
             border: 0.5px solid #ccc;
             border-radius: 5px;
@@ -19,9 +22,10 @@ $font:'Noto Sans JP', sans-serif;
             //タイトルを真ん中に持ってくる
             text-align: center;
             position: relative;
-            &:hover{
-                opacity: 0.5;
+            &:hover {
+                text-decoration: none;
             }
+            
             //会社名
             .companies_link{
                 display: block;
@@ -30,7 +34,9 @@ $font:'Noto Sans JP', sans-serif;
                 position: absolute;
                 top: 0%;
                 left: 0%;
-
+                &:hover {
+                    text-decoration: none;
+                }
             }
             .companies_name {
                 font-size: 2rem;
@@ -69,6 +75,13 @@ $font:'Noto Sans JP', sans-serif;
                 right: 105px;
                 
             }
+            #entry_btn{
+                margin-top: 40px;
+            }
+            #cancel_btn{
+                margin-top: 40px;
+            }
+
         }
     }
 } 

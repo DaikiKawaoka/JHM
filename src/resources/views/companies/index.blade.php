@@ -20,6 +20,8 @@
     </div>
   </div>
 
+
+
   @if (!($companies->isEmpty()))
   <div class="companies_container">
     <ul class="companies_list">
@@ -27,12 +29,10 @@
       <li class="companies_elements">
         <a class="companies_link" href="/companies/{{ $company->id }}">
           <p class="companies_name">{{ $company->name }}</p>
+          @if ($company->deadline)
           <p class="deadline">締切日：
-            @if ($company->deadline)
-            {{ $company->deadline->format('Y年m月d日') }}
-            @else
-            null
-            @endif
+          {{ $company->deadline->format('Y年m月d日') }}
+          @endif
           </p>
           <img src="{{ asset('img/no_image_square.jpg')}}" class="companies_pic">
           <div class="entries_delete_btn">
@@ -41,13 +41,13 @@
             <form action="{{route('entries.destroy', $entries[$company->id]->id)}}" method="post">
               {{ csrf_field() }}
               {{ method_field('delete') }}
-              <button type="submit" class="btn btn-danger">取り消し</button>
+              <button type="submit" class="btn btn-danger" id="cancel_btn">取り消し</button>
             </form>
             @else
             <form action="{{route('entries.store')}}" method='post'>
               {{ csrf_field() }}
               {{ method_field('POST') }}
-              <input type="submit" name="entry" value="エントリー" class="btn btn-success">
+              <input type="submit" name="entry" value="エントリー" class="btn btn-success" id="entry_btn">
               <input type="hidden" name="company_id" value="{{ $company->id }}">
             </form>
             @endif

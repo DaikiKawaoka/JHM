@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Rules\CurrentPassword;
+use App\Students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
@@ -134,10 +135,10 @@ class UsersController extends Controller
     public function updateStudentProfile($id, Request $request)
     {
         $user = Auth::user();
-        $updateUser = User::find($id);
+        $updateUser = Students::find($id);
         $session_name = '';
         $session_message = '';
-        if($user->is_teacher){
+        if($user->is_teacher()){
             $session_name = 'status-error';
             $session_message = '更新対象が自身のプロフィールではないため、処理が失敗しました。';
             return redirect()->route('companies.index')->with($session_name ,$session_message)->withInput();
@@ -193,7 +194,6 @@ class UsersController extends Controller
         }
         $request -> validate([
             'name' => ['required', 'string', 'max:255'],
-            'class' => ['string', 'max:31'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
         ],[
             'name.required' => '生徒名は必須項目です。',
@@ -201,7 +201,6 @@ class UsersController extends Controller
             'email.email'  => 'メールアドレスを入力してください。',
         ]);
         $updateUser->name = $request->input('name');
-        $updateUser->class = $request->input('class');
         $updateUser->email = $request->input('email');
         $updateUser->save();
         $session_name = 'status';
