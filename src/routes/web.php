@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', 'ProgressController@index');
+Route::get('/api/progress', 'ProgressController@ajax_index');
+Route::get('/progress/index2', 'ProgressController@index2');
 Route::post('/auth_logout', 'LogoutController@auth_logout')->name('auth_logout');
-Route::post('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
+Route::get('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
 
 Route::get('/register_confirm', 'Auth\RegisterController@confirm')->name('register_confirm');
 Auth::routes();
