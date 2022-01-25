@@ -291,13 +291,13 @@
                     :key="progress.id"
                   >
                     <td style="width: 100px; text-align: center; padding: 0">
-                      <template v-if="progress.state == '◯'">
+                      <template v-if="progress.state == '合格'">
                         <i
                           class="fas fa-check-circle my-success"
                           aria-hidden="true"
                         ></i>
                       </template>
-                      <template v-if="progress.state == 'x'">
+                      <template v-if="progress.state == '不合格'">
                         <i
                           class="fas fa-times-circle my-fail"
                           aria-hidden="true"
