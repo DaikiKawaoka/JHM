@@ -1,147 +1,368 @@
 <template>
-<div class="container-fluid">
-  <div v-if="students">
-    <header class="header_container">
+  <div class="container-fluid">
+    <div v-if="students">
+      <header class="header_container">
         <div class="title_content">
           <h5>{{ workspace.year }}年度 就職活動リスト</h5>
           <h6>{{ workspace.class_name }}科 / 担任：{{ login_user.name }}</h6>
         </div>
         <div class="btn-group">
-          <form action="/progress/excel_export" method='get'>
-              <input type="submit" class="btn btn-success btn-lg mb-3 mr-2" value="Excelダウンロード">
+          <form action="/progress/excel_export" method="get">
+            <input
+              type="submit"
+              class="btn btn-success btn-lg mb-3 mr-2"
+              value="Excelダウンロード"
+            />
           </form>
         </div>
-    </header>
-
-    <div class="progress-page-all" style="overflow-y: scroll;">
-      <div class="" :style="'width:'+ table_width_px + 'px;'">
-
-        <div class="progress-page-header">
-          <div class="attendnum-div header-attendnum-div">
-            <span class="header-student-attendnum">出席番号</span>
-          </div>
-          <div class="name-div header-student-name-div">
-            <span class="header-student-name">学生氏名</span>
-          </div>
-          <div v-for="entry_count in most_many_entry_num" :key="entry_count">
-            <div class="company-name-div header-company-name-div">
-              <span class="header-company-name">応募先企業名</span>
-            </div>
-            <div class="header-progress-list-div">
-              <span v-for="index in max_progress_count" :key="index" class="header-progress">選考{{index}}</span>
-            </div>
-            <div class="action-date-div header-action-date-div">
-              <span class="header-action-date">日付</span>
-            </div>
-            <div class="action-state-div header-action-state-div">
-              <span class="header-action-state">結果</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="progress-page-body">
-          <div class="student-progress-info-all" v-for="(student , s_index) in students" :key="student.id">
-            <div class="student-info-div">
-              <div class="attendnum-div student-attendnum-div">
-                <span class="student-attendnum">{{student.attend_num}}</span>
-              </div>
-              <div class="name-div student-name-div">
-                <span class="student-name">{{student.name}}</span>
-              </div>
-            </div>
-            <div class="student-progress-info-div">
-              <!-- entries_listは全生徒のエントリー配列 , entries_list[s_index] = s_index番目の生徒のエントリー配列 -->
-              <div class="entry-div" v-for="(entry,e_index) in entries_list[s_index]" :key="(entry.id,e_index)">
-                <div class="entered-company-name-div">
+      </header>
+      <div class="progress-page-all" style="overflow-y: scroll">
+        <table
+          class="table table-bordered"
+          :style="'width:' + table_width_px + 'px;'"
+        >
+          <thead>
+            <tr>
+              <th
+                class="fixed"
+                rowspan="4"
+                style="
+                  width: 65px;
+                  text-align: center;
+                  vertical-align: middle;
+                  padding: 0;
+                "
+              >
+                出席番号
+              </th>
+              <th
+                class="fixed2"
+                rowspan="4"
+                style="
+                  width: 100px;
+                  text-align: center;
+                  vertical-align: middle;
+                  padding: 0;
+                "
+              >
+                学生氏名
+              </th>
+              <th
+                v-for="entry_count in most_many_entry_num"
+                :key="entry_count"
+                :colspan="max_progress_count"
+                style="width: 400px; text-align: center; padding: 0"
+              >
+                応募先企業名
+              </th>
+            </tr>
+            <tr style="width: 100px">
+              <template
+                v-for="entry_count in most_many_entry_num"
+                :key="entry_count"
+              >
+                <th
+                  v-for="index in max_progress_count"
+                  :key="index"
+                  class="header-progress"
+                  style="text-align: center; padding: 0"
+                >
+                  選考{{ index }}
+                </th>
+              </template>
+            </tr>
+            <tr style="width: {{entry_column_width_px}}px;">
+              <th
+                v-for="entry_count in most_many_entry_num"
+                :key="entry_count"
+                :colspan="max_progress_count"
+                style="text-align: center; padding: 0"
+              >
+                日付
+              </th>
+            </tr>
+            <tr style="width: {{entry_column_width_px}}px;">
+              <th
+                v-for="entry_count in most_many_entry_num"
+                :key="entry_count"
+                :colspan="max_progress_count"
+                style="text-align: center; padding: 0"
+              >
+                結果
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-for="(student, s_index) in students" :key="student">
+              <tr>
+                <td
+                  class="fixed"
+                  rowspan="4"
+                  style="
+                    width: 65px;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 0;
+                  "
+                >
+                  {{ student.attend_num }}
+                </td>
+                <td
+                  class="fixed2"
+                  rowspan="4"
+                  style="
+                    width: 100px;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 0;
+                  "
+                >
+                  {{ student.name }}
+                </td>
+                <!-- entries_listは全生徒のエントリー配列 , entries_list[s_index] = s_index番目の生徒のエントリー配列 -->
+                <template
+                  v-for="(entry, e_index) in entries_list[s_index]"
+                  :key="(entry.id, e_index)"
+                >
                   <!-- 求人からエントリーした会社 -->
-                  <span v-if="entry.company_name != null" class="entered-company-name">{{entry.company_name}}</span>
+                  <td
+                    v-if="entry.company_name != null"
+                    class="entered-company-name"
+                    :colspan="max_progress_count"
+                    style="text-align: center; padding: 0"
+                  >
+                    {{ entry.company_name }}
+                  </td>
                   <!-- 生徒自身が登録した会社 -->
-                  <span v-else class="entered-student-company-name">{{entry.student_company_name}}</span>
-                </div>
-
-                <!-- progress_listは全生徒の進捗配列 , progress_list[s_index][e_index] = s_index番目の生徒のe_index番目のエントリーの進捗情報配列 -->
-                <div class="student-progress-list" v-for="progress in progress_list[s_index][e_index]" :key="progress">
-                  <div class="progress-list">
-                    <div class="progress-div">
-                      <div class="progress-action-div">
-                        <span class="progress-action">{{progress.action}}</span>
-                      </div>
-                      <div class="progress-action-date-div">
-                        <span class="progress-action-date">{{progress.action_date}}</span>
-                      </div>
-                      <div class="progress-state-div">
-                        <span class="progress-state">{{progress.state}}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- 進捗数がmax_progress_count(1エントリーに登録できる進捗数) より少ない場合 (表を綺麗に見せるため) -->
-                <div v-if="progress_list[s_index][e_index].length < max_progress_count">
-                  <!-- 進捗数がmax_progress_count(デフォルトでは5個)になるまでfor分で回す -->
-                  <div class="progress-list" v-for="j in max_progress_count - progress_list[s_index][e_index].length" :key="j">
-                    <div class="progress-div">
-                      <div class="progress-action-div">
-                        <span class="progress-action">action(本当は空)</span>
-                      </div>
-                      <div class="progress-action-date-div">
-                        <span class="progress-action-date">date(本当は空)</span>
-                      </div>
-                      <div class="progress-state-div">
-                        <span class="progress-state">state(本当は空)</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-  -------------------------------エントリー区切り線（わかりやすいように一時的に書いているため消してください）-------------------------------
-              </div>
-
-              <!-- 空のエントリー要素を作成 -->
-              <!-- エントリー数が1番多い生徒ではない場合 (表を綺麗に見せるため) -->
-              <div v-if="entries_list[s_index].length < most_many_entry_num">
-                <!-- エントリー数が1番多い人との差分だけfor分で回す -->
-                <div class="entry-div" v-for="i in most_many_entry_num - entries_list[s_index].length" :key="i">
-                  <div class="entered-company-name-div">
-                    <span class="entered-company-name">会社名(本当は空)</span>
-                  </div>
-                  <!-- 空の進捗要素を作成 -->
-                  <div v-for="i in most_many_entry_num - entries_list[s_index].length" :key="i">
+                  <td
+                    v-else
+                    class="entered-student-company-name"
+                    style="text-align: center; padding: 0"
+                  >
+                    {{ entry.student_company_name }}
+                  </td>
+                </template>
+                <!-- 空のエントリー要素を作成 -->
+                <!-- エントリー数が1番多い生徒ではない場合 (表を綺麗に見せるため) -->
+                <template
+                  v-if="entries_list[s_index].length < most_many_entry_num"
+                >
+                  <!-- エントリー数が1番多い人との差分だけfor分で回す -->
+                  <template
+                    v-for="i in most_many_entry_num -
+                    entries_list[s_index].length"
+                    :key="i"
+                  >
+                    <td
+                      :colspan="max_progress_count"
+                      style="text-align: center; padding: 0"
+                    >
+                      &nbsp;
+                    </td>
+                  </template>
+                </template>
+              </tr>
+              <tr>
+                <!-- entries_listは全生徒のエントリー配列 , entries_list[s_index] = s_index番目の生徒のエントリー配列 -->
+                <template
+                  v-for="(entry, e_index) in entries_list[s_index]"
+                  :key="(entry.id, e_index)"
+                >
+                  <!-- progress_listは全生徒の進捗配列 , progress_list[s_index][e_index] = s_index番目の生徒のe_index番目のエントリーの進捗情報配列 -->
+                  <template
+                    class="student-progress-list"
+                    v-for="progress in progress_list[s_index][e_index]"
+                    :key="progress.id"
+                  >
+                    <td style="width: 100px; text-align: center; padding: 0">
+                      {{ progress.action }}
+                    </td>
+                  </template>
+                  <template
+                    v-if="
+                      progress_list[s_index][e_index].length <
+                      max_progress_count
+                    "
+                  >
+                    <template
+                      class="progress-list"
+                      v-for="j in max_progress_count -
+                      progress_list[s_index][e_index].length"
+                      :key="j"
+                    >
+                      <td style="width: 100px; text-align: center; padding: 0">
+                        &nbsp;
+                      </td>
+                    </template>
+                  </template>
+                </template>
+                <!-- 空の進捗要素を作成 -->
+                <!-- エントリー数が1番多い生徒ではない場合 (表を綺麗に見せるため) -->
+                <template
+                  v-if="entries_list[s_index].length < most_many_entry_num"
+                >
+                  <!-- エントリー数が1番多い人との差分だけfor分で回す -->
+                  <template
+                    v-for="i in most_many_entry_num -
+                    entries_list[s_index].length"
+                    :key="i"
+                  >
                     <!-- max_progress_count(進捗登録最大数,デフォルトでは5個)分forで回す -->
-                    <div class="progress-list" v-for="i in max_progress_count" :key="i">
-                      <div class="progress-div">
-                        <div class="progress-action-div">
-                          <span class="progress-action">action(本当は空)</span>
-                        </div>
-                        <div class="progress-action-date-div">
-                          <span class="progress-action-date">date(本当は空)</span>
-                        </div>
-                        <div class="progress-state-div">
-                          <span class="progress-state">state(本当は空)</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    <template
+                      class="progress-list"
+                      v-for="i in max_progress_count"
+                      :key="i"
+                    >
+                      <td style="width: 100px; text-align: center; padding: 0">
+                        &nbsp;
+                      </td>
+                    </template>
+                  </template>
+                </template>
+              </tr>
+              <tr>
+                <!-- entries_listは全生徒のエントリー配列 , entries_list[s_index] = s_index番目の生徒のエントリー配列 -->
+                <template
+                  v-for="(entry, e_index) in entries_list[s_index]"
+                  :key="(entry.id, e_index)"
+                >
+                  <!-- progress_listは全生徒の進捗配列 , progress_list[s_index][e_index] = s_index番目の生徒のe_index番目のエントリーの進捗情報配列 -->
+                  <template
+                    class="student-progress-list"
+                    v-for="progress in progress_list[s_index][e_index]"
+                    :key="progress.id"
+                  >
+                    <td style="width: 100px; text-align: center; padding: 0">
+                      {{ moment(progress.action_date) }}
+                    </td>
+                  </template>
+                  <template
+                    v-if="
+                      progress_list[s_index][e_index].length <
+                      max_progress_count
+                    "
+                  >
+                    <template
+                      class="progress-list"
+                      v-for="j in max_progress_count -
+                      progress_list[s_index][e_index].length"
+                      :key="j"
+                    >
+                      <td style="width: 100px; text-align: center; padding: 0">
+                        &nbsp;
+                      </td>
+                    </template>
+                  </template>
+                </template>
+                <!-- 空の進捗要素を作成 -->
+                <!-- エントリー数が1番多い生徒ではない場合 (表を綺麗に見せるため) -->
+                <template
+                  v-if="entries_list[s_index].length < most_many_entry_num"
+                >
+                  <!-- max_progress_count(進捗登録最大数,デフォルトでは5個)分forで回す -->
 
-            </div>
-            ------------------------------生徒区切り線（わかりやすいように一時的に書いているため消してください）---------------------------------------------
-          </div>
-        </div>
+                  <template
+                    v-for="i in most_many_entry_num -
+                    entries_list[s_index].length"
+                    :key="i"
+                  >
+                    <template
+                      class="progress-list"
+                      v-for="i in max_progress_count"
+                      :key="i"
+                    >
+                      <td style="width: 100px; text-align: center; padding: 0">
+                        &nbsp;
+                      </td>
+                    </template>
+                  </template>
+                </template>
+              </tr>
+              <tr>
+                <!-- entries_listは全生徒のエントリー配列 , entries_list[s_index] = s_index番目の生徒のエントリー配列 -->
+                <template
+                  v-for="(entry, e_index) in entries_list[s_index]"
+                  :key="(entry.id, e_index)"
+                >
+                  <!-- progress_listは全生徒の進捗配列 , progress_list[s_index][e_index] = s_index番目の生徒のe_index番目のエントリーの進捗情報配列 -->
+                  <template
+                    class="student-progress-list"
+                    v-for="progress in progress_list[s_index][e_index]"
+                    :key="progress.id"
+                  >
+                    <td style="width: 100px; text-align: center; padding: 0">
+                      <template v-if="progress.state == '◯'">
+                        <i
+                          class="fas fa-check-circle my-success"
+                          aria-hidden="true"
+                        ></i>
+                      </template>
+                      <template v-if="progress.state == 'x'">
+                        <i
+                          class="fas fa-times-circle my-fail"
+                          aria-hidden="true"
+                        ></i>
+                      </template>
+                    </td>
+                  </template>
+                  <template
+                    v-if="
+                      progress_list[s_index][e_index].length <
+                      max_progress_count
+                    "
+                  >
+                    <template
+                      class="progress-list"
+                      v-for="j in max_progress_count -
+                      progress_list[s_index][e_index].length"
+                      :key="j"
+                    >
+                      <td style="width: 100px; text-align: center; padding: 0">
+                        &nbsp;
+                      </td>
+                    </template>
+                  </template>
+                </template>
+                <!-- 空の進捗要素を作成 -->
+                <!-- エントリー数が1番多い生徒ではない場合 (表を綺麗に見せるため) -->
+                <template
+                  v-if="entries_list[s_index].length < most_many_entry_num"
+                >
+                  <!-- max_progress_count(進捗登録最大数,デフォルトでは5個)分forで回す -->
+
+                  <template
+                    v-for="i in most_many_entry_num -
+                    entries_list[s_index].length"
+                    :key="i"
+                  >
+                    <template
+                      class="progress-list"
+                      v-for="i in max_progress_count"
+                      :key="i"
+                    >
+                      <td style="width: 100px; text-align: center; padding: 0">
+                        &nbsp;
+                      </td>
+                    </template>
+                  </template>
+                </template>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
+      <!-- 生徒が登録されていない場合 -->
+    </div>
+    <div v-else>
+      <h1 style="text-align: center">生徒が登録されていません。</h1>
     </div>
   </div>
-
-  <!-- 生徒が登録されていない場合 -->
-  <div v-else>
-    <h1 style="text-align: center;">生徒が登録されていません。</h1>
-  </div>
-</div>
 </template>
 
 <script>
-
+const moment = require("moment");
 export default {
-  data(){
+  data() {
     return {
       workspace: Object,
       login_user: Object,
@@ -152,12 +373,13 @@ export default {
       table_width_px: 0,
       entry_column_width_px: 0,
       max_progress_count: 0,
-    }
+      isEditProgressState: false,
+    };
   },
   created() {
     let self = this;
-    let url = '/api/progress';
-    axios.get(url).then(function(response){
+    let url = "/api/progress";
+    axios.get(url).then(function (response) {
       self.workspace = response.data.workspace;
       self.login_user = response.data.login_user;
       self.students = response.data.students;
@@ -170,6 +392,9 @@ export default {
     });
   },
   methods: {
+    moment: function (date) {
+      return moment(date).format("YYYY/MM/DD");
+    },
     // excelExport: function() {
     //   let url = '/progress/excel_export';
     //   try {
@@ -185,8 +410,7 @@ export default {
     //   }
     // }
   },
-
-}
+};
 </script>
 
 <style scoped lang='scss'>
