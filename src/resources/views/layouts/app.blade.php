@@ -88,12 +88,6 @@
                                             求人登録
                                         </a>
                                     @else
-                                        <a class="dropdown-item" href="{{ route('entries.index') }}">
-                                            エントリー済み会社一覧
-                                        </a>
-                                        <a class="dropdown-item" href="{{ route('studentCompanies.identityRegister') }}">
-                                            本人登録会社一覧
-                                        </a>
                                         <a class="dropdown-item" href="{{ route('studentCompanies.create') }}">
                                             求人登録
                                         </a>

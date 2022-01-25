@@ -2,16 +2,20 @@
     <div id="studentProfile-header">
         <ul id="header-ul">
             <li class="header-li">
-                <button id="switch-button" @click="currentComponent='overview'">Overview</button>
+                <button id="switch-button" @click="currentComponent='overview'" v-if="currentComponent!='overview'">Overview</button>
+                <button id="switch-large-button" @click="currentComponent='overview'" v-if="currentComponent==='overview'">Overview</button>
             </li>
             <li class="header-li">
-                <button id="switch-button" @click="currentComponent='enterd'">Entered</button>
+                <button id="switch-button" @click="currentComponent='enterd'" v-if="currentComponent!='enterd'">Entered</button>
+                <button id="switch-large-button" @click="currentComponent='enterd'" v-if="currentComponent==='enterd'">Entered</button>
             </li>
             <li class="header-li">
-                <button id="switch-button" @click="currentComponent='companies'">Companies</button>
+                <button id="switch-button" @click="currentComponent='companies'" v-if="currentComponent!='companies'">Companies</button>
+                <button id="switch-large-button" @click="currentComponent='companies'" v-if="currentComponent==='companies'">Companies</button>
             </li>
             <li class="header-li">
-                <button id="switch-button" @click="currentComponent='recommend'">★</button>
+                <button id="switch-button" @click="currentComponent='recommend'" v-if="currentComponent!='recommend'">★</button>
+                <button id="switch-large-button" @click="currentComponent='recommend'" v-if="currentComponent==='recommend'">★</button>
             </li>
         </ul>
         <hr>
@@ -27,8 +31,21 @@
             <recommend-companies-component v-if="currentComponent==='recommend'"></recommend-companies-component>
         </div>
     </div>
-    <div>
-
+    <div id="graphSwitch">
+        <ul id="graphSwitch-ul">
+            <li class="graphSwitch-li">
+                <button id="switch-button" @click="graphSwitch='month'" v-if="currentComponent==='overview'&&graphSwitch!='month'">月間</button>
+                <button id="switch-large-button" @click="graphSwitch='month'" v-if="currentComponent==='overview'&&graphSwitch==='month'">月間</button>
+            </li>
+            <li class="graphSwitch-li">
+                <button id="switch-button" @click="graphSwitch='year'" v-if="currentComponent==='overview'&&graphSwitch!='year'">年間</button>
+                <button id="switch-large-button" @click="graphSwitch='year'" v-if="currentComponent==='overview'&&graphSwitch==='year'">年間</button>
+            </li>
+        </ul>
+    </div>
+    <div id="studentProfileGraph" style="position: relative; height:40vh; width:55vw">
+            <student-profile-month-graph-component  v-if="currentComponent==='overview'&&graphSwitch==='month'"></student-profile-month-graph-component>
+            <student-profile-year-graph-component  v-if="currentComponent==='overview'&&graphSwitch==='year'"></student-profile-year-graph-component>
     </div>
 </template>
 
@@ -39,7 +56,8 @@ import OpenViewComponent from './OpenViewComponent.vue';
 import EnterdCompaniesComponent from './EnterdCompaniesComponent.vue';
 import StudentCompaniesComponent from './StudentCompaniesComponent.vue';
 import RecommendCompaniesComponent from './RecommendCompaniesComponent.vue';
-// import { Bar } from 'vue-chartjs'
+import StudentProfileMonthGraphComponent from './StudentProfileMonthGraphComponent.vue';
+import StudentProfileYearGraphComponent from './StudentProfileYearGraphComponent.vue';
 
 export default {
     data(){
@@ -49,6 +67,7 @@ export default {
             recently_entered_companies: [],
             entered_companies: [],
             companies: [],
+            graphSwitch: "month",
         }
     },
     components: {
@@ -58,6 +77,8 @@ export default {
         EnterdCompaniesComponent,
         StudentCompaniesComponent,
         RecommendCompaniesComponent,
+        StudentProfileMonthGraphComponent,
+        StudentProfileYearGraphComponent,
     },
     created() {
         let self = this;
@@ -80,7 +101,7 @@ export default {
             self.companies = response.data.companies;
         })
     },
-    props:['csrf']
+    props:['csrf'],
 }
 
 </script>
@@ -103,6 +124,11 @@ export default {
     #switch-button {
         border: none;
         background: transparent;
+    }
+    #switch-large-button {
+        border: none;
+        background: transparent;
+        text-decoration: underline;
     }
     #switch-button:hover {
         color: #c0c0c0;
@@ -135,4 +161,25 @@ export default {
         width: 125px;
     }
 
+    .small {
+        max-width: 600px;
+        margin:  150px auto;
+    }
+
+    #graphSwitch {
+        margin-left: 75%;
+    }
+    #graphSwitch-ul {
+        list-style: none;
+        margin-top: 50px;
+    }
+    .graphSwitch-li {
+        display: inline;
+        padding-right: 40px;
+    }
+
+    #studentProfileGraph {
+        margin-left: 450px;
+        width: 700px;
+    }
 </style>
