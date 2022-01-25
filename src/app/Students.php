@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class Students extends Authenticatable{
 
@@ -121,6 +123,30 @@ class Students extends Authenticatable{
         ->where('progress.student_id', $this->id)
         ->where('entries.company_id', $company_id)
         ->get();
+    }
+
+    //自分の2年間分のエントリー数を配列で返す
+    public function getMonthEntryCount()
+    {
+        $this_year_entry_count_array = [0,0,0,0,0,0,0,0,0,0,0,0];
+        $last_year_entry_count_array = [0,0,0,0,0,0,0,0,0,0,0,0];
+        $this_year  = date('Y'); //今年
+        $last_year = date('Y', strtotime('-1 year')); //去年
+        $entry_count_array = Entry::select(DB::raw('create_year , create_month , count(*) AS entry_count'))
+                ->where('student_id', $this->id)
+                ->whereBetween('create_year', [$last_year, $this_year])
+                ->groupBy('create_year','create_month')
+                ->get();
+        foreach($entry_count_array as $entry){
+            if($entry->create_year == $this_year){
+                // 今年のエントリーの場合        キャスト
+                $this_year_entry_count_array[((int) $entry->create_month) - 1] = $entry->entry_count;
+            }else if($entry->create_year == $last_year){
+                // 去年のエントリーの場合        キャスト
+                $last_year_entry_count_array[((int) $entry->create_month) - 1] = $entry->entry_count;
+            }
+        };
+        return $entry_count_array = [$this_year_entry_count_array,$last_year_entry_count_array];
     }
 
     public function getSchedule()
