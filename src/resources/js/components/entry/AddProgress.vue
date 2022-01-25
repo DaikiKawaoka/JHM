@@ -6,7 +6,7 @@
                 <input type="hidden" name="_method" value="post">
                 <input type="hidden" name="_token" :value="csrf">
                 <input type="hidden" name="company_type" value="teacher_created_company">
-                <p>進捗登録<button type="submit" class="btn btn-success">登録</button></p>
+                <p class="event-title">進捗登録</p>
                 <span>
                     イベント
                     <select name="action">
@@ -23,19 +23,23 @@
                     実施日
                     <input type="date" name="action_date">
                 </span>
+                <button type="submit" class="btn btn-success">登録</button>
             </form>
+            <div v-for="status in statuses" :key="status">
+                <edit-progress :status="status" :csrf="csrf" :company_id="company_id"></edit-progress>
+            </div>
         </div>
         <div class="event-form radius margin-top font-size not-entry" v-else>
-            <p>進捗登録<button type="submit" class="btn btn-success" disabled>登録</button></p>
+            <p class="event-title">進捗登録<button type="submit" class="btn btn-success" disabled>登録</button></p>
             <span>
                 イベント
-                <select name="action">
+                <select name="action" disabled>
                     <option v-for="event in events" v-bind:key="event" :value="event">{{event}}</option>
                 </select>
             </span>
             <span>
                 状況
-                <select name="state">
+                <select name="state" disabled>
                     <option v-for="progressStatus in progressStatuses" v-bind:key="progressStatus" :value="progressStatus">{{progressStatus}}</option>
                 </select>
             </span>
@@ -48,10 +52,12 @@
 </template>
 
 <script>
+import EditProgress from './EditProgress.vue'
 
 const moment = require('moment')
 
 export default {
+  components: { EditProgress },
     el:'#file',
     data(){
         return {
@@ -69,7 +75,7 @@ export default {
     },
     created(){
     },
-    props: ['csrf', 'company_id', 'entry'],
+    props: ['csrf', 'company_id', 'entry', 'statuses'],
 }
 </script>
 
@@ -80,7 +86,12 @@ export default {
     padding: 0px;
 }
 .event-form{
-    border: solid 1px #000000;
+    .event-title{
+        font-weight: bold;
+    }
+    background: #fff;
+    border: solid 1px #aaa;
+    box-shadow: 0 0 20px rgba(170, 170, 170, .1);
     span{
         padding-left: .8rem;
     }
