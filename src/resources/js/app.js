@@ -2,7 +2,6 @@ require('./bootstrap');
 
 import Sidebar from './components/SidebarComponent.vue';
 import DeleteModal from './components/DeleteModal.vue';
-import CalendarComponent from './components/CalendarComponent.vue';
 import ProgressComponent from './components/ProgressComponent.vue';
 import CalendarComponent from './components/calendar/CalendarComponent.vue';
 import HeadMessage from './components/HeadMessage.vue';
