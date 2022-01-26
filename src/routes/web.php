@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CompaniesController;
+use App\Http\Controllers\WorkSpacesController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -53,7 +55,12 @@ Route::group(['prefix' => 'api'], function(){
     Route::get('/student/overview', 'api\StudentProfileController@overview');
     Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
     Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
+    
+    Route::get('/companies/getCompanies', 'api\CompaniesInfoController@getCompanies');
 });
+
+
+
 
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
