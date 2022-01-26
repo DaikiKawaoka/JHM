@@ -18,13 +18,17 @@ class CompaniesController extends Controller
         $this->middleware(['auth:web,student']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $login_user = Auth::user();
+        $is_teacher = $login_user->is_teacher();
 
         // 会社一覧取得
         $company = new Company();
-        $companies = $company->getAllCompanies();
+
+            $companies = $company->getAllCompanies();
+        
+
 
         // 各会社のエントリー情報取得
         foreach($companies as $company){
@@ -34,7 +38,7 @@ class CompaniesController extends Controller
             ->first();
         }
 
-        return view('companies/index')->with(['companies'=>$companies,'user' => $login_user, 'entries' => $entries]);
+        return view('companies/index')->with(['companies'=>$companies,'user' => $login_user, 'entries' => $entries, 'is_teacher' => $is_teacher]);
     }
     /**
      * Show the form for creating a new resource.
