@@ -21,21 +21,25 @@
             <student-info-component :login_user="login_user"></student-info-component>
         </div>
         <div id="company">
-            <company-component :recently_entered_companies="recently_entered_companies" v-if="currentComponent==='overview'"></company-component>
-            <enterd-component :entered_companies="entered_companies" v-if="currentComponent==='enterd'"></enterd-component>
-            <companies-component :companies="companies" v-if="currentComponent==='companies'"></companies-component>
-            <recommend-component v-if="currentComponent==='recommend'"></recommend-component>
+            <open-view-component :recently_entered_companies="recently_entered_companies" v-if="currentComponent==='overview'"></open-view-component>
+            <enterd-companies-component :entered_companies="entered_companies" v-if="currentComponent==='enterd'"></enterd-companies-component>
+            <student-companies-component :companies="companies" v-if="currentComponent==='companies'"></student-companies-component>
+            <recommend-companies-component v-if="currentComponent==='recommend'"></recommend-companies-component>
         </div>
+    </div>
+    <div>
+
     </div>
 </template>
 
 <script>
 import HeaderComponent from './HeaderComponent.vue';
 import StudentInfoComponent from './StudentInfoComponent.vue';
-import CompanyComponent from './CompanyComponent.vue';
-import EnterdComponent from './EnterdComponent.vue';
-import CompaniesComponent from './CompaniesComponent.vue';
-import RecommendComponent from './RecommendComponent.vue';
+import OpenViewComponent from './OpenViewComponent.vue';
+import EnterdCompaniesComponent from './EnterdCompaniesComponent.vue';
+import StudentCompaniesComponent from './StudentCompaniesComponent.vue';
+import RecommendCompaniesComponent from './RecommendCompaniesComponent.vue';
+// import { Bar } from 'vue-chartjs'
 
 export default {
     data(){
@@ -50,10 +54,10 @@ export default {
     components: {
         HeaderComponent,
         StudentInfoComponent,
-        CompanyComponent,
-        EnterdComponent,
-        CompaniesComponent,
-        RecommendComponent
+        OpenViewComponent,
+        EnterdCompaniesComponent,
+        StudentCompaniesComponent,
+        RecommendCompaniesComponent,
     },
     created() {
         let self = this;

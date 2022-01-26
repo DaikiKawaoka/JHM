@@ -2,7 +2,7 @@
     <div id="recommend_container">
         <ul id="studentProfile_recommend_list">
             <li class="studentProfile_recommend_item"  v-for="company in recommend" :key="company.id">
-                <a href="" class="studentProfile_link">
+                <a href="companies/{{company.id}}" class="studentProfile_link">
                     <h3>{{company.name}}</h3>
                 </a>
             </li>

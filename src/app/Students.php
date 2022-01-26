@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class Students extends Authenticatable{
 
@@ -54,6 +56,7 @@ class Students extends Authenticatable{
         return $this->belongsToMany(Company::class,'entries','user_id','company_id');
     }
 
+    // エントリーを取得
     public function getMyEntries()
     {
         return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
@@ -61,6 +64,20 @@ class Students extends Authenticatable{
                 ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
                 ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
                 ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
+    }
+
+    // 現在進行中のエントリーを取得 (×が付いていないエントリー)
+    public function getMyOngoingEntries()
+    {
+
+        $entries = Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name','progress.state'])
+                ->leftJoin('students', 'entries.student_id', '=', 'students.id')
+                ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
+                ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
+                ->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')
+                ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
+
+        return $entries = $entries->except(DB::table('entries')->leftJoin('students', 'entries.student_id', '=', 'students.id')->leftJoin('companies', 'entries.company_id', '=', 'companies.id')->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')->where('students.id', $this->id)->where('progress.state', '=', '×')->distinct()->pluck('entries.id')->toArray());
     }
 
     //求人情報にある会社のエントリーを取得
@@ -116,11 +133,35 @@ class Students extends Authenticatable{
     //自分が登録している１つの会社の進捗
     public function getMyProgressByCompany($company_id)
     {
-        return Progress::select(['progress.action', 'progress.state', 'progress.action_date'])
+        return Progress::select(['progress.id', 'progress.action', 'progress.state', 'progress.action_date'])
         ->join('entries', 'progress.entry_id', '=', 'entries.id')
         ->where('progress.student_id', $this->id)
         ->where('entries.company_id', $company_id)
         ->get();
+    }
+
+    //自分の2年間分のエントリー数を配列で返す
+    public function getMonthEntryCount()
+    {
+        $this_year_entry_count_array = [0,0,0,0,0,0,0,0,0,0,0,0];
+        $last_year_entry_count_array = [0,0,0,0,0,0,0,0,0,0,0,0];
+        $this_year  = date('Y'); //今年
+        $last_year = date('Y', strtotime('-1 year')); //去年
+        $entry_count_array = Entry::select(DB::raw('create_year , create_month , count(*) AS entry_count'))
+                ->where('student_id', $this->id)
+                ->whereBetween('create_year', [$last_year, $this_year])
+                ->groupBy('create_year','create_month')
+                ->get();
+        foreach($entry_count_array as $entry){
+            if($entry->create_year == $this_year){
+                // 今年のエントリーの場合        キャスト
+                $this_year_entry_count_array[((int) $entry->create_month) - 1] = $entry->entry_count;
+            }else if($entry->create_year == $last_year){
+                // 去年のエントリーの場合        キャスト
+                $last_year_entry_count_array[((int) $entry->create_month) - 1] = $entry->entry_count;
+            }
+        };
+        return $entry_count_array = [$this_year_entry_count_array,$last_year_entry_count_array];
     }
 
     public function getSchedule()

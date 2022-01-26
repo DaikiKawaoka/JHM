@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Entry;
 use App\Company;
+use DateTime;
 use App\User;
 use App\Progress;
 
@@ -80,9 +81,13 @@ class EntriesController extends Controller
             if($is_entered){
                 $message = '過去にあなたは'.$company->name.'にエントリー済みです。';
             }else{
+                $date  = new DateTime();
                 Entry::create([
                     'student_id' => $user->id,
                     'company_id' => $company->id,
+                    'create_year'=> $date->format('Y'),
+                    'create_month' => $date->format('m'),
+                    'create_day' => $date->format('d'),
                 ]);
                 return redirect()->route('companies.show',['company' => $company_id])->with('status',$company->name.'にエントリーしました。');
             }
@@ -142,10 +147,12 @@ class EntriesController extends Controller
             if($entry){
                 //エントリーしていれば
                 $entry -> delete();
-            }else{
-                $message = 'あなたはエントリーしていないのでこの処理はできません。';
+                $message = 'エントリーを取り消しました。';
+                $company_id = $entry->company_id;
+                return redirect()->route('companies.show', $company_id)->with('status',$message);
             }
-            return redirect()->route('entries.index')->with('status-error',$message);;
+            $message = 'あなたはエントリーしていないのでこの処理はできません。';
+            return redirect()->route('entries.index')->with('status-error',$message);
         }else{
             $message = 'あなたは教師なのでこの処理はできません。';
             return redirect()->route('home')->with('status-error',$message);

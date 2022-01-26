@@ -1,9 +1,12 @@
 <template>
-    <div id="companies_container">
+    <div id="student_company_container">
         <ul id="studentProfile_companies_list">
-            <li class="studentProfile_companies_item"  v-for="company in companies" :key="company.id">
-                <a href="" class="studentProfile_link">
-                    <h3>{{company.name}}</h3>
+            <li class="studentProfile_companies_item" v-for="company in recently_entered_companies" :key="company.id">
+                <a v-bind:href="`/companies/${company.company_id}`" id="studentProfile_link" v-if="company.company_name!==null">
+                    <h3>{{company.company_name}}</h3>
+                </a>
+                <a v-bind:href="`/student/companies/${company.student_company_id}`" id="studentProfile_link" v-else>
+                    <h3>{{company.student_company_name}}</h3>
                 </a>
             </li>
         </ul>
@@ -18,7 +21,7 @@ export default {
         }
     },
     props:[
-        'companies'
+        'recently_entered_companies'
     ],
     methods: {
 
@@ -27,7 +30,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-    #companies_container {
+    #student_company_container {
         margin-left: 180px;
     }
 
@@ -47,14 +50,16 @@ export default {
         margin-top: 20px;
         margin-right: 30px;
     }
-    .studentProfile_companies_item:hover {
-        background-color: #e0e0e0;
-    }
-    .studentProfile_link {
+    #studentProfile_link {
         text-decoration: none;
         color: #000;
     }
     h3 {
         margin-top: 40px;
     }
+
+    .studentProfile_companies_item:hover {
+        background-color: #e0e0e0;
+    }
+
 </style>

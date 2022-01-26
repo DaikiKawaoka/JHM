@@ -16,8 +16,10 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', 'ProgressController@index');
+Route::get('/api/progress', 'ProgressController@ajax_index');
+Route::get('/progress/index2', 'ProgressController@index2');
 Route::post('/auth_logout', 'LogoutController@auth_logout')->name('auth_logout');
-Route::post('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
+Route::get('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
 
 Route::get('/register_confirm', 'Auth\RegisterController@confirm')->name('register_confirm');
 Auth::routes();
@@ -27,7 +29,10 @@ Route::resource('users', 'UsersController');
 Route::put('users/updateStudentProfile/{id}', 'UsersController@updateStudentProfile')->name('users.updateStudentProfile');
 Route::put('users/updateTeacherProfile/{id}', 'UsersController@updateTeacherProfile')->name('users.updateTeacherProfile');
 Route::put('users/updatePassword/{id}', 'UsersController@updatePassword')->name('users.updatePassword');
+
+//companyに関連するアクセス方法
 Route::resource('companies', 'CompaniesController');
+Route::get('companies/{id}/download_pdf', 'CompaniesController@downloadPdf')->name('companies.download_pdf');
 
 Route::get('student/companies/create', 'StudentCompaniesController@create')->name('studentCompanies.create');
 Route::get('student/companies/identityRegister', 'StudentCompaniesController@identityRegister')->name('studentCompanies.identityRegister');
@@ -38,7 +43,7 @@ Route::delete('student/companies/{id}', 'StudentCompaniesController@destroy')->n
 Route::get('student/companies/{id}/edit', 'StudentCompaniesController@edit')->name('studentCompanies.edit');
 
 Route::resource('entries', 'EntriesController');
-Route::resource('progress', 'ProgressController', ['only' => ['index','store','update','destroy']]);
+Route::resource('progress', 'ProgressController', ['only' => ['index', 'store', 'update','destroy']]);
 Route::get('students/login', 'StudentsController@showLoginForm')->name('students.login');
 Route::post('students/authenticate', 'StudentsController@authenticate')->name('students.authenticate');
 
@@ -47,7 +52,7 @@ Route::group(['middleware' => 'auth:web,student'], function () {
 });
 
 Route::group(['prefix' => 'api'], function(){
-    Route::get('/student/openview', 'api\StudentProfileController@openview');
+    Route::get('/student/overview', 'api\StudentProfileController@overview');
     Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
     Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
     

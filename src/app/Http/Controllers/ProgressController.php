@@ -10,6 +10,7 @@ use App\Entry;
 use App\Progress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
+use Response;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
@@ -32,8 +33,84 @@ class ProgressController extends Controller
     }
 
     // 先生のルートページ
-    public function index(Request $request)
+    public function ajax_index(Request $request)
     {
+        $user = Auth::user();
+        if(!$user->is_teacher()){
+            // 先生ではない場合ホームにページ遷移
+            return redirect()->route('home');
+        }
+
+        $workspace_id = Cookie::get('workspace_id');
+        $workspace = WorkSpaces::find($workspace_id);
+
+        if($workspace == null){
+            $workspace = $user->getTaughtClass();
+            $workspace_id = $workspace->id;
+            Cookie::queue('workspace_id', $workspace_id, 1000000);
+            //Vueを取り入れた後に消す
+            $request->session()->put('workspace_id', $workspace_id);
+        }
+
+        // 生徒配列
+        $students = $user->getStudents($workspace_id);
+
+        // 生徒で一番エントリーした人のエントリー数
+        $most_many_entry_num = $user->getMostManyEntryNum($workspace_id);
+
+        $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT'); //デフォルト値:5
+        $ENTRY_COLUMN_WIDTH_PX = $MAX_PROGRESS_COUNT * 100;  // 1進捗セル:100px
+
+        // テーブル全体の幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
+        $table_width_px = $most_many_entry_num * $ENTRY_COLUMN_WIDTH_PX + 100 + 65;
+
+        $entries_list=[];
+        foreach($students as $index => $student){
+            $entries_list[$index] = $student->getMyEntries();
+        }
+        $progress_list=[];
+        $progress = null;
+
+        foreach($entries_list as $i => $entries){
+            foreach($entries as $j => $entry){
+                $progress[$j] = $entry->getProgressList();
+            }
+            $progress_list[$i] = $progress;
+            $progress = null;
+        }
+
+        return [
+            'workspace' => $workspace,
+            'login_user' => $user,
+            'students' => $students,
+            'entries_list' => $entries_list,
+            'progress_list' => $progress_list,
+            'most_many_entry_num' => $most_many_entry_num,
+            'table_width_px' => $table_width_px,
+            'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
+            'max_progress_count' => $MAX_PROGRESS_COUNT,
+        ];
+
+        // return view('progress/index')->with([
+        //     'workspace' => $workspace,
+        //     'students' => $students,
+        //     'most_many_entry_num' => $most_many_entry_num,
+        //     'table_width_px' => $table_width_px,
+        //     'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
+        //     'max_progress_count' => $MAX_PROGRESS_COUNT,
+        // ]);
+    }
+
+    public function index(Request $request){
+        $login_user = Auth::user();
+        if(!$login_user->is_teacher()){
+            // 先生ではない場合ホームにページ遷移
+            return redirect()->route('home');
+        }
+        return view('progress/index');
+    }
+
+    public function index2(Request $request){
         $user = Auth::user();
         // dd($user);
         if(!$user->is_teacher()){
@@ -65,7 +142,7 @@ class ProgressController extends Controller
         // テーブル全体の幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
         $table_width_px = $most_many_entry_num * $ENTRY_COLUMN_WIDTH_PX + 100 + 65;
 
-        return view('progress/index')->with([
+        return view('progress/index2')->with([
             'workspace' => $workspace,
             'students' => $students,
             'most_many_entry_num' => $most_many_entry_num,
@@ -77,6 +154,7 @@ class ProgressController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request);
         $login_user = Auth::user();
 
         if($login_user->is_teacher()){
@@ -85,7 +163,7 @@ class ProgressController extends Controller
 
         $request->validate([
             'action' => ['required','string','regex:/^[説明会|試験受験|面接|社長面接]+$/u'],
-            'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
+            'state' => ['required','string','regex:/^[結果待ち|合格|不合格|内々定|欠席]+$/u'],
             'action_date' => ['required','date'],
             'company_id' => ['required'],
         ],[
@@ -116,7 +194,6 @@ class ProgressController extends Controller
         $session_name = '';
         $session_message = '';
         $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT');
-
 
         if($entry){
             // 会社にエントリーしている場合
@@ -155,15 +232,12 @@ class ProgressController extends Controller
     public function update(Request $request , $progress_id)
     {
         $request->validate([
-            'state' => ['required','string','regex:/^[待ち|◯|×|内々定|欠席]+$/u'],
-            'action_date' => ['required','date'],
+            'state' => ['required','string','regex:/^[結果待ち|合格|不合格|内々定|欠席]+$/u'],
             'company_id' => ['required','integer'],
         ],[
             'state.required' => '状態は必須です。',
             'state.string' => '文字列で入力してください。',
             'state.regex' => '選択欄からお選びください。',
-            'action_date.required' => '実施日は必須です。',
-            'action_date.date' => '日にちを入力してください。',
             'company_id.required' => '会社詳細ページから変更してください。',
             'company_id.integer' => '会社IDが不正です。',
         ]);
@@ -171,11 +245,9 @@ class ProgressController extends Controller
         $login_user = Auth::user();
         $company_id = $request->input('company_id');
         $state = $request->input('state');
-        $action_date = $request->input('action_date');
-        $entry = Entry::
-                    where('user_id', $login_user->id)
+        $entry = Entry::where('student_id', $login_user->id)
                     ->where('company_id', $company_id)
-                    ->first();
+                    ->get();
         $session_name = '';
         $session_message = '';
 
@@ -190,7 +262,6 @@ class ProgressController extends Controller
             if($progress){
                 // 進捗が登録されている場合update
                 $progress->state = $state;
-                $progress->action_date = $action_date;
                 $progress->save();
 
                 $session_name = 'status';
@@ -378,7 +449,7 @@ class ProgressController extends Controller
                     $sheet->setCellValueByColumnAndRow($write_cell_row_num + $p_index , $write_cell_col_num + 2, $progress->action_date->format('Y/m/d'));
                     $sheet->setCellValueByColumnAndRow($write_cell_row_num + $p_index , $write_cell_col_num + 3, $progress->state);
                     if($progress->state == "内々定") $has_got_informal_offer = true;
-                    if($progress->state == "×") $is_failed = true;
+                    if($progress->state == "不合格") $is_failed = true;
                 }
                 if($has_got_informal_offer){
                     // 数字からアルファベットに変換

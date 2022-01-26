@@ -12,11 +12,16 @@ class EntriesTableSeeder extends Seeder
      */
     public function run()
     {
+        $date  = new DateTime();
         for ($i = 1; $i<=9; $i++) {
             for($j = 1; $j<=2; $j++){
                 DB::table('entries')->insert([
                     'student_id' => $i,
-                    'company_id' => rand(1,9),
+                    'company_id' => $j,
+                    'create_year'=> $date->format('Y'),
+                    'create_month' => $date->format('m'),
+                    'create_day' => $date->format('d'),
+                    'created_at' => date("Y-m-d H:i:s")
                 ]);
             }
         }

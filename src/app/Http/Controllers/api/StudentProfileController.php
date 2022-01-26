@@ -13,17 +13,22 @@ class StudentProfileController extends Controller
         $this->middleware(['auth:web,student']);
     }
 
-    public function openview(Request $request)
+    public function overview(Request $request)
     {
         $login_user = Auth::user();
         if($login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        $show_openview_companies = $login_user->getRecentlyEnteredCompaniesInfo();
+        $show_overview_companies = $login_user->getRecentlyEnteredCompaniesInfo();
+
+        // グラフのために各月のエントリー数と進捗登録数を取得（2年分）
+        $entry_count_array = $login_user->getMonthEntryCount();
 
         return [
-            'recently_entered_companies' => $show_openview_companies,
-            'login_user' => $login_user
+            'recently_entered_companies' => $show_overview_companies,
+            'login_user' => $login_user,
+            'this_year_entry_count_array' => $entry_count_array[0],
+            'last_year_entry_count_array' => $entry_count_array[1],
         ];
     }
 
