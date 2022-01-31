@@ -12,24 +12,11 @@
                     <form method="POST" action="{{ route('companies.store') }}" enctype="multipart/form-data">
                         @csrf
 
-                        <company-create :errors="{{json_encode([
-                                'name' => $errors->get('name'),
-                                'prefecture' => $errors->get('prefecture'),
-                                'url' => $errors->get('url'),
-                                'deadline' => $errors->get('deadline'),
-                                'remarks' => $errors->get('remarks'),
-                            ])}}" :company="{{json_encode([
-                                'name' => old('name'),
-                                'prefecture' => old('prefecture'),
-                                'url' => old('url'),
-                                'deadline' => old('deadline'),
-                                'remarks' => old('remarks'),
-                            ])}}"></company-create>
-                        <!-- <div class="form-group row">
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('会社名') }}</label>
 
                             <div class="col-md-7">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', isset($company->name) ? $company->name : '') }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', isset($company->name) ? $company->name : '') }}" required autofocus>
 
                                 @error('name')
                                 <span class="invalid-feedback" role="alert">
@@ -85,12 +72,14 @@
                             </div>
                         </div>
 
+                        @for($i = 1; $i <= 3; $i++)
                         <div class="form-group row">
-                            <label for="pdf" class="col-md-4 col-form-label text-md-right">PDF</label>
+                            <label for="pdf" class="col-md-4 col-form-label text-md-right">PDF({{$i}})</label>
                             <div class="col-md-7">
-                                <input type="file" class="form-control" id="pdf" name="pdf" value="">
+                                <input type="file" class="form-control" id="pdf" name="pdf{{$i}}" value="">
                             </div>
                         </div>
+                        @endfor
 
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('備考') }}</label>
@@ -111,7 +100,7 @@
                                     {{ __('登録') }}
                                 </button>
                             </div>
-                        </div> -->
+                        </div>
                     </form>
                 </div>
             </div>
