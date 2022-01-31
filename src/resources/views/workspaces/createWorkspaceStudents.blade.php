@@ -6,12 +6,6 @@
         <div class="col-md-8" id="student-add-col">
         <form method="POST" action="{{ route('workspaces.createWorkspaceStudents') }}">
 
-        @if (session('status-error'))
-            <div class="alert alert-danger ">
-                {{ session('status-error') }}
-            </div>
-        @endif
-
         @csrf
         @foreach($students as $student)
             <div class="list">

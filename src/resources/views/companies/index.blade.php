@@ -2,16 +2,6 @@
 
 @section('content')
 <div class="container-fluid">
-  @if (session('status'))
-  <div class="alert alert-success" role="alert">
-    {{ session('status') }}
-  </div>
-  @endif
-  @if (session('status-error'))
-  <div class="alert alert-danger ">
-    {{ session('status-error') }}
-  </div>
-  @endif
   <div class="row justify-content-center mb-5">
     <div class="col-md-8">
       <div class="card">
