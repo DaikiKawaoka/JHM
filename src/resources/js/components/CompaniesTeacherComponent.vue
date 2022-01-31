@@ -49,7 +49,7 @@
         </div>
 
         <div class="companies_container">
-            <ul class="companies_list">
+            <ul class="companies_list"  v-if="this.companiesData.length > 0">
                 <a :href="'/companies/' + company.id" class="companies_link" v-for="company in companiesData" :key="company.id">
                     <li class="companies_elements">
                         <p class="companies_name">{{ company.name }}</p>
@@ -88,7 +88,7 @@
                     </li>
                 </a>
             </ul>
-            
+            <ul v-else class="no_company">会社名:{{this.search_name}},  都道府県:{{this.prefecture}} の求人がありません。</ul>
         </div>
     </div>
 </template>
@@ -154,7 +154,6 @@ export default {
         axios.get(company_url).then(function(response){
             self.login_user = response.data.login_user;
             self.companiesData = response.data.search_companies.data;
-            console.log(response);
         }).catch(response => console.log(response))
     },
     mounted() {
@@ -166,7 +165,6 @@ export default {
 <style scoped lang='scss'>
  * {
     margin: 0;
-    padding: 0;
 }
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap');
 $font:'Noto Sans JP', sans-serif;
@@ -180,6 +178,7 @@ $font:'Noto Sans JP', sans-serif;
 
 .filter_form{
     float: left;
+    margin-left: 3%;
     .filter_prefecture{
         margin-top: 10px;
     }
@@ -267,6 +266,11 @@ $font:'Noto Sans JP', sans-serif;
                 margin-top: 40px;
             }
         }
+    }
+    .no_company{
+        font-size: 20px;
+        font-weight: 500;
+        color: red;
     }
 } 
 </style>
