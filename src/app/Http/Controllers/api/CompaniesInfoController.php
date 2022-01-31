@@ -21,9 +21,6 @@ class CompaniesInfoController extends Controller
     public function getCompanies(Request $request)
     {
         $login_user = Auth::user();
-        if($login_user->is_teacher() == false){
-            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
-        }
 
         $search_name = $request->input('company_name');
         $search_prefe = $request->input('prefecture');
