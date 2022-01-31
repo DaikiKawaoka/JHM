@@ -84,4 +84,6 @@ Route::prefix('schedule')->group(function(){
     Route::get('calendar', 'CompanyScheduleController@calendar')->name('schedules.calendar');
 });
 
+Route::delete('/companies/{company_id}/pdf/{pdf_id}/destroy', 'CompaniesController@removePdf')->name('companies.remove_pdf');
+
 Route::get('/home', 'HomeController@index')->name('home');

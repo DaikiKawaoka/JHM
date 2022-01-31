@@ -11,7 +11,7 @@ class Company extends Model
 {
     use SoftDeletes;
     protected $fillable = [
-        'name', 'create_user_name', 'prefecture', 'url', 'remarks', 'deadline', 'create_user_id', 'image_path',
+        'id', 'name', 'create_user_name', 'prefecture', 'url', 'remarks', 'deadline', 'create_user_id', 'image_path',
     ];
 
     protected $dates = ['deadline'];
@@ -45,10 +45,10 @@ class Company extends Model
 
     public function getClassEntry($workspace_id)
     {
-        $workspaces = WorkSpaces::find($workspace_id)->getMember();
+        $member = Membership::where('workspace_id', $workspace_id)->get();
         $students = [];
-        foreach($workspaces as $workspace){
-            array_push($students, $workspace->student_id);
+        foreach($member as $student){
+            array_push($students, $student->student_id);
         }
         $entry = Entry::select('student_id')
                         ->where('company_id', $this->id)

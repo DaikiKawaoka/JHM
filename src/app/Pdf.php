@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class Pdf extends Model
 {
     protected $fillable = [
-        'pdf', 'company_id'
+        'id', 'pdf', 'company_id'
     ];
     protected $table = 'pdf';
 
@@ -35,6 +35,11 @@ class Pdf extends Model
                 $pdf->delete();
             }
         }
+    }
+
+    public function deleteThumbnail($image_name)
+    {
+        Storage::delete($image_name.'jpg');
     }
 
 }

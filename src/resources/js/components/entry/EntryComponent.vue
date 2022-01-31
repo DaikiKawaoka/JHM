@@ -85,7 +85,6 @@ export default {
         margin-top: 1rem;
         display: flex;
         .entryComponent-left-part{
-            // width: 80%;
             .show-pdf{
                 margin-top: 1rem;
                 display: flex;

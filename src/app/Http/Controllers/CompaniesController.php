@@ -210,7 +210,9 @@ class CompaniesController extends Controller
         if(!$login_user->is_teacher() || $company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        return view('companies.edit')->with('company', $company,);
+        $pdf = Pdf::where('company_id', $company->id)->get();
+
+        return view('companies.edit')->with(['company' => $company, 'pdf' => $pdf]);
 
     }
 
@@ -250,7 +252,54 @@ class CompaniesController extends Controller
         $company->remarks = $request->input('remarks');
         $company->deadline = $request->input('deadline');
 
+        $pdf_names = [];
+        $image_path = $company->image_path;
+
+        for($i = 1; $i <= 3; $i++){
+            if($request->file('pdf'.$i)){
+                //PDFの保存処理
+                $file_name = $request->file('pdf'.$i)->getClientOriginalName();
+                $request->file('pdf'.$i)->storeAs('public/pdf',$file_name);
+                //ファイル名から拡張子を切り取る
+                $pdf_model = new Pdf();
+                $pdf_name = $pdf_model->cutExtension($file_name);
+
+                $check_data = [
+                    'pdf_name' => $pdf_name,
+                    'extension' => $request->file('pdf'.$i),
+                ];
+
+                $validator = Validator::make($check_data, [
+                    'pdf_name' => [Rule::unique('pdf', 'pdf'), 'string', 'max:63'],
+                    'extension' => [new PdfRule],
+                ]);
+                //バリデータに引っかかったら、前のページにリダイレクトする
+                if($validator->fails()){
+                    return redirect()->route('companies.create')
+                        ->with('status-error', '追加しようとしたPDFまたは、PDF名はすでに存在しています')
+                        ->withErrors($validator)
+                        ->withInput();;
+                }
+
+                array_push($pdf_names, $pdf_name);
+
+                if($i == 1){
+                    $pdf_model->saveAsImage($pdf_name);
+                    $image_path = $pdf_name;
+                }
+            }
+        }
+
+        $company->image_path = $image_path;
+
         $company->save();
+
+        foreach ($pdf_names as $pdf) {
+            Pdf::create([
+                'pdf' => $pdf,
+                'company_id' => $company->id
+            ]);
+        }
 
         return redirect()->route('companies.show', $company->id)->with('status','会社情報を更新しました');
     }
@@ -316,5 +365,35 @@ class CompaniesController extends Controller
             return response()->download($save_path);
         }
 
+    }
+
+    public function removePdf($company_id, $pdf_id){
+        //会社のPDFの削除
+        $login_user = Auth::user();
+        $company = Company::find($company_id);
+        $pdf = Pdf::find($pdf_id);
+        //会社を作成したユーザでなければ、リダイレクト
+        if($login_user->id != $company->create_user_id)
+            return redirect()->route('companies.index');
+        //PDFの削除処理
+        // dd($company);
+        $pdf->delete();
+        //会社のサムネに使われていれば、取り除く
+        $company = Company::where('image_path', $pdf->pdf)->first();
+        $pdf_object = new Pdf();
+        if($company){
+            $pdf_object->deleteThumbnail($company->image_path);
+            $company->image_path = '';
+            $company->update();
+        }
+        //会社のサムネを別のPDFにする
+        $company_pdfs = Pdf::where('company_id', $company_id)->get();
+        if($company_pdfs){
+            // dd($company->image_path);
+            $company->image_path = $company_pdfs[0]->pdf;
+            $pdf_object->saveAsImage($company->image_path);
+            $company->update();
+        }
+        return redirect()->route('companies.edit', $company->id);
     }
 }
