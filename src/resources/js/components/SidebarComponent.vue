@@ -1,26 +1,7 @@
 <template>
     <div class="side1">
         <div v-for="taughtClass in classes" :key="taughtClass.id" class="class-box">
-            <a class="workspace-link" v-if="workspace_id == taughtClass.id">
-                <div class="box1" id="selected">
-                    <p v-if="taughtClass.class_name.length > 3">
-                        {{ taughtClass.class_name.substr(0, 3) }}...
-                    </p>
-                    <p v-else>{{ taughtClass.class_name }}</p>
-                </div>
-            </a>
-            <a
-                :href="'/workspaces/' + taughtClass.id + '/change'"
-                class="workspace-link"
-                v-else
-            >
-                <div class="box1">
-                    <p v-if="taughtClass.class_name.length > 3">
-                        {{ taughtClass.class_name.substr(0, 3) }}...
-                    </p>
-                    <p v-else>{{ taughtClass.class_name }}</p>
-                </div>
-            </a>
+            <workspace-box :taughtClass="taughtClass" :workspace_id="workspace_id"></workspace-box>
         </div>
         <div class="ope">
             <a href="/workspaces/create">
@@ -29,7 +10,7 @@
                 </p>
             </a>
         </div>
-        <div class="ope">
+        <div class="ope" v-if="workspace_id">
             <a :href="'/workspaces/' + workspace_id + '/edit'">
                 <p>
                     <i class="fas fa-cog"></i>
@@ -39,7 +20,9 @@
     </div>
 </template>
 <script>
+import WorkspaceBox from './WorkspaceBox.vue';
 export default {
+    components: { WorkspaceBox },
     props: ["classes", "workspace_id"],
 };
 </script>
