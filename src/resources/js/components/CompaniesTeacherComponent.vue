@@ -53,8 +53,10 @@
                 <a :href="'/companies/' + company.id" class="companies_link" v-for="company in companiesData" :key="company.id">
                     <li class="companies_elements">
                         <p class="companies_name">{{ company.name }}</p>
-                        <p class="deadline">締切日:{{ company.deadline }}</p>
+                        <p class="deadline" v-if="company.deadline !== null">締切日:{{ company.deadline }}</p>
                         <img src="/img/no_image_square.jpg" class="companies_pic"/>
+
+                        <p class="create_user_name">{{ company.create_user_name }}</p>
 
                         <!-- 取り消し・エントリー -->
                         <div class="entries_delete_btn" v-if="!(this.user.id == this.is_teacher)">
@@ -88,7 +90,8 @@
                     </li>
                 </a>
             </ul>
-            <ul v-else class="no_company">会社名:{{this.search_name}},  都道府県:{{this.prefecture}} の求人がありません。</ul>
+            <ul v-else class="no_company" v-show="!this.isLoading">該当する求人がありません。</ul>
+            <spinner class="spinner" v-show="this.isLoading">読み込み中...</spinner>
         </div>
     </div>
 </template>
@@ -104,6 +107,7 @@ export default {
             prefecture: '',
             search_name: '',
             login_user: Object,
+            isLoading: true
 
         }
     },
@@ -138,6 +142,7 @@ export default {
             .then(response => {
                 this.login_user = response.data.login_user;
                 this.companiesData = response.data.search_companies.data;
+                this.isLoading = false;
                 console.log(response);
             });   
         },
@@ -154,6 +159,7 @@ export default {
         axios.get(company_url).then(function(response){
             self.login_user = response.data.login_user;
             self.companiesData = response.data.search_companies.data;
+            self.isLoading = false;
         }).catch(response => console.log(response))
     },
     mounted() {
@@ -207,6 +213,13 @@ $font:'Noto Sans JP', sans-serif;
         .companies_link{
             &:hover {
                 text-decoration: none;
+            }
+            .create_user_name{
+                float: right;
+                margin-top: 5px;
+                margin-right: 5%;
+                font-size: 20px;
+                color: #000;
             }
         }
         .companies_elements {
@@ -270,7 +283,14 @@ $font:'Noto Sans JP', sans-serif;
     .no_company{
         font-size: 20px;
         font-weight: 500;
-        color: red;
+        text-align: center;
+    }
+    .spinner{
+        font-size: 20px;
+        font-weight: 500;
+        // text-align: center;
+        margin-left: 40%;
+
     }
 } 
 </style>
