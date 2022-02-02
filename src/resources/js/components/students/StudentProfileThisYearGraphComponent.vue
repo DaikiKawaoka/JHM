@@ -5,24 +5,26 @@
 import Chart from 'chart.js/auto';
 
 export default {
+    props: ['thisYears'],
+    data: function () {
+        return {
+            thisYears: this.thisYears
+        }
+    },
     methods: {
-        renderChart() {
+        renderChart:function() {
         let ctx = document.getElementById("myChart");
         new Chart(ctx, {
             type: 'line',
             data:{
-                labels: ["１月", "2月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "10月", "11月", "12月"],
+                labels: [
+                    "１月", "2月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "10月", "11月", "12月"
+                ],
                 datasets: [{
                     label: "エントリー数",
-                    data: [10, 19, 3, 5, 2, 3, 0, 40, 50, 9, 5, 16],
+                    data: this.thisYears,
                     borderColor: 'rgba(255,99,132,1)',
                     backgroundColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                },{
-                    label: "新規",
-                    data: [6, 13, 26, 15,5, 3, 19, 6, 15, 17, 3, 1],
-                    borderColor: 'rgba(0, 206, 209, 1)',
-                    backgroundColor: 'rgba(0, 206, 209, 1)',
                     borderWidth: 1
                 }]
             },
@@ -35,7 +37,7 @@ export default {
                     y: {
                         display: true,
                         suggestedMin: 0,
-                        suggestedMax: 30,
+                        suggestedMax: 6,
                         beginAtZero: true,
                     }
                 }
@@ -44,6 +46,11 @@ export default {
         }
     },
     mounted() {
+        if (this.thisYears[0] != undefined) {
+            this.renderChart();
+        }
+    },
+    updated() {
         this.renderChart();
     }
 };
