@@ -21,13 +21,8 @@ class ProgressController extends Controller
         $workspace_id = Cookie::get('workspace_id');
         $workspace = WorkSpaces::find($workspace_id);
 
-        if($workspace == null){
-            $workspace = $user->getTaughtClass();
-            $workspace_id = $workspace->id;
-            Cookie::queue('workspace_id', $workspace_id, 1000000);
-            //Vueを取り入れた後に消す
-            $request->session()->put('workspace_id', $workspace_id);
-        }
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
 
         // 生徒配列
         $students = $user->getStudents($workspace_id);
@@ -86,13 +81,9 @@ class ProgressController extends Controller
 
         $workspace_id = Cookie::get('workspace_id');
         $workspace = WorkSpaces::find($workspace_id);
-        if($workspace == null){
-            $workspace = $user->getTaughtClass();
-            $workspace_id = $workspace->id;
-            Cookie::queue('workspace_id', $workspace_id, 1000000);
-            //Vueを取り入れた後に消す
-            $request->session()->put('workspace_id', $workspace_id);
-        }
+
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
 
         // 生徒配列
         $students = $user->getStudents($workspace_id);

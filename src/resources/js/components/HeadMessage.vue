@@ -1,6 +1,6 @@
 <template>
     <transition name="message-box">
-        <div v-bind:class="getClass" v-if="is_show">
+        <div v-bind:class="getClass" v-if="is_show" @click="removeMessage">
             <p class="message-content">{{message}}</p>
         </div>
     </transition>
@@ -27,6 +27,11 @@ export default {
                     "error-message" : true,
                     "message-board" : true,
                 }
+        }
+    },
+    methods: {
+        removeMessage(){
+            this.is_show = false;
         }
     },
     created() {
@@ -56,6 +61,7 @@ export default {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    cursor: pointer;
     .message-content{
         font-size: .9rem;
     }

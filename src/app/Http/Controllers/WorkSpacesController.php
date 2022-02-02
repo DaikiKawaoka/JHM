@@ -48,9 +48,7 @@ class WorkSpacesController extends Controller
             'year' => $request->input('year'),
         ]);
         Cookie::queue('workspace_id', $workspace->id, 1000000);
-        //Vueを取り入れた後に消す
         $request->session()->put('workspace_id', $workspace->id);
-        // return redirect()->route('companies.index');
         return redirect()->route('workspaces.createStudentsShow');
     }
 
@@ -60,6 +58,8 @@ class WorkSpacesController extends Controller
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         //ワークスペース作成者でなければ、アクセスさせない
         $workspace = WorkSpaces::find($id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $now = Carbon::now();
@@ -77,6 +77,8 @@ class WorkSpacesController extends Controller
             return redirect()->route('progress.index')->with('status-error', 'アクセス権限がありません');
         //ワークスペース作成者でなければ、アクセスさせない
         $workspace = WorkSpaces::find($id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('progress.index')->with('status-error', 'アクセス権限がありません');
         $request->validate([
@@ -91,18 +93,27 @@ class WorkSpacesController extends Controller
         return redirect()->route('progress.index')->with('status', 'ワークスペースの情報を更新しました');
     }
 
-    public function destroy($id){
+    public function destroy($id, Request $request){
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
             return redirect()->route('progress.index')->with('status-error', 'アクセス権限がありません');
         //ワークスペース作成者でなければ、アクセスさせない
         $workspace = WorkSpaces::find($id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('progress.index')->with('status-error', 'アクセス権限がありません');
         //所属している生徒をワークスペースから削除する
         Membership::where('workspace_id', $id)->delete();
         $workspace->delete();
-        Cookie::queue('workspace_id', null, 1000000);
+        $first_workspace = WorkSpaces::where('teacher_id', $login_user->id)->first();
+        if($first_workspace){
+            $request->session()->put('workspace_id', $first_workspace->id);
+            Cookie::queue('workspace_id', $first_workspace->id, 1000000);
+        }else{
+            $request->session()->put('workspace_id', null);
+            Cookie::queue('workspace_id', null, 1000000);
+        }
         return redirect()->route('progress.index')->with('status', 'ワークスペースの削除に成功しました');
     }
 
@@ -112,6 +123,8 @@ class WorkSpacesController extends Controller
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         //ワークスペース作成者でなければ、アクセスさせない
         $workspace = WorkSpaces::find($id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         Cookie::queue('workspace_id', $id, 1000000);
@@ -121,24 +134,30 @@ class WorkSpacesController extends Controller
     }
 
     public function showMember(){
+        //切り替え中のワークスペースに所属している生徒の一覧を表示する
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $workspace_id = Cookie::get('workspace_id');
         $workspace = WorkSpaces::find($workspace_id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
         //ワークスペース作成者でなければ、アクセスさせない
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $member = $workspace->getMember();
         return view('workspaces.showMember')->with(['member' => $member]);
+
     }
 
     public function addStudentsShow(){
+        //ワークスペースに生徒を追加するときのページ
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $workspace_id = Cookie::get('workspace_id');
-
+        if(!WorkSpaces::find($workspace_id))
+            return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
         $students = Students::all();
         $added_students_id = \DB::table('membership')->select('student_id')->where('workspace_id',$workspace_id)->pluck('student_id')->toArray();
 
@@ -151,7 +170,8 @@ class WorkSpacesController extends Controller
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $workspace_id = Cookie::get('workspace_id');
         $workspace = WorkSpaces::find($workspace_id);
-
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if ($workspace->getMember()) {
             return redirect()->route('workspaces.addStudentsShow');
         }
@@ -160,11 +180,13 @@ class WorkSpacesController extends Controller
 
         return view('workspaces.createWorkspaceStudents')->with(['students' => $students]);
     }
-  
+
     public function calendar(Request $request){
         $login_user = Auth::user();
         $workspace_id = Cookie::get('workspace_id');
         $workspace = WorkSpaces::find($workspace_id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースを登録後に利用できます');
         //ワークスペース作成者でなければ、アクセスさせない
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');

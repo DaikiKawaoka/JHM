@@ -33,6 +33,10 @@ class ProgressController extends Controller
             // 先生ではない場合ホームにページ遷移
             return redirect()->route('home');
         }
+        $workspace_id = Cookie::get('workspace_id');
+        $workspace = WorkSpaces::find($workspace_id);
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', 'ワークスペースを登録後に利用できます');
         return view('progress/index');
     }
 
