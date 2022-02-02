@@ -8,19 +8,13 @@ use Illuminate\Support\Facades\Auth;
 use App\WorkSpaces;
 use App\Entry;
 use App\Progress;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
-use Response;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment as Align;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;   // 塗りつぶし種類
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
@@ -33,74 +27,6 @@ class ProgressController extends Controller
     }
 
     // 先生のルートページ
-    public function ajax_index(Request $request)
-    {
-        $user = Auth::user();
-        if(!$user->is_teacher()){
-            // 先生ではない場合ホームにページ遷移
-            return redirect()->route('home');
-        }
-
-        $workspace_id = Cookie::get('workspace_id');
-        $workspace = WorkSpaces::find($workspace_id);
-
-        if($workspace == null){
-            $workspace = $user->getTaughtClass();
-            $workspace_id = $workspace->id;
-            Cookie::queue('workspace_id', $workspace_id, 1000000);
-            //Vueを取り入れた後に消す
-            $request->session()->put('workspace_id', $workspace_id);
-        }
-
-        // 生徒配列
-        $students = $user->getStudents($workspace_id);
-
-        // 生徒で一番エントリーした人のエントリー数
-        $most_many_entry_num = $user->getMostManyEntryNum($workspace_id);
-
-        $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT'); //デフォルト値:5
-        $ENTRY_COLUMN_WIDTH_PX = $MAX_PROGRESS_COUNT * 100;  // 1進捗セル:100px
-
-        // テーブル全体の幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
-        $table_width_px = $most_many_entry_num * $ENTRY_COLUMN_WIDTH_PX + 100 + 65;
-
-        $entries_list=[];
-        foreach($students as $index => $student){
-            $entries_list[$index] = $student->getMyEntries();
-        }
-        $progress_list=[];
-        $progress = null;
-
-        foreach($entries_list as $i => $entries){
-            foreach($entries as $j => $entry){
-                $progress[$j] = $entry->getProgressList();
-            }
-            $progress_list[$i] = $progress;
-            $progress = null;
-        }
-
-        return [
-            'workspace' => $workspace,
-            'login_user' => $user,
-            'students' => $students,
-            'entries_list' => $entries_list,
-            'progress_list' => $progress_list,
-            'most_many_entry_num' => $most_many_entry_num,
-            'table_width_px' => $table_width_px,
-            'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
-            'max_progress_count' => $MAX_PROGRESS_COUNT,
-        ];
-
-        // return view('progress/index')->with([
-        //     'workspace' => $workspace,
-        //     'students' => $students,
-        //     'most_many_entry_num' => $most_many_entry_num,
-        //     'table_width_px' => $table_width_px,
-        //     'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
-        //     'max_progress_count' => $MAX_PROGRESS_COUNT,
-        // ]);
-    }
-
     public function index(Request $request){
         $login_user = Auth::user();
         if(!$login_user->is_teacher()){
@@ -108,48 +34,6 @@ class ProgressController extends Controller
             return redirect()->route('home');
         }
         return view('progress/index');
-    }
-
-    public function index2(Request $request){
-        $user = Auth::user();
-        // dd($user);
-        if(!$user->is_teacher()){
-            // 先生ではない場合ホームにページ遷移
-            // dd($user);
-            return redirect()->route('home');
-        }
-
-        $workspace_id = Cookie::get('workspace_id');
-        $workspace = WorkSpaces::find($workspace_id);
-
-        if($workspace == null){
-            $workspace = $user->getTaughtClass();
-            $workspace_id = $workspace->id;
-            Cookie::queue('workspace_id', $workspace_id, 1000000);
-            //Vueを取り入れた後に消す
-            $request->session()->put('workspace_id', $workspace_id);
-        }
-
-        // 生徒配列
-        $students = $user->getStudents($workspace_id);
-
-        // 生徒で一番エントリーした人のエントリー数
-        $most_many_entry_num = $user->getMostManyEntryNum($workspace_id);
-
-        $MAX_PROGRESS_COUNT = config('const.MAX_PROGRESS_COUNT'); //デフォルト値:5
-        $ENTRY_COLUMN_WIDTH_PX = $MAX_PROGRESS_COUNT * 100;  // 1進捗セル:100px
-
-        // テーブル全体の幅 = 最大エントリー数 * エントリー列の幅 + 名前列の幅 + 出席番号列の幅
-        $table_width_px = $most_many_entry_num * $ENTRY_COLUMN_WIDTH_PX + 100 + 65;
-
-        return view('progress/index2')->with([
-            'workspace' => $workspace,
-            'students' => $students,
-            'most_many_entry_num' => $most_many_entry_num,
-            'table_width_px' => $table_width_px,
-            'entry_column_width_px' => $ENTRY_COLUMN_WIDTH_PX,
-            'max_progress_count' => $MAX_PROGRESS_COUNT,
-        ]);
     }
 
     public function store(Request $request)

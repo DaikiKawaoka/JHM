@@ -69,15 +69,17 @@ class Students extends Authenticatable{
     // 現在進行中のエントリーを取得 (×が付いていないエントリー)
     public function getMyOngoingEntries()
     {
-
-        $entries = Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name','progress.state'])
+        return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
                 ->leftJoin('students', 'entries.student_id', '=', 'students.id')
                 ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
                 ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
                 ->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')
-                ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
-
-        return $entries = $entries->except(DB::table('entries')->leftJoin('students', 'entries.student_id', '=', 'students.id')->leftJoin('companies', 'entries.company_id', '=', 'companies.id')->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')->where('students.id', $this->id)->where('progress.state', '=', '×')->distinct()->pluck('entries.id')->toArray());
+                ->where('students.id', $this->id)
+                ->where(function($q){
+                    $q->where('progress.state', '!=' , '不合格')
+                        ->orWhereNull('progress.state');
+                })
+                ->orderBy('entries.id', 'asc')->get();
     }
 
     //求人情報にある会社のエントリーを取得

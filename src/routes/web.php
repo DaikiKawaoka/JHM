@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', 'ProgressController@index');
-Route::get('/api/progress', 'ProgressController@ajax_index');
 Route::get('/progress/index2', 'ProgressController@index2');
 Route::post('/auth_logout', 'LogoutController@auth_logout')->name('auth_logout');
 Route::get('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
@@ -52,10 +51,12 @@ Route::group(['middleware' => 'auth:web,student'], function () {
 });
 
 Route::group(['prefix' => 'api'], function(){
+    Route::get('/progress', 'api\ProgressController@index');
+    Route::get('/progress/getEntries', 'api\ProgressController@getEntries');
+    Route::get('/progress/getOngoingEntries', 'api\ProgressController@getEntries');
     Route::get('/student/overview', 'api\StudentProfileController@overview');
     Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
     Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
-    
     Route::get('/companies/getCompanies', 'api\CompaniesInfoController@getCompanies');
 });
 
