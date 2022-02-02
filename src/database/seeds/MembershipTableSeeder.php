@@ -12,13 +12,19 @@ class MembershipTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 0; $i<3; $i++) {
-            for($j = 1; $j<4; $j++){
-                DB::table('membership')->insert([
-                    'workspace_id' => $i+1,
-                    'student_id' => $j+($i*3),
-                ]);
-            }
+        // 3年制
+        for ($i = 0; $i<24; $i++) {
+            DB::table('membership')->insert([
+                'workspace_id' => 1,
+                'student_id' => $i+1,
+            ]);
+        }
+        // 4年制
+        for ($i = 0; $i<10; $i++) {
+            DB::table('membership')->insert([
+                'workspace_id' => 2,
+                'student_id' => $i+25,
+            ]);
         }
     }
 }

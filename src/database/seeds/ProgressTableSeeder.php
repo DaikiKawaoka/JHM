@@ -12,17 +12,17 @@ class ProgressTableSeeder extends Seeder
      */
     public function run()
     {
-        $actions = ['説明会','面接','社長面接'];
-        $action_dates = ['2021-11-01','2021-12-02','2021-10-03'];
-        $states = ['合格','不合格','不合格'];
-        for ($i = 0; $i<9; $i++) {
-            for($j = 0; $j<2; $j++){
+        $actions = ['説明会','面接','面接','説明会'];
+        $action_dates = ['2022-01-01','2022-01-15','2022-01-30','2022-02-01'];
+        $states = ['合格','不合格','不合格','結果待ち'];
+        for ($i = 0; $i<34; $i++) {
+            for($j = 1; $j<5; $j++){
                 DB::table('progress')->insert([
                     'student_id' => $i+1,
-                    'entry_id' => $j+($i*2)+1,
-                    'action' => $actions[$j],
-                    'state' => $states[$j],
-                    'action_date' => $action_dates[$j],
+                    'entry_id' => $j+($i*4),
+                    'action' => $actions[$j - 1],
+                    'state' => $states[$j - 1],
+                    'action_date' => $action_dates[$j -1],
                 ]);
             }
         }

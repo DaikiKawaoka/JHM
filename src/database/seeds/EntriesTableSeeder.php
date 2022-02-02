@@ -13,8 +13,8 @@ class EntriesTableSeeder extends Seeder
     public function run()
     {
         $date  = new DateTime();
-        for ($i = 1; $i<=9; $i++) {
-            for($j = 1; $j<=2; $j++){
+        for ($i = 1; $i<=34; $i++) {
+            for($j = 1; $j<=4; $j++){
                 DB::table('entries')->insert([
                     'student_id' => $i,
                     'company_id' => $j,

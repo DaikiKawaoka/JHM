@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Entry;
 use App\Company;
 use DateTime;
-use App\User;
-use App\Progress;
 
 class EntriesController extends Controller
 {

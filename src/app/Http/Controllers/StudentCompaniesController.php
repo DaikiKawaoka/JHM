@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Company;
 use App\Entry;
-use App\User;
-use App\Progress;
 use App\StudentCompany;
+use DateTime;
 
 class StudentCompaniesController extends Controller
 {
@@ -55,9 +53,13 @@ class StudentCompaniesController extends Controller
         $student_company->create_student_id = $login_user->id;
         $student_company->save();
 
+        $date  = new DateTime();
         Entry::create([
             'student_id' => $login_user->id,
-            'student_company_id' => $student_company->id
+            'student_company_id' => $student_company->id,
+            'create_year'=> $date->format('Y'),
+            'create_month' => $date->format('m'),
+            'create_day' => $date->format('d'),
         ]);
 
         return redirect()->route('studentCompanies.show',$student_company->id);
