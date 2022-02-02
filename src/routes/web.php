@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth:web,student'], function () {
 Route::group(['prefix' => 'api'], function(){
     Route::get('/progress', 'api\ProgressController@index');
     Route::get('/progress/getEntries', 'api\ProgressController@getEntries');
+    Route::get('/progress/getSuccessfulEntries', 'api\ProgressController@getEntries');
     Route::get('/progress/getOngoingEntries', 'api\ProgressController@getEntries');
     Route::get('/student/overview', 'api\StudentProfileController@overview');
     Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');

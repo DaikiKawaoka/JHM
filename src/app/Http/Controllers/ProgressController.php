@@ -317,7 +317,7 @@ class ProgressController extends Controller
             $sheet->setCellValue("B{$write_cell_col_num}", $student->name);
 
             // 生徒のエントリー会社を出力
-            foreach($student->getMyEntries() as $e_index => $entry){
+            foreach($student->getEntries() as $e_index => $entry){
 
                 $write_cell_row_num = 3 + ($e_index * $MAX_PROGRESS_COUNT);
                 $has_got_informal_offer = false; // 内定か
