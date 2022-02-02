@@ -38,7 +38,7 @@ class ProgressController extends Controller
 
         $entries_list=[];
         foreach($students as $index => $student){
-            $entries_list[$index] = $student->getMyEntries();
+            $entries_list[$index] = $student->getEntries();
 
             // 現在most_many_entry_numを上回る生徒がいた場合、その値をmost_many_entry_numに入れる
             if($most_many_entry_num < count($entries_list[$index])){
@@ -75,6 +75,7 @@ class ProgressController extends Controller
         ];
     }
 
+
     public function getEntries(Request $request)
     {
         $user = Auth::user();
@@ -85,7 +86,6 @@ class ProgressController extends Controller
 
         $workspace_id = Cookie::get('workspace_id');
         $workspace = WorkSpaces::find($workspace_id);
-
         if($workspace == null){
             $workspace = $user->getTaughtClass();
             $workspace_id = $workspace->id;
@@ -100,20 +100,35 @@ class ProgressController extends Controller
         // 生徒で一番エントリーした人のエントリー数
         // エントリーがクラス全体で0でも1列は作成するため,1を代入
         $most_many_entry_num = 1;
-
         $entries_list=[];
-        foreach($students as $index => $student){
-            if($request->path() == 'api/progress/getEntries'){
-                $entries_list[$index] = $student->getMyEntries();
-            }else{
-                $entries_list[$index] = $student->getMyOngoingEntries();
+        if($request->path() == 'api/progress/getEntries'){
+            // 各生徒の全エントリーを取得
+            foreach($students as $index => $student){
+                $entries_list[$index] = $student->getEntries();
+                // 現在most_many_entry_numを上回る生徒がいた場合、その値をmost_many_entry_numに入れる
+                if($most_many_entry_num < count($entries_list[$index])){
+                    $most_many_entry_num = count($entries_list[$index]);
+                }
             }
+        }else if($request->path() == 'api/progress/getSuccessfulEntries'){
+            // 各生徒の内定が出たエントリーのみ取得
+            foreach($students as $index => $student){
+                $entries_list[$index] = $student->getSuccessfulEntries();
 
-            // 現在most_many_entry_numを上回る生徒がいた場合、その値をmost_many_entry_numに入れる
-            if($most_many_entry_num < count($entries_list[$index])){
-                $most_many_entry_num = count($entries_list[$index]);
+                if($most_many_entry_num < count($entries_list[$index])){
+                    $most_many_entry_num = count($entries_list[$index]);
+                }
+            }
+        }else{
+            // 各生徒の進行中のエントリーのみ取得
+            foreach($students as $index => $student){
+                $entries_list[$index] = $student->getOngoingEntries();
+                if($most_many_entry_num < count($entries_list[$index])){
+                    $most_many_entry_num = count($entries_list[$index]);
+                }
             }
         }
+
         $progress_list=[];
         $progress = null;
 
