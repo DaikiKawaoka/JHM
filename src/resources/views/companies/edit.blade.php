@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('会社編集') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('companies.update',$company->id) }}">
+                    <form method="POST" action="{{ route('companies.update',$company->id) }}" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
                         <div class="form-group row">
@@ -63,7 +63,7 @@
                           <label for="deadline" class="col-md-4 col-form-label text-md-right">応募締切</label>
                           <div class="col-md-6">
                             <!-- Unixstrtotime:タイムスタンプ変換 -->
-                            <input type="date" class="form-control  @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ date('Y-m-d',strtotime($company->deadline)) }}" autocomplete="deadline">
+                            <input type="date" class="form-control  @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ date('Y-m-d',strtotime($company->deadline)) }}">
                               @error('deadline')
                                   <span class="invalid-feedback" role="alert">
                                       <strong>{{ $message }}</strong>
@@ -71,6 +71,36 @@
                               @enderror
                           </div>
                         </div>
+
+                        @php
+                            $pdf_num = 1
+                        @endphp
+                        @foreach($pdf as $p)
+                        <div class="form-group row">
+                            <label for="" class="col-md-4 col-form-label text-md-right">PDF{{$pdf_num}}</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" value="{{$p->pdf}}.pdf" disabled>
+                            </div>
+                            <div class="col-md-2">
+                                <delete-modal :is_delete_btn="true" :csrf="{{json_encode(csrf_token())}}" delete_url="/companies/{{$company->id}}/pdf/{{$p->id}}/destroy"></delete-modal>
+                            </div>
+                        </div>
+                            @php
+                                $pdf_num++
+                            @endphp
+                        @endforeach
+
+                        @for($i=$pdf->count(); $i < 3; $i++)
+                        <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">PDF{{$pdf_num}}</label>
+                            <div class="col-md-6">
+                                <input type="file" name="pdf{{$i+1}}" class="form-control">
+                            </div>
+                        </div>
+                            @php
+                                $pdf_num++
+                            @endphp
+                        @endfor
 
                         <div class="form-group row">
                           <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('備考') }}</label>
@@ -82,6 +112,12 @@
                                   </span>
                               @enderror
                           </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-8 mx-auto my-2 text-sm-right">
+                                ※PDF1はサムネイルとして表示されます
+                            </div>
                         </div>
 
                         <div class="form-group row mb-0">

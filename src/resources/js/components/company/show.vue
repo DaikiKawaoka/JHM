@@ -1,13 +1,13 @@
 <template>
-    <div class="entryComponent">
-        <div class="entryComponent-left-part">
+    <div class="show-component">
+        <div class="show-left-part">
             <div class="show-pdf">
                 <img :src="'http://localhost:8000/storage/pdf_image/'+company.image_path+'.jpg'" class="companies_pic" v-if="company.image_path">
                 <img src="http://localhost:8000/img/no_image_square.jpg" class="companies_pic" v-else>
             </div>
         </div>
-        <div class="entryComponent-right-part">
-            <div class="detail-button">
+        <div class="show-right-part">
+            <div class="show-right-top-part">
                 <div class="company-detail radius margin-top font-size">
                     <table>
                         <tr>
@@ -28,22 +28,31 @@
                         </tr>
                     </table>
                 </div>
-                <div class="entry-field">
-                    <form v-if="entry" :action="'/entries/'+entry.id" method="post">
-                        <input type="hidden" name="_method" value="delete">
-                        <input type="hidden" name="_token" :value="csrf">
-                        <button class="btn btn-danger">取り消し</button>
-                    </form>
-                    <form v-else action="/entries" method="post">
-                        <input type="hidden" name="_method" value="post">
-                        <input type="hidden" name="_token" :value="csrf">
-                        <input type="hidden" :value="company.id" name="company_id">
-                        <button class="btn btn-success">エントリー</button>
-                    </form>
-                    <a :href="'/companies/'+company.id+'/download_pdf'" class="btn btn-info active mt-4" role="button" v-if="company.image_path">PDFダウンロード</a>
+                <div class="btn-field">
+                    <a :href="'/companies/'+company.id+'/edit'" class="btn btn-info active mt-4" role="button">編集</a>
+                    <button class="btn btn-danger active mt-4" type="button" @click="on_delete">削除</button>
                 </div>
+                <delete-modal v-if="show_delete" :is_delete_btn="false" :csrf="csrf" :delete_url="delete_url" v-on:exitDeleteModal="this.show_delete = $event"></delete-modal>
             </div>
-            <add-progress :company_id="company.id" :csrf="csrf" :entry="entry" :statuses="statuses"></add-progress>
+            <div class="entry-circumstances radius margin-top font-size">
+                <table>
+                    <tr>
+                        <th>エントリー人数</th>
+                        <td>{{all_entry_count}}名</td>
+                    </tr>
+                    <tr>
+                        <th>クラスのエントリー人数</th>
+                        <td>{{class_entry.length}}名</td>
+                    </tr>
+                    <tr v-if="class_entry.length != 0">
+                        <th>エントリーした生徒一覧</th>
+                    </tr>
+                    <tr v-for="student in class_entry" :key="student.id">
+                        <th></th>
+                        <td>{{student.name}}</td>
+                    </tr>
+                </table>
+            </div>
             <div class="company-remarks radius margin-top my-3" v-show="company.remarks">
                 <p class="font-size remarks-title">詳細説明</p>
                 <div class="mx-3">
@@ -55,36 +64,36 @@
 </template>
 
 <script>
-import AddProgress from './AddProgress.vue';
+import DeleteModal from '../DeleteModal.vue';
 
 export default {
-    components:{
-        AddProgress,
-    },
+  components: { DeleteModal },
     data(){
-        return{
-            events:[
-                '説明会','試験受験','面接','社長面接'
-            ],
-            progresStatuses:[
-                '結果待ち','合格','不合格','内々定','欠席'
-            ]
+        return {
+            show_delete: false
         }
     },
-    methods:{
+    methods: {
+        on_delete(){
+            this.show_delete = true;
+        },
+        off_delete(){
+            this.show_delete = false;
+        }
     },
-    computed:{
-    },
-    props: ['entry','statuses','company', 'csrf'],
+    props: ['company', 'all_entry_count', 'class_entry', 'csrf', 'delete_url'],
+    mounted(){
+        console.log(this.class_entry);
+    }
 }
 </script>
 
 <style scoped lang='scss'>
 
-    .entryComponent{
+    .show-component{
         margin-top: 1rem;
         display: flex;
-        .entryComponent-left-part{
+        .show-left-part{
             .show-pdf{
                 margin-top: 1rem;
                 display: flex;
@@ -97,10 +106,10 @@ export default {
             }
         }
 
-        .entryComponent-right-part{
+        .show-right-part{
             width: 100%;
             margin-left: 20px;
-            .detail-button{
+            .show-right-top-part{
                 display: flex;
                 .company-detail{
                     width: 70%;
@@ -118,10 +127,10 @@ export default {
                         }
                     }
                 }
-                .entry-field{
+                .btn-field{
                     margin: 3% 3%;
                     button, a{
-                        width: 12rem;
+                        width: 8rem;
                         height: 4rem;
                         color: #ffffff;
                         font-size: 1.2rem;
@@ -131,21 +140,20 @@ export default {
                     }
                 }
             }
-            .event-form{
-                border: solid 1px #000000;
-                span{
-                    padding-left: 10px;
-                }
-                button{
-                    margin-left: 50px;
-                    padding: 5px 20px 5px 20px;
-                }
-            }
-            .entry-company{
-                .progress-area{
-                    width: 100%;
-                    text-align: center;
-                    overflow: scroll;
+            .entry-circumstances{
+                width: 90%;
+                background: #fff;
+                border: solid 1px #aaa;
+                box-shadow: 0 0 20px rgba(170, 170, 170, .1);
+                table{
+                    tr{
+                        th{
+                            padding-left: 40px;
+                        }
+                        td{
+                            padding-left: 100px;
+                        }
+                    }
                 }
             }
             .company-remarks{

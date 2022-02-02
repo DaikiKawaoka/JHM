@@ -1,13 +1,13 @@
 <template>
     <div>
         <div class="progress-row" v-if="showStatus">
-            <span class="status-action-date">{{ status['action_date'] }}</span>
+            <span class="status-action-date">{{status['action_date']}}</span>
             <span class="status-action">{{status['action']}}</span>
             <span class="status-state">{{status['state']}}</span>
             <button v-on:click="onEdit" class="btn btn-success progress-btn">編集</button>
         </div>
-        <div class="" v-else>
-            <form class="progress-row" :action="'/progress/'+status.id" method="post">
+        <div class="progress-row" v-else>
+            <form class="" :action="'/progress/'+status.id" method="post">
                 <input type="hidden" name="_method" value="put">
                 <input type="hidden" name="_token" :value="csrf">
                 <span class="status-action-date">{{status['action_date']}}</span>
@@ -48,7 +48,12 @@
                 </span>
                 <input type="hidden" name="company_id" :value="company_id">
                 <button type="submit" class="btn btn-success progress-btn">変更</button>
-                <button type="button" class="btn btn-danger progress-btn" @click="offEdit">戻る</button>
+                <button type="button" class="btn btn-primary progress-btn" @click="offEdit">戻る</button>
+            </form>
+            <form class="" :action="'/progress/'+status.id" method="post">
+                <input type="hidden" name="_method" value="delete">
+                <input type="hidden" name="_token" :value="csrf">
+                <button type="submit" class="btn btn-danger progress-btn">削除</button>
             </form>
         </div>
         <hr>
@@ -103,18 +108,18 @@ export default {
     display: flex;
     align-items: center;
     .status-action{
-        width: 10rem;
+        width: 9rem;
         padding: 0 1.8rem;
     }
     .status-state{
-        width: 10rem;
+        width: 9rem;
         padding: 0 1.8rem;
-        .status-select{
-            width: 1.5rem;
+        select{
+            font-size: .9rem;
         }
     }
     .status-action-date{
-        width: 10rem;
+        width: 9rem;
         padding: 0 1.8rem;
     }
     .progress-btn{

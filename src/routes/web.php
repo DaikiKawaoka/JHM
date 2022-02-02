@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\WorkSpacesController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,10 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', 'ProgressController@index');
+Route::get('/api/progress', 'ProgressController@ajax_index');
+Route::get('/progress/index2', 'ProgressController@index2');
 Route::post('/auth_logout', 'LogoutController@auth_logout')->name('auth_logout');
-Route::post('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
+Route::get('/progress/excel_export', 'ProgressController@excel_export')->name('progress.excel_export');
 
 Route::get('/register_confirm', 'Auth\RegisterController@confirm')->name('register_confirm');
 Auth::routes();
@@ -52,7 +55,12 @@ Route::group(['prefix' => 'api'], function(){
     Route::get('/student/overview', 'api\StudentProfileController@overview');
     Route::get('/student/getMyCompanies', 'api\StudentProfileController@getMyCompanies');
     Route::get('/student/getEnteredCompanies', 'api\StudentProfileController@getEnteredCompanies');
+    
+    Route::get('/companies/getCompanies', 'api\CompaniesInfoController@getCompanies');
 });
+
+
+
 
 Route::prefix('workspaces')->group(function(){
     Route::get('create', 'WorkSpacesController@create')->name('workspaces.create');
@@ -75,5 +83,7 @@ Route::prefix('schedule')->group(function(){
     Route::delete('{id}/destroy', 'CompanyScheduleController@destroy');
     Route::get('calendar', 'CompanyScheduleController@calendar')->name('schedules.calendar');
 });
+
+Route::delete('/companies/{company_id}/pdf/{pdf_id}/destroy', 'CompaniesController@removePdf')->name('companies.remove_pdf');
 
 Route::get('/home', 'HomeController@index')->name('home');
