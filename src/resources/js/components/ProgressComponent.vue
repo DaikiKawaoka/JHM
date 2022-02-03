@@ -14,6 +14,13 @@
               value="Excelダウンロード"
             />
           </form>
+          <input
+            type="checkbox"
+            v-model="checked"
+            v-on:change="isProgressView(checked)"
+            id="checkbox"
+          />
+          <label for="checkbox" class="checkbox">{{isProgressViewMessage}}</label>
         </div>
       </header>
       <div class="progress-page-all" style="overflow-y: scroll">
@@ -28,7 +35,7 @@
                 rowspan="4"
                 style="
                   width: 65px;
-                  text-align: center;
+                  text-align: center; 
                   vertical-align: middle;
                   padding: 0;
                 "
@@ -297,11 +304,14 @@
                           aria-hidden="true"
                         ></i>
                       </template>
-                      <template v-if="progress.state == '不合格'">
+                      <template v-else-if="progress.state == '不合格'">
                         <i
                           class="fas fa-times-circle my-fail"
                           aria-hidden="true"
                         ></i>
+                      </template>
+                      <template v-else>
+                        {{ progress.state }}
                       </template>
                     </td>
                   </template>
@@ -373,8 +383,9 @@ export default {
       table_width_px: 0,
       entry_column_width_px: 0,
       max_progress_count: 0,
-      isEditProgressState: false,
-    };
+      checked: false,
+      isProgressViewMessage: "すべてのエントリー",
+    };面談
   },
   created() {
     let self = this;
@@ -394,6 +405,29 @@ export default {
   methods: {
     moment: function (date) {
       return moment(date).format("YYYY/MM/DD");
+    },
+    isProgressView: function (checked) {
+      if (checked) {
+        let self = this;
+        let url = "/api/progress/getOngoingEntries";
+        axios.get(url).then(function (response) {
+          self.entries_list = response.data.entries_list;
+          self.progress_list = response.data.progress_list;
+          self.most_many_entry_num = response.data.most_many_entry_num;
+          self.table_width_px = response.data.table_width_px;
+        });
+        this.isProgressViewMessage = "進行中のエントリー";
+      } else {
+        let self = this;
+        let url = "/api/progress/getEntries";
+        axios.get(url).then(function (response) {
+          self.entries_list = response.data.entries_list;
+          self.progress_list = response.data.progress_list;
+          self.most_many_entry_num = response.data.most_many_entry_num;
+          self.table_width_px = response.data.table_width_px;
+        });
+        this.isProgressViewMessage = "すべてのエントリー";
+      }
     },
     // excelExport: function() {
     //   let url = '/progress/excel_export';
