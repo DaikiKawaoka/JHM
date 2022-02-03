@@ -72,7 +72,7 @@ class CompaniesController extends Controller
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'prefecture' => ['nullable', 'string', 'max:3'],
             'url' => ['url', 'nullable', 'max:255'],
@@ -85,6 +85,12 @@ class CompaniesController extends Controller
             'url.url' => 'URLを入力してください',
             'deadline.after' => '締切日は本日以降にしてください。',
         ]);
+
+        if ($validator->fails()) {
+            return redirect('companies/create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $pdf_names = [];
         $image_path = '';
