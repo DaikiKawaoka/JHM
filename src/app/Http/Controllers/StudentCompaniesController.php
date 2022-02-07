@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Entry;
 use App\StudentCompany;
 use DateTime;
@@ -39,13 +40,19 @@ class StudentCompaniesController extends Controller
         if($login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'prefecture' => ['nullable', 'string', 'max:3'],
         ],[
-            'name.required' => '会社名は必須項目です。',
-            'name.max' => '会社名は必須項目です。',
+            'name.required' => '会社名は必須項目です',
+            'name.max' => '会社名は255文字以内です',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('studentCompanies.create'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $student_company = new StudentCompany;
         $student_company->name = $request->input('name');
@@ -62,7 +69,7 @@ class StudentCompaniesController extends Controller
             'create_day' => $date->format('d'),
         ]);
 
-        return redirect()->route('studentCompanies.show',$student_company->id);
+        return redirect()->route('studentCompanies.show',$student_company->id)->with('status', '会社情報を登録しました');
     }
 
 
@@ -138,19 +145,24 @@ class StudentCompaniesController extends Controller
         $company = StudentCompany::find($id);
 
         if(!$company)
-            return redirect()->back()->with('status-error', '会社データが存在しません');
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
         if($login_user->is_teacher() || $company->create_student_id != $login_user->id)
-            return redirect()->back()->with('status-error', 'アクセス権限がありません');
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'prefecture' => ['nullable', 'string', 'max:3'],
+            ],[
+                'name.required' => '会社名は必須項目です',
+                'name.max' => '会社名は255文字以内です',
+            ]);
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'prefecture' => ['nullable', 'string', 'max:3'],
-        ],[
-            'name.required' => '会社名は必須項目です。',
-            'name.max' => '会社名は必須項目です。',
-        ]);
+            if ($validator->fails()) {
+                return redirect(route('studentCompanies.edit', $company->id))
+                            ->withErrors($validator)
+                            ->withInput();
+            }
 
         $company->name = $request->input('name');
         $company->prefecture = $request->input('prefecture');
@@ -174,25 +186,20 @@ class StudentCompaniesController extends Controller
         $company = StudentCompany::find($id);
 
         if(!$company)
-            return redirect()->back()->with('status-error', '会社データが存在しません');
+            return redirect()->route('companies.index')->with('status-error', '会社データが存在しません');
 
         if($login_user->is_teacher() || $company->create_student_id != $login_user->id)
-            return redirect()->back()->with('status-error', 'アクセス権限がありません');
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         $entry = $company->getEntry();
 
         if($entry->hasProgress()){
-            return redirect()->back()->with('status-error', '進捗情報が登録されている為、削除できません。');
+            return redirect()->route('companies.index')->with('status-error', '進捗情報が登録されている為、削除できません。');
         }
 
         $entry->delete();
         $company->delete();
 
-        return redirect()->route('entries.index')->with('status', '会社情報を削除しました');
-    }
-
-    public function identityRegister()
-    {
-        
+        return redirect()->route('companies.index')->with('status', '会社情報を削除しました');
     }
 }
