@@ -6,14 +6,36 @@
           <h5>{{ workspace.year }}年度 就職活動リスト</h5>
           <h6>{{ workspace.class_name }}科 / 担任：{{ login_user.name }}</h6>
         </div>
-        <div class="btn-group">
+        <div class="progress_view_box">
+          <select
+            class="progress_view_select"
+            v-model="ProgressViewSelected"
+            v-on:change="selectProgressView"
+          >
+            <option v-for="option in options" v-bind:value="option.value">
+              {{ option.text }}
+            </option>
+          </select>
+          <span class="progress_view_select_highlight"></span>
+          <span class="progress_view_select_selectbar"></span>
+          <label class="progress_view_select_selectlabel">リスト指定</label>
+        </div>
+                <div class="btn-group">
           <form action="/progress/excel_export" method="get">
             <input
+              id="excel_dl_btn"
               type="submit"
-              class="btn btn-success btn-lg mb-3 mr-2"
+              class="btn btn-success btn-lg mb-1"
               value="Excelダウンロード"
             />
           </form>
+          <input
+            type="checkbox"
+            v-model="checked"
+            v-on:change="isProgressView(checked)"
+            id="checkbox"
+          />
+          <label for="checkbox" class="checkbox">{{isProgressViewMessage}}</label>
         </div>
       </header>
       <div class="progress-page-all" style="overflow-y: scroll">
@@ -28,7 +50,7 @@
                 rowspan="4"
                 style="
                   width: 65px;
-                  text-align: center;
+                  text-align: center; 
                   vertical-align: middle;
                   padding: 0;
                 "
@@ -297,11 +319,14 @@
                           aria-hidden="true"
                         ></i>
                       </template>
-                      <template v-if="progress.state == '不合格'">
+                      <template v-else-if="progress.state == '不合格'">
                         <i
                           class="fas fa-times-circle my-fail"
                           aria-hidden="true"
                         ></i>
+                      </template>
+                      <template v-else>
+                        {{ progress.state }}
                       </template>
                     </td>
                   </template>
@@ -373,7 +398,12 @@ export default {
       table_width_px: 0,
       entry_column_width_px: 0,
       max_progress_count: 0,
-      isEditProgressState: false,
+      ProgressViewSelected: "1",
+      options: [
+        { text: "すべて", value: 1 },
+        { text: "進行中のみ", value: 2 },
+        { text: "内定済みのみ", value: 3 },
+      ],
     };
   },
   created() {
@@ -394,6 +424,38 @@ export default {
   methods: {
     moment: function (date) {
       return moment(date).format("YYYY/MM/DD");
+    },
+    selectProgressView: function () {
+      let self = this;
+      switch (self.ProgressViewSelected) {
+        case 1:
+          let url = "/api/progress/getEntries";
+          axios.get(url).then(function (response) {
+            self.entries_list = response.data.entries_list;
+            self.progress_list = response.data.progress_list;
+            self.most_many_entry_num = response.data.most_many_entry_num;
+            self.table_width_px = response.data.table_width_px;
+          });
+          break;
+        case 2:
+          url = "/api/progress/getOngoingEntries";
+          axios.get(url).then(function (response) {
+            self.entries_list = response.data.entries_list;
+            self.progress_list = response.data.progress_list;
+            self.most_many_entry_num = response.data.most_many_entry_num;
+            self.table_width_px = response.data.table_width_px;
+          });
+          break;
+        case 3:
+          url = "/api/progress/getSuccessfulEntries";
+          axios.get(url).then(function (response) {
+            self.entries_list = response.data.entries_list;
+            self.progress_list = response.data.progress_list;
+            self.most_many_entry_num = response.data.most_many_entry_num;
+            self.table_width_px = response.data.table_width_px;
+          });
+          break;
+      }
     },
     // excelExport: function() {
     //   let url = '/progress/excel_export';
