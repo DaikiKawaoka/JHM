@@ -20,7 +20,7 @@ class Company extends Model
 
     public static function getAllCompanies()
     {
-        return Company::select(['companies.id','companies.name as name','prefecture','url','remarks','deadline',
+        return Company::select(['companies.id','companies.name as name','prefecture','url','remarks','deadline', 'image_path',
                         'create_user_id','users.name as create_user_name','companies.created_at'])
                         ->join('users', 'companies.create_user_id', '=', 'users.id')
                         ->orderBy('companies.id', 'desc')

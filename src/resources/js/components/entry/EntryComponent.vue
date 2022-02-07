@@ -2,8 +2,8 @@
     <div class="entryComponent">
         <div class="entryComponent-left-part">
             <div class="show-pdf">
-                <img :src="'http://localhost:8000/storage/pdf_image/'+company.image_path+'.jpg'" class="companies_pic" v-if="company.image_path">
-                <img src="http://localhost:8000/img/no_image_square.jpg" class="companies_pic" v-else>
+                <img :src="'/storage/pdf_image/'+company.image_path+'.jpg'" class="companies_pic" v-if="company.image_path">
+                <img src="/img/no_image_square.jpg" class="companies_pic" v-else>
             </div>
         </div>
         <div class="entryComponent-right-part">
@@ -43,7 +43,7 @@
                     <a :href="'/companies/'+company.id+'/download_pdf'" class="btn btn-info active mt-4" role="button" v-if="company.image_path">PDFダウンロード</a>
                 </div>
             </div>
-            <add-progress :company_id="company.id" :csrf="csrf" :entry="entry" :statuses="statuses"></add-progress>
+            <add-progress :company_id="company.id" :csrf="csrf" :entry="entry" :statuses="statuses" who_created="teacher_created_company"></add-progress>
             <div class="company-remarks radius margin-top my-3" v-show="company.remarks">
                 <p class="font-size remarks-title">詳細説明</p>
                 <div class="mx-3">
@@ -129,23 +129,6 @@ export default {
                         justify-content: center;
                         align-items: center;
                     }
-                }
-            }
-            .event-form{
-                border: solid 1px #000000;
-                span{
-                    padding-left: 10px;
-                }
-                button{
-                    margin-left: 50px;
-                    padding: 5px 20px 5px 20px;
-                }
-            }
-            .entry-company{
-                .progress-area{
-                    width: 100%;
-                    text-align: center;
-                    overflow: scroll;
                 }
             }
             .company-remarks{
