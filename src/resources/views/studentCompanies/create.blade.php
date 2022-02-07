@@ -53,6 +53,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('確認') }}</label>
                             <div class="col-md-7">
                                 <h6>※この会社情報は{{Auth::user()->name}}さんと先生のみ閲覧できます。</h6><br>
+                                <h6>※会社情報を登録した時点でエントリーしているとみなします</h6><br>
                                 <h6>※他の生徒がこの会社情報を見てエントリーすることはありません。</h6><br>
                                 <h6>※この会社情報は先生が{{Auth::user()->name}}さんの就活の進捗を確認するときに使用されます。</h6>
                             </div>
