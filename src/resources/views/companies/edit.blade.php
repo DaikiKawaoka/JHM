@@ -63,7 +63,7 @@
                           <label for="deadline" class="col-md-4 col-form-label text-md-right">応募締切</label>
                           <div class="col-md-6">
                             <!-- Unixstrtotime:タイムスタンプ変換 -->
-                            <input type="date" class="form-control  @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ date('Y-m-d',strtotime($company->deadline)) }}">
+                            <input type="date" class="form-control  @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ isset($company->deadline) ? date('Y-m-d',strtotime($company->deadline)) : ''}}">
                               @error('deadline')
                                   <span class="invalid-feedback" role="alert">
                                       <strong>{{ $message }}</strong>

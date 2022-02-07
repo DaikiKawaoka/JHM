@@ -57,7 +57,7 @@ class Students extends Authenticatable{
     }
 
     // エントリーを取得
-    public function getMyEntries()
+    public function getEntries()
     {
         return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
                 ->leftJoin('students', 'entries.student_id', '=', 'students.id')
@@ -66,18 +66,38 @@ class Students extends Authenticatable{
                 ->where('students.id', $this->id)->orderBy('entries.id', 'asc')->get();
     }
 
-    // 現在進行中のエントリーを取得 (×が付いていないエントリー)
-    public function getMyOngoingEntries()
+    // 内定が出されたエントリーを取得
+    public function getSuccessfulEntries()
     {
         return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
                 ->leftJoin('students', 'entries.student_id', '=', 'students.id')
                 ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
                 ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
                 ->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')
+                ->distinct()
                 ->where('students.id', $this->id)
-                ->where(function($q){
-                    $q->where('progress.state', '!=' , '不合格')
-                        ->orWhereNull('progress.state');
+                ->where('progress.state', '=' , '内々定')
+                ->orderBy('entries.id', 'asc')->get();
+    }
+
+    // 現在進行中のエントリーを取得 (不合格と内々定が無いエントリー)
+    public function getOngoingEntries()
+    {
+        return Entry::select(['entries.id as id','entries.student_id as student_id','entries.company_id as company_id','companies.name as company_name','companies.prefecture','companies.url','entries.student_company_id as student_company_id','student_companies.name as student_company_name'])
+                ->leftJoin('students', 'entries.student_id', '=', 'students.id')
+                ->leftJoin('companies', 'entries.company_id', '=', 'companies.id')
+                ->leftJoin('student_companies', 'entries.student_company_id', '=', 'student_companies.id')
+                ->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')
+                ->distinct()
+                ->where('students.id', $this->id)
+                ->whereNotIn('entries.id', function($q){
+                    $q->select('entries.id')
+                        ->from('entries')
+                        ->leftJoin('progress', 'entries.id', '=', 'progress.entry_id')
+                        ->where(function($q){
+                                $q->where('progress.state', '=' , '不合格')
+                                ->orWhere('progress.state', '=' , '内々定');
+                            });
                 })
                 ->orderBy('entries.id', 'asc')->get();
     }

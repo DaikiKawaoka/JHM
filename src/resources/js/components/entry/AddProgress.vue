@@ -5,7 +5,7 @@
                 <input type="hidden" name="company_id" :value="company_id">
                 <input type="hidden" name="_method" value="post">
                 <input type="hidden" name="_token" :value="csrf">
-                <input type="hidden" name="company_type" value="teacher_created_company">
+                <input type="hidden" name="company_type" :value="who_created">
                 <p class="event-title">進捗登録</p>
                 <span>
                     イベント
@@ -75,7 +75,7 @@ export default {
     },
     created(){
     },
-    props: ['csrf', 'company_id', 'entry', 'statuses'],
+    props: ['csrf', 'company_id', 'entry', 'statuses', 'who_created'],
 }
 </script>
 

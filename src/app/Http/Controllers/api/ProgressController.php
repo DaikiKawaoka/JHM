@@ -21,14 +21,8 @@ class ProgressController extends Controller
         $workspace_id = Cookie::get("workspace_id");
         $workspace = WorkSpaces::find($workspace_id);
 
-        if (!$workspace) {
-            return redirect()
-                ->route("companies.index")
-                ->with(
-                    "status-error",
-                    "管理しているワークスペースが存在しません"
-                );
-        }
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
 
         // 生徒配列
         $students = $user->getStudents($workspace_id);
@@ -37,8 +31,8 @@ class ProgressController extends Controller
         // エントリーがクラス全体で0でも1列は作成するため,1を代入
         $most_many_entry_num = 1;
 
-        $entries_list = [];
-        foreach ($students as $index => $student) {
+        $entries_list=[];
+        foreach($students as $index => $student){
             $entries_list[$index] = $student->getEntries();
 
             // 現在most_many_entry_numを上回る生徒がいた場合、その値をmost_many_entry_numに入れる
@@ -77,6 +71,7 @@ class ProgressController extends Controller
         ];
     }
 
+
     public function getEntries(Request $request)
     {
         $user = Auth::user();
@@ -88,14 +83,8 @@ class ProgressController extends Controller
         $workspace_id = Cookie::get("workspace_id");
         $workspace = WorkSpaces::find($workspace_id);
 
-        if (!$workspace) {
-            return redirect()
-                ->route("companies.index")
-                ->with(
-                    "status-error",
-                    "管理しているワークスペースが存在しません"
-                );
-        }
+        if(!$workspace)
+            return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
 
         // 生徒配列
         $students = $user->getStudents($workspace_id);
@@ -103,36 +92,36 @@ class ProgressController extends Controller
         // 生徒で一番エントリーした人のエントリー数
         // エントリーがクラス全体で0でも1列は作成するため,1を代入
         $most_many_entry_num = 1;
-        $entries_list = [];
-        if ($request->path() == "api/progress/getEntries") {
+        $entries_list=[];
+        if($request->path() == 'api/progress/getEntries'){
             // 各生徒の全エントリーを取得
-            foreach ($students as $index => $student) {
+            foreach($students as $index => $student){
                 $entries_list[$index] = $student->getEntries();
                 // 現在most_many_entry_numを上回る生徒がいた場合、その値をmost_many_entry_numに入れる
-                if ($most_many_entry_num < count($entries_list[$index])) {
+                if($most_many_entry_num < count($entries_list[$index])){
                     $most_many_entry_num = count($entries_list[$index]);
                 }
             }
-        } elseif ($request->path() == "api/progress/getSuccessfulEntries") {
+        }else if($request->path() == 'api/progress/getSuccessfulEntries'){
             // 各生徒の内定が出たエントリーのみ取得
-            foreach ($students as $index => $student) {
+            foreach($students as $index => $student){
                 $entries_list[$index] = $student->getSuccessfulEntries();
 
-                if ($most_many_entry_num < count($entries_list[$index])) {
+                if($most_many_entry_num < count($entries_list[$index])){
                     $most_many_entry_num = count($entries_list[$index]);
                 }
             }
-        } else {
+        }else{
             // 各生徒の進行中のエントリーのみ取得
-            foreach ($students as $index => $student) {
+            foreach($students as $index => $student){
                 $entries_list[$index] = $student->getOngoingEntries();
-                if ($most_many_entry_num < count($entries_list[$index])) {
+                if($most_many_entry_num < count($entries_list[$index])){
                     $most_many_entry_num = count($entries_list[$index]);
                 }
             }
         }
 
-        $progress_list = [];
+        $progress_list=[];
         $progress = null;
 
         foreach ($entries_list as $i => $entries) {

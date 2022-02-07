@@ -9,11 +9,12 @@ import StudentProfileComponent from './components/students/StudentProfileCompone
 import CompaniesTeacherComponent from './components/CompaniesTeacherComponent.vue';
 import EntryComponent from './components/entry/EntryComponent';
 import CompanyShow from './components/company/show.vue';
+import StudentCompanyShow from './components/StudentCompany/show.vue';
 
 import { createApp } from 'vue';
 
 const app = createApp({
     components: {
-        Sidebar, DeleteModal, CalendarComponent, StudentProfileComponent, HeadMessage, EntryComponent, CompanyShow, ProgressComponent, CompaniesTeacherComponent
+        Sidebar, DeleteModal, CalendarComponent, StudentProfileComponent, HeadMessage, EntryComponent, CompanyShow, ProgressComponent, CompaniesTeacherComponent, StudentCompanyShow
     }
 }).mount('#app');

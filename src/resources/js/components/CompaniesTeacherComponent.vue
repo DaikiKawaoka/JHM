@@ -54,7 +54,8 @@
                     <li class="companies_elements">
                         <p class="companies_name">{{ company.name }}</p>
                         <p class="deadline" v-if="company.deadline !== null">締切日:{{ company.deadline }}</p>
-                        <img src="/img/no_image_square.jpg" class="companies_pic"/>
+                        <img :src="'/storage/pdf_image/'+company.image_path+'.jpg'" class="companies_pic" v-if="company.image_path"/>
+                        <img src="/img/no_image_square.jpg" class="companies_pic" v-else/>
 
                         <p class="create_user_name">{{ company.create_user_name }}</p>
 
@@ -256,6 +257,7 @@ $font:'Noto Sans JP', sans-serif;
             //写真
             .companies_pic {
                 width: 460px;
+                height: 460px;
             }
             //ボタン
             #edit_btn {

@@ -72,7 +72,7 @@ class CompaniesController extends Controller
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'prefecture' => ['nullable', 'string', 'max:3'],
             'url' => ['url', 'nullable', 'max:255'],
@@ -85,6 +85,12 @@ class CompaniesController extends Controller
             'url.url' => 'URLを入力してください',
             'deadline.after' => '締切日は本日以降にしてください。',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('companies.create'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $pdf_names = [];
         $image_path = '';
@@ -234,7 +240,7 @@ class CompaniesController extends Controller
         if(!$login_user->is_teacher() || $company->create_user_id != $login_user->id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'prefecture' => ['nullable', 'string', 'max:3'],
             'url' => ['url', 'nullable', 'max:255'],
@@ -242,9 +248,17 @@ class CompaniesController extends Controller
             'remarks' => ['string','nullable'],
         ],[
             'name.required' => '会社名は必須項目です。',
-            'name.max' => '会社名は必須項目です。',
+            'name.max' => '会社名は２５５文字以内です',
+            'url.max' => 'URLは２５５文字以内です',
+            'url.url' => 'URLを入力してください',
             'deadline.after' => '締切日は本日以降にしてください。',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('companies.edit', $company->id))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $company->name = $request->input('name');
         $company->prefecture = $request->input('prefecture');
