@@ -55,9 +55,10 @@ class LoginController extends Controller
         }else{
             //管理しているワークスペースがあれば
             $first_workspace = WorkSpaces::where('teacher_id', $user->id)->first();
-            if($first_workspace)
+            if($first_workspace){
                 $request->session()->put('workspace_id', $first_workspace->id);
                 Cookie::queue('workspace_id', $first_workspace->id, 1000000);
+            }
         }
     }
 }
