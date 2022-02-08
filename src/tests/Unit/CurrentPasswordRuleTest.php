@@ -8,6 +8,7 @@ use App\Rules\CurrentPassword;
 use App\User;
 use App\Http\Requests\TestRequestCurrentPassword;
 use App\Students;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 
 class CurrentPasswordRuleTest extends TestCase
@@ -47,5 +48,12 @@ class CurrentPasswordRuleTest extends TestCase
             'this password is True' => ['password_current', 'password', true],
             'this password is False' => ['password_current', 'failure_password', false],
         ];
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
     }
 }

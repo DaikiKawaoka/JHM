@@ -26,7 +26,7 @@
                 <button type="submit" class="btn btn-success">登録</button>
             </form>
             <div v-for="status in statuses" :key="status">
-                <edit-progress :status="status" :csrf="csrf" :company_id="company_id"></edit-progress>
+                <edit-progress :status="status" :csrf="csrf" :company_id="company_id" who_created="teacher_created_company"></edit-progress>
             </div>
         </div>
         <div class="event-form radius margin-top font-size not-entry" v-else>

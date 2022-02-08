@@ -1,18 +1,18 @@
-
-.header_container{
+.header_container {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     margin-top: 50px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
-.my-success{
+.my-success {
     color: #4caf50;
- }
- .my-fail{
+}
+.my-fail {
     color: #d63031;
- }
-.fixed,.fixed2 {
+}
+.fixed,
+.fixed2 {
     position: sticky;
     color: #fff;
     background: #333;
@@ -26,9 +26,115 @@
         border: 1px solid #ccc;
     }
 }
-.fixed{
+.fixed {
     left: 0;
-  }
-  .fixed2{
+}
+.fixed2 {
     left: 65px;
+}
+
+.progress_view_box {
+  position: relative;
+  width: 300px;
+  text-align: center;
+}
+
+.progress_view_select {
+  position: relative;
+  font-family: inherit;
+  background-color: transparent;
+  width: 100%;
+  padding: 10px 10px 10px 0;
+  font-size: 18px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+  &:focus {
+    outline: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
   }
+}
+
+.progress_view_box {
+  .progress_view_select {
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select::-ms-expand {
+    display: none;
+  }
+
+  &:after {
+    position: absolute;
+    top: 18px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    padding: 0;
+    content: '';
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+  }
+}
+
+.progress_view_select_selectlabel {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  top: 10px;
+  transition: 0.2s ease all;
+}
+
+.progress_view_select {
+  &:focus ~ .progress_view_select_selectlabel, &:valid ~ .progress_view_select_selectlabel {
+    color: #55efc4;
+    top: -20px;
+    transition: 0.2s ease all;
+    font-size: 14px;
+  }
+}
+
+.progress_view_select_selectbar {
+  position: relative;
+  display: block;
+  width: 100%;
+
+  &:before, &:after {
+    content: '';
+    height: 2px;
+    width: 0;
+    bottom: 1px;
+    position: absolute;
+    background: #55efc4;
+    transition: 0.2s ease all;
+  }
+
+  &:before {
+    left: 50%;
+  }
+
+  &:after {
+    right: 50%;
+  }
+}
+
+.progress_view_select:focus ~ .progress_view_select_selectbar {
+  &:before, &:after {
+    width: 50%;
+  }
+}
+
+.progress_view_select_highlight {
+  position: absolute;
+  top: 25%;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
