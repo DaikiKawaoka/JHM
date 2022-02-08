@@ -102,7 +102,7 @@
                                     </form>
                                 </div>
                             </li>
-                            @if (Auth::user()->is_teacher())
+                            @if (Auth::user()->is_teacher() && session('workspace_id'))
                                 <li class="nav-item dropdown">
                                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -113,7 +113,7 @@
                                         <a class="dropdown-item" href="{{ route('workspaces.showMember') }}">
                                             生徒一覧
                                         </a>
-                                        <a class="dropdown-item" href="{{ route('workspaces.addStudentsShow') }}">
+                                        <a class="dropdown-item" href="{{ route('workspaces.addStudentsShow', session('workspace_id')) }}">
                                             生徒登録
                                         </a>
 

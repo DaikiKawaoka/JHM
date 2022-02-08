@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Rules\WorkSpaceYear;
 use App\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+
 
 class WorkSpacesController extends Controller
 {
@@ -36,15 +40,23 @@ class WorkSpacesController extends Controller
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
-        $request->validate([
-            'name' => ['required', 'string', 'max:31'],
+        $validator = Validator::make($request->all(), [
+            'class_name' => ['required', 'string', 'max:31'],
             'year' => ['required', new WorkSpaceYear],
         ],[
-            'name.max' => '名前は31文字までです'
+            'class_name.required' => '名前は必須項目です',
+            'class_name.max' => '名前は31文字までです'
         ]);
+
+        if ($validator->fails()){
+            return redirect(route('workspaces.create'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $workspace = WorkSpaces::create([
             'teacher_id' => $login_user->id,
-            'class_name' => $request->input('name'),
+            'class_name' => $request->input('class_name'),
             'year' => $request->input('year'),
         ]);
         Cookie::queue('workspace_id', $workspace->id, 1000000);
@@ -81,12 +93,20 @@ class WorkSpacesController extends Controller
             return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('progress.index')->with('status-error', 'アクセス権限がありません');
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'class_name' => ['required', 'string', 'max:31'],
             'year' => ['required', new WorkSpaceYear],
         ],[
-            'name.max' => '名前は31文字までです'
+            'class_name.required' => '名前は必須項目です',
+            'class_name.max' => '名前は31文字までです'
         ]);
+
+        if ($validator->fails()){
+            return redirect(route('workspaces.edit', $workspace->id))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $workspace->class_name = $request->input('class_name');
         $workspace->year = $request->input('year');
         $workspace->save();
@@ -146,16 +166,15 @@ class WorkSpacesController extends Controller
         if($login_user->id != $workspace->teacher_id)
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         $member = $workspace->getMember();
-        return view('workspaces.showMember')->with(['member' => $member]);
+        return view('workspaces.showMember')->with(['member' => $member,'workspace_id' => $workspace_id]);
 
     }
 
-    public function addStudentsShow(){
+    public function addStudentsShow($workspace_id){
         //ワークスペースに生徒を追加するときのページ
         $login_user = Auth::user();
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
-        $workspace_id = Cookie::get('workspace_id');
         if(!WorkSpaces::find($workspace_id))
             return redirect()->route('companies.index')->with('status-error', '管理しているワークスペースが存在しません');
         $students = Students::all();
@@ -173,7 +192,7 @@ class WorkSpacesController extends Controller
         if(!$workspace)
             return redirect()->route('companies.index')->with('status-error', 'ワークスペースが存在しません');
         if ($workspace->getMember()) {
-            return redirect()->route('workspaces.addStudentsShow');
+            return redirect()->route('workspaces.addStudentsShow', $workspace_id);
         }
 
         $students = Students::all();
@@ -207,7 +226,11 @@ class WorkSpacesController extends Controller
 
         $added_students_id = \DB::table('membership')->select('student_id')->where('workspace_id',$workspace_id)->pluck('student_id')->toArray();
 
-        foreach ($request->students as $student_id) {
+        $students = $request->students;
+        if(!$students){
+            $students = [];
+        }
+        foreach ($students as $student_id) {
             if (!in_array($student_id, $added_students_id)) {
                 membership::create([
                     'workspace_id' => $workspace_id,
@@ -217,7 +240,7 @@ class WorkSpacesController extends Controller
         }
 
         foreach ($added_students_id as $added_student_id) {
-            if (!in_array($added_student_id, $request->students)) {
+            if (!in_array($added_student_id, $students)) {
                 membership::where('student_id', $added_student_id)->delete();
             }
         }
@@ -242,6 +265,6 @@ class WorkSpacesController extends Controller
             ]);
         }
 
-        return redirect()->route('workspaces.showMember');
+        return redirect()->route('workspaces.showMember')->with('status',"生徒を追加しました。");
     }
 }
