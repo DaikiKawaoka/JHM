@@ -15,7 +15,7 @@
 
                     <div class="card-body p-5">
                         　是非、ワークスペースに生徒を登録してください。生徒を登録していただくと、エントリーしている企業や就活の進捗を把握することができます。
-                        <p class="text-right mt-3 mr-3"><a href="{{ route('workspaces.addStudentsShow') }}">今すぐ登録する</a></p>
+                        <p class="text-right mt-3 mr-3"><a href="{{ route('workspaces.addStudentsShow',['workspace_id'=> $workspace_id]) }}">今すぐ登録する</a></p>
                     </div>
                 </div>
             @endif
