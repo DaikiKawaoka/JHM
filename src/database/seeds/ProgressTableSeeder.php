@@ -26,5 +26,31 @@ class ProgressTableSeeder extends Seeder
                 ]);
             }
         }
+
+        $student_ids= [6,12,17];
+        $actions = ['説明会','面接','最終面接'];
+        $action_dates = ['2021-05-01','2022-05-15','2022-06-01'];
+        $states = ['合格','合格','内々定'];
+        for($i = 0; $i < 3; $i++){
+            for($j = 0; $j < 3; $j++){
+                DB::table('progress')->insert([
+                    'student_id' => $student_ids[$i],
+                    'entry_id' => 139 + $i,
+                    'action' => $actions[$j],
+                    'state' => $states[$j],
+                    'action_date' => $action_dates[$j],
+                ]);
+            }
+        }
+
+        for($i = 0; $i < 3; $i++){
+            DB::table('progress')->insert([
+                'student_id' => 8,
+                'entry_id' => 137,
+                'action' => $actions[$i],
+                'state' => $states[$i],
+                'action_date' => $action_dates[$i],
+            ]);
+        }
     }
 }

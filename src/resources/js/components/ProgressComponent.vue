@@ -29,13 +29,6 @@
               value="Excelダウンロード"
             />
           </form>
-          <input
-            type="checkbox"
-            v-model="checked"
-            v-on:change="isProgressView(checked)"
-            id="checkbox"
-          />
-          <label for="checkbox" class="checkbox">{{isProgressViewMessage}}</label>
         </div>
       </header>
       <div class="progress-page-all" style="overflow-y: scroll">
@@ -159,6 +152,7 @@
                   <td
                     v-else
                     class="entered-student-company-name"
+                    :colspan="max_progress_count"
                     style="text-align: center; padding: 0"
                   >
                     {{ entry.student_company_name }}

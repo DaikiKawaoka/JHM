@@ -38,5 +38,30 @@ class EntriesTableSeeder extends Seeder
                 'created_at' => date("Y-m-d H:i:s")
             ]);
         }
+
+        DB::table('entries')->insert([
+            'student_id' => 6,
+            'company_id' => 12,
+            'create_year'=> $date->format('Y'),
+            'create_month' => $date->format('m'),
+            'create_day' => $date->format('d'),
+            'created_at' => date("Y-m-d H:i:s")
+        ]);
+        DB::table('entries')->insert([
+            'student_id' => 12,
+            'company_id' => 12,
+            'create_year'=> $date->format('Y'),
+            'create_month' => $date->format('m'),
+            'create_day' => $date->format('d'),
+            'created_at' => date("Y-m-d H:i:s")
+        ]);
+        DB::table('entries')->insert([
+            'student_id' => 17,
+            'company_id' => 12,
+            'create_year'=> $date->format('Y'),
+            'create_month' => $date->format('m'),
+            'create_day' => $date->format('d'),
+            'created_at' => date("Y-m-d H:i:s")
+        ]);
     }
 }
