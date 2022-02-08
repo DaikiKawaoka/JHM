@@ -146,9 +146,9 @@ Route::prefix("workspaces")->group(function () {
 });
 
 Route::prefix("schedule")->group(function () {
-    Route::post("store", "CompanyScheduleController@store");
-    Route::post("{id}/update", "CompanyScheduleController@update");
-    Route::delete("{id}/destroy", "CompanyScheduleController@destroy");
+    Route::post("store", "CompanyScheduleController@store")->name('schedule.store');
+    Route::post("{id}/update", "CompanyScheduleController@update")->name('schedule.update');
+    Route::delete("{id}/destroy", "CompanyScheduleController@destroy")->name('schedule.destroy');
     Route::get("calendar", "CompanyScheduleController@calendar")->name(
         "schedules.calendar"
     );
