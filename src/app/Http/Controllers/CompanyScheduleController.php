@@ -34,7 +34,7 @@ class CompanyScheduleController extends Controller
             'schedule_date' => ['required', 'date', 'after:yesterday'],
         ]);
         if($validator->fails()){
-            return redirect()->route('workspaces.calendar')->with('status-error', '予定日は本日以降、予定内容は31文字以内です');
+            return redirect()->route('workspaces.calendar')->with('status-error', '予定日は本日以降、予定内容は1~31文字以内です');
         }
         Schedules::create([
             'workspace_id' => $workspace_id,
