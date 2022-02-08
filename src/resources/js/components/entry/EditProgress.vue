@@ -10,6 +10,7 @@
             <form class="" :action="'/progress/'+status.id" method="post">
                 <input type="hidden" name="_method" value="put">
                 <input type="hidden" name="_token" :value="csrf">
+                <input type="hidden" name="company_type" :value="who_created">
                 <span class="status-action-date">{{status['action_date']}}</span>
                 <span class="status-action">{{status['action']}}</span>
                 <span class="status-state">
@@ -92,7 +93,7 @@ export default {
         const action_date = moment(this.status['action_date']);
         this.status['action_date'] = String(action_date.year()) + '/' + String(action_date.month()+1) + '/' + String(action_date.date());
     },
-    props: ['status', 'csrf', 'company_id'],
+    props: ['status', 'csrf', 'company_id',"who_created"],
 }
 </script>
 
