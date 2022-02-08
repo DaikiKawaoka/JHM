@@ -3,13 +3,11 @@
 namespace Tests\Feature\Progress;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use App\Company;
 use App\Progress;
 use App\Students;
-use App\User;
 
 class DestroyTest extends TestCase
 {
