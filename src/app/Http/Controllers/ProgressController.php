@@ -42,7 +42,6 @@ class ProgressController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
         $login_user = Auth::user();
 
         if($login_user->is_teacher()){
@@ -119,9 +118,14 @@ class ProgressController extends Controller
 
     public function update(Request $request , $progress_id)
     {
+        $login_user = Auth::user();
+        if($login_user->is_teacher())
+            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
+
         $request->validate([
             'state' => ['required','string','regex:/^[結果待ち|合格|不合格|内々定|欠席]+$/u'],
             'company_id' => ['required','integer'],
+            'company_type' => ['required'],
         ],[
             'state.required' => '状態は必須です。',
             'state.string' => '文字列で入力してください。',
@@ -130,17 +134,18 @@ class ProgressController extends Controller
             'company_id.integer' => '会社IDが不正です。',
         ]);
 
-        $login_user = Auth::user();
         $company_id = $request->input('company_id');
         $state = $request->input('state');
-        $entry = Entry::where('student_id', $login_user->id)
-                    ->where('company_id', $company_id)
-                    ->get();
+        $entry = null;
+        if ($request->input('company_type') == 'teacher_created_company') {
+            //求人情報の会社のエントリー
+            $entry = $login_user->getEntry($company_id);
+        }else{
+            //生徒自身が登録した会社のエントリー
+            $entry = $login_user->getMyCompanyEntry($company_id);
+        }
         $session_name = '';
         $session_message = '';
-
-        if($login_user->is_teacher())
-            return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
 
         if($entry){
             // 会社にエントリーしている場合
