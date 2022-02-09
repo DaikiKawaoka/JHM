@@ -127,9 +127,11 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                @if (!Auth::user()->is_teacher())
                                     <a class="dropdown-item" href="{{ route('students.show')}}">
                                             プロフィール
                                     </a>
+                                @endif
 
                                     <a class="dropdown-item" href="{{ route('users.edit', Auth::user()->id) }}">
                                         {{ __('プロフィール編集') }}
