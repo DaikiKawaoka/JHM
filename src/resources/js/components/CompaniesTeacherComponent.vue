@@ -52,7 +52,7 @@
             <ul class="companies_list"  v-if="this.companiesData.length > 0">
                 <a :href="'/companies/' + company.id" class="companies_link" v-for="company in companiesData" :key="company.id">
                     <li class="companies_elements">
-                        <p class="companies_name">{{ company.name }}</p>
+                        <p class="companies_name text-truncate">{{ company.name }}</p>
                         <p class="deadline" v-if="company.deadline !== null">締切日:{{ company.deadline }}</p>
                         <img :src="'/storage/pdf_image/'+company.image_path+'.jpg'" class="companies_pic" v-if="company.image_path"/>
                         <img src="/img/no_image_square.jpg" class="companies_pic" v-else/>
@@ -115,7 +115,6 @@ export default {
     methods:{
         setKeyword(){
             this.search_name = this.$refs.input.value;
-            console.log(this.search_name);
             this.searchCompany();
         },
         setDesc(){
@@ -144,15 +143,10 @@ export default {
                 this.login_user = response.data.login_user;
                 this.companiesData = response.data.search_companies.data;
                 this.isLoading = false;
-                console.log(response);
-            });   
+            });
         },
 
     },
-    computed:{
-        
-        
-        },
     created(){
         let self = this;
         let company_url = '/api/companies/getCompanies';
@@ -224,6 +218,7 @@ $font:'Noto Sans JP', sans-serif;
             }
         }
         .companies_elements {
+            transition: .6s;
             border: 0.5px solid #ccc;
             border-radius: 5px;
             margin: 18px;
@@ -272,13 +267,18 @@ $font:'Noto Sans JP', sans-serif;
                 display: block;
                 position: absolute;
                 bottom: 20px;
-                right: 105px;    
+                right: 105px;
             }
             #entry_btn{
                 margin-top: 40px;
             }
             #cancel_btn{
                 margin-top: 40px;
+            }
+            &:hover{
+                background: #eee;
+                opacity: .9;
+                transition: .6s;
             }
         }
     }
@@ -294,5 +294,5 @@ $font:'Noto Sans JP', sans-serif;
         margin-left: 40%;
 
     }
-} 
+}
 </style>
