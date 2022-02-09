@@ -58,6 +58,8 @@ class LoginController extends Controller
             if($first_workspace){
                 $request->session()->put('workspace_id', $first_workspace->id);
                 Cookie::queue('workspace_id', $first_workspace->id, 1000000);
+            }else{
+                Cookie::queue(Cookie::forget('workspace_id'));
             }
         }
     }

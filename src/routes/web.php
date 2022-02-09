@@ -83,6 +83,12 @@ Route::resource("progress", "ProgressController", [
 Route::get("students/login", "StudentsController@showLoginForm")->name(
     "students.login"
 );
+Route::get("students/create", "StudentsController@create")->name(
+    "students.create"
+);
+Route::post("students", "StudentsController@store")->name(
+    "students.store"
+);
 Route::post("students/authenticate", "StudentsController@authenticate")->name(
     "students.authenticate"
 );
@@ -158,5 +164,10 @@ Route::delete(
     "/companies/{company_id}/pdf/{pdf_id}/destroy",
     "CompaniesController@removePdf"
 )->name("companies.remove_pdf");
+
+// =============== fallback 404 ===============
+// Route::fallback(function () {
+// 	return redirect('/');
+// });
 
 Route::get("/home", "HomeController@index")->name("home");

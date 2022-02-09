@@ -10,17 +10,13 @@
                 <div class="card-body">
 
                         <div class="form-group row mb-0">
-                        <div>
-                        <p>このアプリは生徒が自らアカウント作成をすることができません。<br>
-                        生徒の場合は教師にアカウントを作ってもらってください。</p>
-                        </div>
 
                         <div class="col-md-8 offset-md-4">
-                        <h4>教師ですか？</h4>
+                        <h4>教師ですか？生徒ですか？</h4>
                         </div>
                             <div class="col-md-8 offset-md-4">
                                 <a class="btn btn-primary" href="{{ url('/register?teacher=true') }}" role="button">{{ __('教師です') }}</a>
-                                <a class="btn btn-primary" href="{{ route('login') }}" role="button">{{ __('違います') }}</a>
+                                <a class="btn btn-primary mx-5" href="{{ route('students.create')  }}" role="button">{{ __('生徒です') }}</a>
                             </div>
                         </div>
 
