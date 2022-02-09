@@ -170,9 +170,10 @@ class WorkSpacesController extends Controller
 
     }
 
-    public function addStudentsShow($workspace_id){
+    public function addStudentsShow(){
         //ワークスペースに生徒を追加するときのページ
         $login_user = Auth::user();
+        $workspace_id = Cookie::get('workspace_id');
         if(!$login_user->is_teacher())
             return redirect()->route('companies.index')->with('status-error', 'アクセス権限がありません');
         if(!WorkSpaces::find($workspace_id))

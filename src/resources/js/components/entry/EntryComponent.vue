@@ -71,10 +71,6 @@ export default {
             ]
         }
     },
-    methods:{
-    },
-    computed:{
-    },
     props: ['entry','statuses','company', 'csrf'],
 }
 </script>

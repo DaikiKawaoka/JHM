@@ -82,9 +82,6 @@ export default {
         }
     },
     props: ['company', 'all_entry_count', 'class_entry', 'csrf', 'delete_url'],
-    mounted(){
-        console.log(this.class_entry);
-    }
 }
 </script>
 
